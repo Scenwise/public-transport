@@ -1,0 +1,44 @@
+.filterDiv {
+    margin-top: 14px;
+    background: rgba(51, 51, 51, 0.9);
+    margin-left: 5px;
+    margin-right: 5px;
+    color: white;
+    width: 23vh;
+}
+
+.openFilterDiv {
+    margin-top: 14px;
+    background: rgba(51, 51, 51, 0.9);
+    margin-left: 5px;
+    margin-right: 5px;
+    color: white;
+    width: 23vh;
+    height: 30vh;
+    overflow-y: scroll;
+}
+
+.optionsDivSelected {
+    /* margin-top: 14px; */
+    background: rgba(140, 140, 140, 0.9);
+    /* margin-left: 5px; */
+    margin-right: 5px;
+    width: 20vh;
+    color: white;
+}
+
+.dropDownMenuTitleSpan:hover {
+    cursor: pointer;
+}
+
+.dropDownMenuTitleDiv {
+    padding-left: 20px;
+}
+
+.optionsDiv {
+    padding-left: 10px;
+}
+
+.optionsDiv:hover {
+    cursor: pointer;
+}

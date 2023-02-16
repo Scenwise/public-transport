@@ -1,0 +1,12 @@
+{
+    "id": "stops-fill",
+    "type": "circle",
+    "source": "gtfs_shape_id_stops",
+    "layout": {
+        "visibility": "visible"
+    },
+    "paint": {
+      "circle-color": "yellow",
+      "circle-radius": 5
+    }
+  }

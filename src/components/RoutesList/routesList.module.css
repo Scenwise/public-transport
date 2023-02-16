@@ -1,0 +1,23 @@
+.listStyle {
+    overflow-y: scroll;
+    height: 55vh;
+    margin-top: 14px;
+    background: rgba(51, 51, 51, 0.9);
+    margin-left: -30px;
+}
+
+.noStyle {
+
+}
+
+.ListOfRoutesSpan:hover {
+    cursor: pointer;
+}
+
+.divElement {
+    padding-left: 10px;
+    padding-right: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white;
+}

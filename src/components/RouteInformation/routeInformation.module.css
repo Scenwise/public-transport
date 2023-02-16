@@ -1,0 +1,36 @@
+.MainDivRouteInformation {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    height: 35vh;
+    background: rgba(51, 51, 51, 0.9)
+}
+
+.stopNamesSpan {
+    flex: 1;
+    color: white;
+    rotate: 300deg;
+    width: max-content;
+    height: max-content;
+    position: relative;
+    top: 35%;
+    text-overflow: ellipsis;
+    overflow: visible;
+    line-height: 1;
+    /* font-size: 5px; */
+}
+
+.routeInformationSpan {
+    color: white;
+    flex: 1;
+}
+
+.routeInformationInnerDiv {
+    display: flex;
+}
+
+.StopsDiv {
+    display: flex;
+    overflow-x: scroll;
+    height: 29.3vh
+}

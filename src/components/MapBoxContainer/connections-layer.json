@@ -1,0 +1,12 @@
+{
+  "id": "connecting-lines-fill",
+  "type": "line",
+  "source": "gtfs_shapes_agency_vehicle_type_number_stops_info",
+  "layout": {
+      "visibility": "visible"
+  },
+  "paint": {
+    "line-color": "purple",
+    "line-width": 1
+  }
+}

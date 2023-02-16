@@ -1,0 +1,12 @@
+{
+    "id": "selected_line",
+    "type": "line",
+    "source": "selected_line-layer",
+    "layout": {
+        "visibility": "visible"
+    },
+    "paint": {
+      "line-color": "red",
+      "line-width": 3
+    }
+  }
