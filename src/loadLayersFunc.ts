@@ -2,6 +2,9 @@ import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import connectionsLayer from './components/MapBoxContainer/connections-layer.json'
 import {jsonInterfaceConverterRoutes} from './components/MapBoxContainer/functions/jsonInterfaceConverter';
 import ShapeIds from './interfaces/ShapeIds';
+import setLayerToMap from './components/MapBoxContainer/functions/setLayerToMap';
+// import Stop from './interfaces/Stops';
+import createLayer from './components/MapBoxContainer/functions/createLayer';
 
 const loadLineStringLayer = (
     map: mapboxgl.Map | null, 
@@ -12,46 +15,28 @@ const loadLineStringLayer = (
     if(map?.getLayer('connecting-lines-fill') !== undefined){
         map.removeLayer('connecting-lines-fill')
         map.removeSource('gtfs_shapes_agency_vehicle_type_number_stops_info');
-      }
+    }
     //   const filters = {agencies: agenciesFilter, Vehicle Type:modalitiesFilter};
-      if(data === undefined || filters === undefined ){
-        return [{} as GeoJSON.FeatureCollection<GeoJSON.Geometry>, null, null]
-      }
-      const [dataRoutesMap, agenciesSet, modalitiesSet ] = jsonInterfaceConverterRoutes(data, filters);
-      
-      const routeLayer = {type: 'FeatureCollection',features: [] as Array<unknown>};
-      
-      // const gids = dataRoutesMap?.keys;
-      dataRoutesMap?.forEach((shape: ShapeIds, shapeId: number) => {
-        // const shape: ShapeIds|undefined = dataRoutesMap?.get(shapeId);
-        const feature = {
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: shape?.geom
-          },
-          properties: {
-            shape_id: shape?.shape_id,
-            origin: shape?.origin,
-            destination: shape?.destination,
-            route_id: shape?.route_id,
-            vehicle_type: shape?.vehicle_type,
-            line_number: shape?.line_number,
-            agency_id: shape?.agency_id,
-            route_name: shape?.route_id,
-            gid: shape?.gid
-          }
-        }
-        routeLayer.features.push(feature);
-      })
+    if(data === undefined || filters === undefined ){
+      return [{} as GeoJSON.FeatureCollection<GeoJSON.Geometry>, null, null]
+    }
+    
+    const [dataRoutesMap, agenciesSet, modalitiesSet ] = jsonInterfaceConverterRoutes(data, filters);
+    const dataRoutesArray: ShapeIds[] = []
+    
+    dataRoutesMap?.forEach((element) => {
+      dataRoutesArray.push(element)
+    })
+    const routeLayer = createLayer("LineString", dataRoutesArray)
+    setLayerToMap(
+      'gtfs_shapes_agency_vehicle_type_number_stops_info', 
+      JSON.parse(JSON.stringify(connectionsLayer)), 
+      routeLayer as FeatureCollection<Geometry, GeoJsonProperties>, 
+      map
+    )
 
-      map?.addSource('gtfs_shapes_agency_vehicle_type_number_stops_info', {
-        'type':'geojson',
-        'data': routeLayer as FeatureCollection<Geometry, GeoJsonProperties>
-      });     
-      map?.addLayer(JSON.parse(JSON.stringify(connectionsLayer)))
-      map?.setPaintProperty("connecting-lines-fill", "line-offset", offset);
-      return [routeLayer as FeatureCollection<Geometry, GeoJsonProperties>, agenciesSet, modalitiesSet];
+    map?.setPaintProperty("connecting-lines-fill", "line-offset", offset);
+    return [routeLayer as FeatureCollection<Geometry, GeoJsonProperties>, agenciesSet, modalitiesSet];
 }
 
 export default loadLineStringLayer;

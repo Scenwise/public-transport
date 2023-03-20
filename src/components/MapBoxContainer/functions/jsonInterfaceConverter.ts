@@ -21,7 +21,7 @@ const jsonInterfaceConverter = (
                 const stop:Stop = {
                     stopId: stopIds[i],
                     stopName: stopNames[i],
-                    geometry: stopGeoms[i]
+                    geom: stopGeoms[i]
                 };
                 mapStopIds.set(stopIds[i], stop)
             }
@@ -46,18 +46,36 @@ const jsonInterfaceConverterRoutes = (
     const filterModalities = filters["Vehicle Type"]
     const filterLineNumber = filters["Line Number"]
     try {
-        
+        console.log(filters);
+        console.log(data);
+        console.log(data.features);
+        // console.log(filters);
         data.features.forEach((element) => {
             const property: ShapeIds = JSON.parse(JSON.stringify(element.properties))
             
-            if(filters !== undefined && (filterAgencies.size>0 || filterModalities.size>0 || filterLineNumber.size>0)){
-                if(
-                    !filterAgencies.has(property.agency_id)&&
-                    !filterModalities.has(property.vehicle_type)&&
-                    !filterLineNumber.has(property.line_number)
-                ){
-                    return;
+            if(filters !== undefined /*&& (filterAgencies.size>0 || filterModalities.size>0 || filterLineNumber.size>0)*/){
+                if(filterAgencies.size>0){
+                    if(!filterAgencies.has(property.agency_id)){
+                        return;
+                    }
                 }
+                if(filterModalities.size>0){
+                    if(!filterModalities.has(property.vehicle_type)){
+                        return;
+                    }
+                }
+                if(filterLineNumber.size>0){
+                    if(!filterLineNumber.has(property.line_number)){
+                        return;
+                    }
+                }
+                // if(
+                //     !filterAgencies.has(property.agency_id)&&
+                //     !filterModalities.has(property.vehicle_type)&&
+                //     !filterLineNumber.has(property.line_number)
+                // ){
+                //     return;
+                // }
                 
             }
 

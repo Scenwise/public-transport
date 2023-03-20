@@ -1,18 +1,21 @@
 import Stops from '../../interfaces/Stops';
 import styles from './routeInformation.module.css';
+import { RootStore } from '../..';
+import {useSelector} from 'react-redux'
 // selectedRoute={selectedRoute} setSelectedRoute={setSelectedRoute} stopIdsMapCont={stopIdsMapCont} stopsIds={shapeIdStopsMapCont?.get(selectedRoute[0])}
 const RouteInformation = ({
-    selectedRoute,
-    setSelectedRoute,
-    stopIdsMapCont,
-    stopsIds
+    // selectedRoute,
+    // stopIdsMapCont,
+    // stopsIds
 }:{
-    selectedRoute: [number, string, string, string, string, string, boolean],
-    setSelectedRoute: React.Dispatch<React.SetStateAction<[number, string, string, string, string, string, boolean]>>,
-    stopIdsMapCont: Map<number, Stops>|null|undefined,
-    stopsIds: number[]|undefined
+    // selectedRoute: [number, string, string, string, string, string, boolean],
+    // stopIdsMapCont: Map<number, Stops>|null|undefined,
+    // stopsIds: number[]|undefined
 }) => {
-
+    const selectedRoute = useSelector((state: RootStore) => state.selectedRouteReducer.selectedRoute);
+    const stopIdsMapCont = useSelector((state: RootStore) => state.stopsReducer.stopIdMapCont);
+    const shapeIdStopsMapCont = useSelector((state: RootStore) => state.stopsReducer.shapeIdStopsMapCont)
+    const stopsIds: number[]|undefined = shapeIdStopsMapCont?.get(selectedRoute[0])?.stops_ids;
     const displayStops = () => {
         const stopNamesList: JSX.Element[] = []
         let i = 1;

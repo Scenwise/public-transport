@@ -8,33 +8,48 @@ import Stop from '../../interfaces/Stops';
 import { FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
 import loadLineStringLayer from '../../loadLayersFunc';
 import selectedLineLayer from './selected_line-layer.json';
-import { useStore } from 'react-context-hook';
+// import { useStore } from 'react-context-hook';
+import setLayerToMap from './functions/setLayerToMap';
+import createLayer from './functions/createLayer';
+import {useSelector, useDispatch} from 'react-redux';
+import { RootStore } from '../../index';
+import allActions from '../../actions/allActions';
+
+
+// The following is required to stop "npm build" from transpiling mapbox code.
+// notice the exclamation point in the import.
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
+mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
+
 
 const Map = (
   {
+    // offset,
     setDisplayGeoDataPTLines,
-    setSelectedRoute,
+    // setSelectedRoute,
     setMap,
-    setAgenciesSet,
-    setModalitiesSet,
-    setGeoDataPTLines,
-    setShapeIdStopsMap,
-    setStopIdsMap
+    // setAgenciesSet,
+    // setModalitiesSet,
+    // setShapeIdStopsMap,
+    // setStopIdsMap
   }: {
+    // offset: number,
     setDisplayGeoDataPTLines: React.Dispatch<React.SetStateAction<GeoJSON.FeatureCollection<GeoJSON.Geometry>|undefined>>,
-    setSelectedRoute: React.Dispatch<React.SetStateAction<[number, string, string, string, string, string, boolean]>>,
+    // setSelectedRoute: React.Dispatch<React.SetStateAction<[number, string, string, string, string, string, boolean]>>,
     setMap: React.Dispatch<React.SetStateAction<mapboxgl.Map | null>>,
-    setAgenciesSet: React.Dispatch<React.SetStateAction<Set<string>|null|undefined>>,
-    setModalitiesSet: React.Dispatch<React.SetStateAction<Set<string>|null|undefined>>,
-    setGeoDataPTLines: React.Dispatch<React.SetStateAction<GeoJSON.FeatureCollection<GeoJSON.Geometry>|undefined>>,
-    setShapeIdStopsMap: React.Dispatch<React.SetStateAction<Map<number, ShapeIdStops>|null|undefined>>
-    setStopIdsMap: React.Dispatch<React.SetStateAction<Map<number, Stop>|null|undefined>>
+    // setAgenciesSet: React.Dispatch<React.SetStateAction<Set<string>|null|undefined>>,
+    // setModalitiesSet: React.Dispatch<React.SetStateAction<Set<string>|null|undefined>>,
+    // setShapeIdStopsMap: React.Dispatch<React.SetStateAction<Map<number, ShapeIdStops>|null|undefined>>
+    // setStopIdsMap: React.Dispatch<React.SetStateAction<Map<number, Stop>|null|undefined>>
   }) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const [offset, , ] = useStore('offset');
+  const dispatch = useDispatch()
+  // const [offset, , ] = useStore('offset');
 
   const [lng, ] = useState(4.9041);
   const [lat, ] = useState(52.3676);
+  const offset = useSelector((state: RootStore) => state.offsetReducer.offset)
   // const [shapeIdStopsMapMBCont, setShapeIdStopsMapMBCont] = useState<Map<number, ShapeIdStops>|null>(); 
   // const [stopIdsMapMBCont, setStopIdsMapMBCont] = useState<Map<number, Stop>|null>();
 
@@ -63,7 +78,7 @@ const Map = (
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current as string | HTMLElement,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/ecuzmici/ckxhn19g40e1p14moxofji6oh',
       center: [lng, lat], //coordinates for Amsterdam
       zoom: 10,
     });
@@ -76,8 +91,10 @@ const Map = (
       // console.log(shapeIdStopsMap, stopIdsMap);
       routesMap = shapeIdStopsMap;
       stopsMap = stopIdsMap;
-      setShapeIdStopsMap(shapeIdStopsMap);
-      setStopIdsMap(stopIdsMap);
+      // setShapeIdStopsMap(shapeIdStopsMap);
+      dispatch(allActions.setShapeIdStopsMapContainerAction.setShapeIdStopsMapContainerAction(shapeIdStopsMap));
+      dispatch(allActions.setStopIdsMapContAction.setStopIdsMapContAction(stopIdsMap));
+      // setStopIdsMap(stopIdsMap);
     })
     
     
@@ -89,16 +106,21 @@ const Map = (
       dataComponent=data
 
       const [routeLayer, agenciesSet, modalitiesSet] = loadLineStringLayer(map, data, {"Agency": new Set<string>(), "Vehicle Type": new Set<string>(), "Line Number": new Set<string>()}, offset as number)
-      setAgenciesSet(agenciesSet);
-      setModalitiesSet(modalitiesSet);
+      dispatch(allActions.setAgencieSetAction.setAgenciesSetAction(agenciesSet));
+      // setAgenciesSet(agenciesSet);
+      dispatch(allActions.setModalitiesSetAction.setModlitiesSetAction(modalitiesSet));
+      // setModalitiesSet(modalitiesSet);
       if(routeLayer !== null){
-        setDisplayGeoDataPTLines(routeLayer);
+        // setDisplayGeoDataPTLines(routeLayer);
+        // dispatch(allActions.setDisplayGeoDataPTLines.setDisplayGeoDataPTLines(routeLayer));
     }
-      setGeoDataPTLines(data);
+      dispatch(allActions.setGeoDataPTLinesActions.setGeoDataPTLinesAction(data))
+      // setGeoDataPTLines(data);
     })   
 
     map.on('click', function (e) {
-      setSelectedRoute([-1, "", "", "", "", "", false])
+      dispatch(allActions.setSelectedRouteAction.setSelectedRouteAction([-1, "", "", "", "", "", false]));
+
       try {
         if(map.getLayer('stops-fill') !== undefined){
           map.removeLayer('stops-fill')
@@ -125,7 +147,6 @@ const Map = (
         const destination = selectedFeature["destination"];
         const lineNumber = selectedFeature["line_number"];
         const agency = selectedFeature["agency_id"]
-        const routeLayer = {type: 'FeatureCollection',features: [] as Array<unknown>};
 
         if(dataComponent===null){
           return;
@@ -133,34 +154,19 @@ const Map = (
 
         const [dataRoutesMap, , ] = jsonInterfaceConverterRoutes(dataComponent, {"Agency": new Set<string>(), "Vehicle Type": new Set<string>(), "Line Number": new Set<string>()});
         const shape = dataRoutesMap?.get(gid);
+      
+        const routeLayer = createLayer("LineString", [shape])
         
-        const feature = {
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: shape?.geom
-          },
-          properties: {
-            shape_id: shape?.shape_id,
-            origin: shape?.origin,
-            destination: shape?.destination,
-            route_id: shape?.route_id,
-            vehicle_type: shape?.vehicle_type,
-            line_number: shape?.line_number,
-            agency_id: shape?.agency_id,
-            route_name: shape?.route_id,
-            gid: shape?.gid
-          }
-        }
-        routeLayer.features.push(feature);
-        
-        map?.addSource('selected_line-layer', {
-          'type':'geojson',
-          'data': routeLayer as FeatureCollection<Geometry, GeoJsonProperties>
-        });     
-        map?.addLayer(JSON.parse(JSON.stringify(selectedLineLayer)))  
+        setLayerToMap(
+          'selected_line-layer', 
+          JSON.parse(JSON.stringify(selectedLineLayer)), 
+          routeLayer as FeatureCollection<Geometry, GeoJsonProperties>, 
+          map
+        )
+         
         map?.setPaintProperty("selected_line", "line-offset", offset);
-        setSelectedRoute([gid as number, id, agency, lineNumber, origin, destination, true])
+        dispatch(allActions.setSelectedRouteAction.setSelectedRouteAction([gid as number, id, agency, lineNumber, origin, destination, true]));
+
         displayStopsForGidId(gid) 
       }
       
@@ -264,31 +270,21 @@ const Map = (
     };
 
     const displayStopsForGidId = (gid: number) => {
-      // console.log(gidStopsMap, stopIdsMap);
       const stopIds: Array<number>|undefined = routesMap?.get(gid)?.stops_ids;
-      const pointLayer = {type: 'FeatureCollection',features: [] as Array<unknown>};
-      
+      const stopsArray: (Stop|undefined)[] = []
       stopIds?.forEach((stopId: number) => {
-        const stopIdProp: Stop|undefined = stopsMap?.get(stopId);
-        const feature = {
-          type: 'Feature', 
-          geometry: {
-            type: 'Point',
-            coordinates: stopIdProp?.geometry
-          },
-          properties: {
-            stopId: stopIdProp?.stopId,
-            stopName: stopIdProp?.stopName
-          }
+        if(stopsMap?.has(stopId)){
+          stopsArray.push(stopsMap?.get(stopId))
         }
-        pointLayer.features.push(feature);
-      })      
-      
-      map.addSource('gtfs_shape_id_stops', {
-        'type':'geojson',
-        'data': pointLayer as FeatureCollection<Geometry, GeoJsonProperties>
-      });
-      map.addLayer(JSON.parse(JSON.stringify(stopsLayer)))
+      })
+      const pointLayer = createLayer("Point", stopsArray)
+
+      setLayerToMap(
+        'gtfs_shape_id_stops', 
+        JSON.parse(JSON.stringify(stopsLayer)), 
+        pointLayer as FeatureCollection<Geometry, GeoJsonProperties>, 
+        map
+      )
       map?.setPaintProperty("stops-fill",  "circle-translate", [offset, 0]);
     };
     
