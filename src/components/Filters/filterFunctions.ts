@@ -23,7 +23,7 @@ const addNewValueToFilter = (
     filter: {"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}, 
     ddMenuName: string, 
     name: string, 
-    // setFilter: React.Dispatch<{"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}>
+    setFilter: React.Dispatch<{"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}>
 ) => {
     if(geoDataPTLines!==undefined){
 
@@ -34,9 +34,8 @@ const addNewValueToFilter = (
             filterToPass[ddMenuName] = newSet.add(name)
         }
         
-        // setFilter({...filter, [ddMenuName]: newSet.add(name)})
-        const dictionary = {...filter, [ddMenuName]: newSet.add(name)}
-        return {filterToPass, dictionary}
+        setFilter({...filter, [ddMenuName]: newSet.add(name)})
+        return filterToPass
     }           
 
 };
@@ -46,7 +45,7 @@ const removeSingleFilterValue = (
     filter: {"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}, 
     ddMenuName: string, 
     name: string, 
-    // setFilter: React.Dispatch<{"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}>
+    setFilter: React.Dispatch<{"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}>
 ) => {
     if(geoDataPTLines!==undefined){
         
@@ -57,9 +56,8 @@ const removeSingleFilterValue = (
             filterToPass[ddMenuName] = newSet
         }
         
-        // setFilter({...filter, [ddMenuName]: newSet})
-        const dictionary = {...filter, [ddMenuName]: newSet.add(name)}
-        return {filterToPass, dictionary}
+        setFilter({...filter, [ddMenuName]: newSet})
+        return filterToPass;
         
     }      
 };
@@ -69,7 +67,7 @@ const removeAllFilters = (
     filter: {"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}, 
     ddMenuName: string, 
     name: string, 
-    // setFilter: React.Dispatch<{"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}>
+    setFilter: React.Dispatch<{"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}>
 ) => {
     if(geoDataPTLines!==undefined){
 
@@ -79,9 +77,8 @@ const removeAllFilters = (
             filterToPass[ddMenuName] = new Set<string>();
         }
         
-        // setFilter({...filter, [ddMenuName]: new Set<string>()})
-        const dictionary = {...filter, [ddMenuName]: new Set<string>()}
-        return {filterToPass, dictionary}
+        setFilter({...filter, [ddMenuName]: new Set<string>()})
+        return filterToPass;
     }
 };
 

@@ -46,10 +46,7 @@ const jsonInterfaceConverterRoutes = (
     const filterModalities = filters["Vehicle Type"]
     const filterLineNumber = filters["Line Number"]
     try {
-        console.log(filters);
-        console.log(data);
-        console.log(data.features);
-        // console.log(filters);
+        
         data.features.forEach((element) => {
             const property: ShapeIds = JSON.parse(JSON.stringify(element.properties))
             
