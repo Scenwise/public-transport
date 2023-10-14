@@ -15,6 +15,7 @@ const RoutesList = (
       if(geoDataPTLines === undefined){
         return;
       }
+      
       geoDataPTLines.features.forEach((feature, index) => {
         const routeInfo = JSON.parse(JSON.stringify(feature.properties));
         routesArray.push(

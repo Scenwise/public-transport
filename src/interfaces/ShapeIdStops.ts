@@ -11,6 +11,6 @@ export interface ShapeIdStops {
     line_number: string,
     agency_id: string,
     geom: Array<Point>,
-    gid: number
+    id: number
 }
 export default ShapeIdStops;

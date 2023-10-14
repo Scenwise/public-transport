@@ -11,6 +11,9 @@ import selectedLineLayer from './selected_line-layer.json';
 // import { useStore } from 'react-context-hook';
 import setLayerToMap from './functions/setLayerToMap';
 import createLayer from './functions/createLayer';
+import {useSelector, useDispatch} from 'react-redux';
+import { RootStore } from '../../index';
+import allActions from '../../actions/allActions';
 
 
 // The following is required to stop "npm build" from transpiling mapbox code.
@@ -22,31 +25,20 @@ mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worke
 
 const Map = (
   {
-    offset,
     setDisplayGeoDataPTLines,
-    setSelectedRoute,
     setMap,
-    setAgenciesSet,
-    setModalitiesSet,
-    setGeoDataPTLines,
-    setShapeIdStopsMap,
-    setStopIdsMap
   }: {
-    offset: number,
+    // offset: number,
     setDisplayGeoDataPTLines: React.Dispatch<React.SetStateAction<GeoJSON.FeatureCollection<GeoJSON.Geometry>|undefined>>,
-    setSelectedRoute: React.Dispatch<React.SetStateAction<[number, string, string, string, string, string, boolean]>>,
     setMap: React.Dispatch<React.SetStateAction<mapboxgl.Map | null>>,
-    setAgenciesSet: React.Dispatch<React.SetStateAction<Set<string>|null|undefined>>,
-    setModalitiesSet: React.Dispatch<React.SetStateAction<Set<string>|null|undefined>>,
-    setGeoDataPTLines: React.Dispatch<React.SetStateAction<GeoJSON.FeatureCollection<GeoJSON.Geometry>|undefined>>,
-    setShapeIdStopsMap: React.Dispatch<React.SetStateAction<Map<number, ShapeIdStops>|null|undefined>>
-    setStopIdsMap: React.Dispatch<React.SetStateAction<Map<number, Stop>|null|undefined>>
   }) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch()
   // const [offset, , ] = useStore('offset');
 
   const [lng, ] = useState(4.9041);
   const [lat, ] = useState(52.3676);
+  const offset = useSelector((state: RootStore) => state.offsetReducer.offset)
   // const [shapeIdStopsMapMBCont, setShapeIdStopsMapMBCont] = useState<Map<number, ShapeIdStops>|null>(); 
   // const [stopIdsMapMBCont, setStopIdsMapMBCont] = useState<Map<number, Stop>|null>();
 
@@ -80,37 +72,39 @@ const Map = (
       zoom: 10,
     });
     setMap(map);
-
-    // getDataFunction();
-    // const dataShapeStops = 
-    fetchGtfsTable('gtfs_stop_shape_ids_geom').then((dataShapeStops)=>{
+    fetchGtfsTable('gtfs_stop_shape_ids_geom').then((dataShapeStops)=>{      
       const {shapeIdStopsMap, stopIdsMap} = jsonInterfaceConverter(dataShapeStops);
-      // console.log(shapeIdStopsMap, stopIdsMap);
+
       routesMap = shapeIdStopsMap;
       stopsMap = stopIdsMap;
-      setShapeIdStopsMap(shapeIdStopsMap);
-      setStopIdsMap(stopIdsMap);
+
+      dispatch(allActions.setShapeIdStopsMapContainerAction.setShapeIdStopsMapContainerAction(shapeIdStopsMap));
+      dispatch(allActions.setStopIdsMapContAction.setStopIdsMapContAction(stopIdsMap));
     })
     
     
     
     map.on('load', async function (){    
       
-      
       const data = await fetchGtfsTable('gtfs_shapes_agency_vehicle_type_number_stops_info');
       dataComponent=data
-
+      
       const [routeLayer, agenciesSet, modalitiesSet] = loadLineStringLayer(map, data, {"Agency": new Set<string>(), "Vehicle Type": new Set<string>(), "Line Number": new Set<string>()}, offset as number)
-      setAgenciesSet(agenciesSet);
-      setModalitiesSet(modalitiesSet);
+      dispatch(allActions.setAgencieSetAction.setAgenciesSetAction(agenciesSet));
+
+      dispatch(allActions.setModalitiesSetAction.setModlitiesSetAction(modalitiesSet));
+
       if(routeLayer !== null){
         setDisplayGeoDataPTLines(routeLayer);
-    }
-      setGeoDataPTLines(data);
+        dispatch(allActions.setDisplayGeoDataPTLines.setDisplayGeoDataPTLines(routeLayer));
+      }
+      dispatch(allActions.setGeoDataPTLinesActions.setGeoDataPTLinesAction(data))
+      setDisplayGeoDataPTLines(data);
     })   
 
     map.on('click', function (e) {
-      setSelectedRoute([-1, "", "", "", "", "", false])
+      dispatch(allActions.setSelectedRouteAction.setSelectedRouteAction([-1, "", "", "", "", "", false]));
+
       try {
         if(map.getLayer('stops-fill') !== undefined){
           map.removeLayer('stops-fill')
@@ -130,7 +124,8 @@ const Map = (
       if(selectedFeature!==undefined && selectedFeature !== null){
 
         const properties = JSON.parse(JSON.stringify(selectedFeature))
-        const gid = properties["gid"] as number;
+        
+        const gid = properties["route_id"] as number;
 
         const id = selectedFeature["shape_id"]
         const origin = selectedFeature["origin"];
@@ -155,7 +150,8 @@ const Map = (
         )
          
         map?.setPaintProperty("selected_line", "line-offset", offset);
-        setSelectedRoute([gid as number, id, agency, lineNumber, origin, destination, true])
+        dispatch(allActions.setSelectedRouteAction.setSelectedRouteAction([gid as number, id, agency, lineNumber, origin, destination, true]));
+
         displayStopsForGidId(gid) 
       }
       
