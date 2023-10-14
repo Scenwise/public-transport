@@ -16,18 +16,20 @@ const loadLineStringLayer = (
         map.removeLayer('connecting-lines-fill')
         map.removeSource('gtfs_shapes_agency_vehicle_type_number_stops_info');
     }
-    //   const filters = {agencies: agenciesFilter, Vehicle Type:modalitiesFilter};
+;
     if(data === undefined || filters === undefined ){
       return [{} as GeoJSON.FeatureCollection<GeoJSON.Geometry>, null, null]
     }
     
     const [dataRoutesMap, agenciesSet, modalitiesSet ] = jsonInterfaceConverterRoutes(data, filters);
+    
     const dataRoutesArray: ShapeIds[] = []
     
     dataRoutesMap?.forEach((element) => {
       dataRoutesArray.push(element)
     })
     const routeLayer = createLayer("LineString", dataRoutesArray)
+    
     setLayerToMap(
       'gtfs_shapes_agency_vehicle_type_number_stops_info', 
       JSON.parse(JSON.stringify(connectionsLayer)), 

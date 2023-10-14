@@ -16,7 +16,8 @@ const jsonInterfaceConverter = (
             const stopNames = property.stop_names;
             const stopGeoms = JSON.parse(JSON.stringify(element.geometry))["coordinates"];
             property.geom = stopGeoms;
-            mapShapeIdStops.set(property.gid, property);
+            mapShapeIdStops.set(property.route_id, property);
+            
             for(let i = 0; i < stops; i++){
                 const stop:Stop = {
                     stopId: stopIds[i],
@@ -38,7 +39,7 @@ const jsonInterfaceConverterRoutes = (
     data: GeoJSON.FeatureCollection<GeoJSON.Geometry>,
     filters: {"Agency": Set<string>, "Vehicle Type": Set<string>, "Line Number": Set<string>}
 ): [Map<number, ShapeIds>|null, Set<string>|null, Set<string>|null] => {
-    // console.log(data);
+
     const agenciesSet = new Set<string>();
     const modalitiesSet = new Set<string>();
     const shapeIdsMap = new Map<number, ShapeIds>();
@@ -46,7 +47,7 @@ const jsonInterfaceConverterRoutes = (
     const filterModalities = filters["Vehicle Type"]
     const filterLineNumber = filters["Line Number"]
     try {
-        
+
         data.features.forEach((element) => {
             const property: ShapeIds = JSON.parse(JSON.stringify(element.properties))
             
@@ -66,13 +67,6 @@ const jsonInterfaceConverterRoutes = (
                         return;
                     }
                 }
-                // if(
-                //     !filterAgencies.has(property.agency_id)&&
-                //     !filterModalities.has(property.vehicle_type)&&
-                //     !filterLineNumber.has(property.line_number)
-                // ){
-                //     return;
-                // }
                 
             }
 
@@ -82,14 +76,13 @@ const jsonInterfaceConverterRoutes = (
             
             const routeGeoms = JSON.parse(JSON.stringify(element.geometry))["coordinates"];
             property.geom = routeGeoms;
-            shapeIdsMap.set(property.gid, property)
+            shapeIdsMap.set(property.route_id, property)
             agenciesSet.add(property.agency_id);
             modalitiesSet.add(property.vehicle_type)
         })
 
     } catch (error) {
         console.log(error);
-        
     }
     
     return [shapeIdsMap, agenciesSet, modalitiesSet];

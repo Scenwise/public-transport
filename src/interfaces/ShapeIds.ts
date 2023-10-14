@@ -10,7 +10,7 @@ interface ShapeIds {
     agency_id: string,
     route_name: string,
     geom: Array<Point>,
-    gid: number
+    id: number
 }
 
 // const getProperty = (shape: ShapeIds) => {
