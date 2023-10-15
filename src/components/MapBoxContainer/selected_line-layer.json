@@ -6,7 +6,7 @@
         "visibility": "visible"
     },
     "paint": {
-      "line-color": "red",
-      "line-width": 3
+        "line-color": "red",
+        "line-width": 3
     }
-  }
+}

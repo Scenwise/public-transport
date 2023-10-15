@@ -1,12 +1,12 @@
-.textInputDiv {
+.text-input-div {
     margin-top: 14px;
-    background: rgba(51, 51, 51, 0.9);
+    background: rgb(51 51 51 / 90%);
 }
 
-.innerDivs {
+.inner-divs {
     padding: 5px;
 }
 
-.textInputNameSpan:hover {
+.text-input-name-span:hover {
     cursor: pointer;
 }

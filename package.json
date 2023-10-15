@@ -32,7 +32,15 @@
     "start": "react-scripts start",
     "build": "react-scripts build --force",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint . --ext .ts --ext .tsx",
+    "lint:fix": "eslint . --ext .ts --ext .tsx --fix",
+    "lint:report": "yarn run lint -- -f json -o eslint-report.json",
+    "format": "prettier --check src/**/*.{js,jsx,ts,tsx,css,md,json} --config ./.prettierrc",
+    "format:fix": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md,json} --config ./.prettierrc",
+    "stylelint": "stylelint src/**/*.css",
+    "stylelint:fix": "stylelint src/**/*.css --fix",
+    "stylelint:report": "yarn run stylelint -- -f json -o stylelint-report.json"
   },
   "eslintConfig": {
     "extends": [
@@ -57,6 +65,17 @@
     ]
   },
   "devDependencies": {
-    "@types/mapbox-gl": "^2.7.10"
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
+    "@types/mapbox-gl": "^2.7.10",
+    "eslint": "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-sonarjs": "^0.21.0",
+    "prettier": "^3.0.3",
+    "stylelint": "^15.10.3",
+    "stylelint-config-idiomatic-order": "^9.0.0",
+    "stylelint-config-prettier": "^9.0.5",
+    "stylelint-config-standard": "^34.0.0",
+    "stylelint-prettier": "^4.0.2"
   }
 }

@@ -6,7 +6,7 @@
         "visibility": "visible"
     },
     "paint": {
-      "circle-color": "yellow",
-      "circle-radius": 5
+        "circle-color": "yellow",
+        "circle-radius": 5
     }
-  }
+}
