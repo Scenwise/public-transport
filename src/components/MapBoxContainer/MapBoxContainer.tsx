@@ -100,7 +100,6 @@ const Map = ({
 
             if (routeLayer !== null) {
                 setDisplayGeoDataPTLines(routeLayer);
-                dispatch(allActions.setDisplayGeoDataPTLines.setDisplayGeoDataPTLines(routeLayer));
             }
             dispatch(allActions.setGeoDataPTLinesActions.setGeoDataPTLinesAction(data));
             setDisplayGeoDataPTLines(data);
