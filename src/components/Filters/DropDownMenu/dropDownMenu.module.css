@@ -1,44 +1,46 @@
-.filterDiv {
-    margin-top: 14px;
-    background: rgba(51, 51, 51, 0.9);
-    margin-left: 5px;
-    margin-right: 5px;
-    color: white;
+.filter-div {
     width: 23vh;
+    margin-top: 14px;
+    margin-right: 5px;
+    margin-left: 5px;
+    background: rgb(51 51 51 / 90%);
+    color: white;
 }
 
-.openFilterDiv {
-    margin-top: 14px;
-    background: rgba(51, 51, 51, 0.9);
-    margin-left: 5px;
-    margin-right: 5px;
-    color: white;
+.open-filter-div {
     width: 23vh;
     height: 30vh;
+    margin-top: 14px;
+    margin-right: 5px;
+    margin-left: 5px;
+    background: rgb(51 51 51 / 90%);
+    color: white;
     overflow-y: scroll;
 }
 
-.optionsDivSelected {
-    /* margin-top: 14px; */
-    background: rgba(140, 140, 140, 0.9);
+.options-div-selected {
+    width: 20vh;
+
     /* margin-left: 5px; */
     margin-right: 5px;
-    width: 20vh;
+
+    /* margin-top: 14px; */
+    background: rgb(140 140 140 / 90%);
     color: white;
 }
 
-.dropDownMenuTitleSpan:hover {
+.drop-down-menu-title-span:hover {
     cursor: pointer;
 }
 
-.dropDownMenuTitleDiv {
+.drop-down-menu-title-div {
     padding-left: 20px;
 }
 
-.optionsDiv {
+.options-div {
     padding-left: 10px;
 }
 
-.optionsDiv:hover {
+.options-div:hover {
     cursor: pointer;
 }

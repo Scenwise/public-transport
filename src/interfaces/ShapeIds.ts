@@ -1,16 +1,16 @@
-import { Point } from "mapbox-gl";
+import { Point } from 'mapbox-gl';
 
 interface ShapeIds {
-    shape_id: number,
-    origin: string,
-    destination: string,
-    route_id: number,
-    vehicle_type: string,
-    line_number: string,
-    agency_id: string,
-    route_name: string,
-    geom: Array<Point>,
-    id: number
+    shape_id: number;
+    origin: string;
+    destination: string;
+    route_id: number;
+    vehicle_type: string;
+    line_number: string;
+    agency_id: string;
+    route_name: string;
+    geom: Array<Point>;
+    id: number;
 }
 
 // const getProperty = (shape: ShapeIds) => {
@@ -25,6 +25,6 @@ interface ShapeIds {
 //         route_name: shape?.route_id,
 //         gid: shape?.gid
 //     }
-// } 
+// }
 
 export default ShapeIds;

@@ -1,36 +1,37 @@
-.MainDivRouteInformation {
-    bottom: 0;
+.main-div-route-information {
     position: absolute;
+    bottom: 0;
     width: 100%;
     height: 35vh;
-    background: rgba(51, 51, 51, 0.9)
+    background: rgb(51 51 51 / 90%);
 }
 
-.stopNamesSpan {
-    flex: 1;
-    color: white;
-    rotate: 300deg;
-    width: max-content;
-    height: max-content;
+.stop-names-span {
     position: relative;
     top: 35%;
-    text-overflow: ellipsis;
     overflow: visible;
+    width: max-content;
+    height: max-content;
+    flex: 1;
+    color: white;
     line-height: 1;
+    rotate: 300deg;
+    text-overflow: ellipsis;
+
     /* font-size: 5px; */
 }
 
-.routeInformationSpan {
-    color: white;
+.route-information-span {
     flex: 1;
+    color: white;
 }
 
-.routeInformationInnerDiv {
+.route-information-inner-div {
     display: flex;
 }
 
-.StopsDiv {
+.stops-div {
     display: flex;
+    height: 29.3vh;
     overflow-x: scroll;
-    height: 29.3vh
 }

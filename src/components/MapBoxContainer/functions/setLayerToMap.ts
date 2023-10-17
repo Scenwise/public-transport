@@ -1,19 +1,18 @@
-import { FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
+import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 const setLayerToMap = (
-    layerSource: string, 
-    layerId: string, 
-    featureCollection: FeatureCollection<Geometry, GeoJsonProperties>, 
-    map: mapboxgl.Map|null
+    layerSource: string,
+    layerId: string,
+    featureCollection: FeatureCollection<Geometry, GeoJsonProperties>,
+    map: mapboxgl.Map | null,
 ) => {
     // console.log(featureCollection);
-    
-    map?.addSource(layerSource, {
-        'type':'geojson',
-        'data': featureCollection
-        });     
-    map?.addLayer(JSON.parse(JSON.stringify(layerId))) 
 
-}
+    map?.addSource(layerSource, {
+        type: 'geojson',
+        data: featureCollection,
+    });
+    map?.addLayer(JSON.parse(JSON.stringify(layerId)));
+};
 
 export default setLayerToMap;

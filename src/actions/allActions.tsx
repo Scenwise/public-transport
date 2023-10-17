@@ -1,13 +1,13 @@
-import setGeoDataPTLinesActions from "./setGeoDataPTLines";
-import setMapAction from "./setMapAction";
-import setDisplayGeoDataPTLines from "./setDisplayGeoDataPTLines";
+import setAgencieSetAction from './setAgencieSetAction';
+import setDisplayGeoDataPTLines from './setDisplayGeoDataPTLines';
+import setFilterAction from './setFilterAction';
+import setGeoDataPTLinesActions from './setGeoDataPTLines';
+import setMapAction from './setMapAction';
+import setModalitiesSetAction from './setModalitiesSetAction';
+import setOffsetAction from './setOffsetAction';
+import setSelectedRouteAction from './setSelectedRouteAction';
 import setShapeIdStopsMapContainerAction from './setShapeIdStopsMapContainerAction';
-import setStopIdsMapContAction from "./setStopIdsMapContAction";
-import setAgencieSetAction from "./setAgencieSetAction";
-import setModalitiesSetAction from "./setModalitiesSetAction";
-import setSelectedRouteAction from "./setSelectedRouteAction";
-import setOffsetAction from "./setOffsetAction";
-import setFilterAction from "./setFilterAction";
+import setStopIdsMapContAction from './setStopIdsMapContAction';
 
 const allActions = {
     setGeoDataPTLinesActions,
@@ -19,7 +19,7 @@ const allActions = {
     setModalitiesSetAction,
     setSelectedRouteAction,
     setOffsetAction,
-    setFilterAction
-}
+    setFilterAction,
+};
 
 export default allActions;
