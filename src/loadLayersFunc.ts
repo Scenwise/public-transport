@@ -1,10 +1,10 @@
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
-import connectionsLayer from './components/MapBoxContainer/connections-layer.json';
 // import Stop from './interfaces/Stops';
 import createLayer from './components/MapBoxContainer/functions/createLayer';
 import { jsonInterfaceConverterRoutes } from './components/MapBoxContainer/functions/jsonInterfaceConverter';
 import setLayerToMap from './components/MapBoxContainer/functions/setLayerToMap';
+import connectionsLayer from './data/layers/connections-layer.json';
 import ShapeIds from './interfaces/ShapeIds';
 
 const loadLineStringLayer = (

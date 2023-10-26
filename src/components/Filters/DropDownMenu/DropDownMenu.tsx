@@ -1,5 +1,4 @@
 import { useState } from 'react';
-// import { useStore } from "react-context-hook";
 import { useDispatch, useSelector } from 'react-redux';
 
 import allActions from '../../../actions/allActions';

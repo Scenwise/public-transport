@@ -8,16 +8,12 @@ import { RootStore } from '../../index';
 import loadLineStringLayer from '../../loadLayersFunc';
 import DropDownMenu from '../Filters/DropDownMenu/DropDownMenu';
 import TextInputFilter from '../Filters/TextInputFilter/TextInputFilter';
-import Map from '../MapBoxContainer/MapBoxContainer';
 import RouteInformation from '../RouteInformation/RouteInformation';
 import RoutesList from '../RoutesList/RoutesList';
 import styles from './mainComponentStyle.module.css';
 
-// import { Slider } from '@material-ui/core'
-// import { useStore } from "react-context-hook";
 const MainComponent = () => {
     const [map, setMap] = useState<mapboxgl.Map | null>(null);
-    // const [geoDataPTLines, setGeoDataPTLines] = useState<GeoJSON.FeatureCollection<GeoJSON.Geometry>>();
     const [displayGeoDataPTLines, setDisplayGeoDataPTLines] = useState<GeoJSON.FeatureCollection<GeoJSON.Geometry>>();
 
     const dispatch = useDispatch();
@@ -84,9 +80,9 @@ const MainComponent = () => {
                     />
                 </div>
             </div>
-            <div>
-                <Map setDisplayGeoDataPTLines={setDisplayGeoDataPTLines} setMap={setMap} />
-            </div>
+            {/*<div>*/}
+            {/*    <Map setDisplayGeoDataPTLines={setDisplayGeoDataPTLines} setMap={setMap} />*/}
+            {/*</div>*/}
             <div>
                 <RouteInformation /*stopsIds={shapeIdStopsMapCont?.get(selectedRoute[0])?.stops_ids}*/ />
             </div>

@@ -9,9 +9,9 @@ type Filter = {
 type Filters = Record<string, Filter>;
 type FeatureRecord<T extends GeoJSON.Feature> = Record<string, T>;
 
-type PTSegmentFeature = GeoJSON.Feature<PTSegmentGeometry, PTSegmentProperties>;
-type PTSegmentGeometry = GeoJSON.LineString;
-interface PTSegmentProperties {
+type PTRouteFeature = GeoJSON.Feature<PTRouteGeometry, PTRouteProperties>;
+type PTRouteGeometry = GeoJSON.LineString;
+interface PTRouteProperties {
     shape_id: number; // id
     origin: string;
     destination: string;
@@ -20,16 +20,23 @@ interface PTSegmentProperties {
     line_number: string;
     agency_id: string;
     route_name: string;
+    stops_ids: string[];
 }
 
 type PTStopFeature = GeoJSON.Feature<PTStopGeometry, PTStopProperties>;
 type PTStopGeometry = GeoJSON.Point;
 interface PTStopProperties {
-    stopId: number;
+    stopId: string;
     stopName: string;
 }
 
+// type Stops =  Record<string, Stop>;
+// type Stop =  {
+//     stopName: string;
+//     geometry: number[];
+// }
+
 type Status = {
-    ptSegment: import('./data').ReadyState;
+    ptRoute: import('./data').ReadyState;
     ptStop: import('./data').ReadyState;
 };

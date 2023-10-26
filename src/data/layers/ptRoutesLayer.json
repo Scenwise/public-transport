@@ -1,0 +1,13 @@
+{
+    "id": "ptRoutes",
+    "type": "line",
+    "source": "ptRoutesSource",
+    "layout": {
+        "line-cap": "round",
+        "visibility": "visible"
+    },
+    "paint": {
+        "line-color": "purple",
+        "line-width": 1
+    }
+}

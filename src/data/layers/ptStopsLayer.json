@@ -1,0 +1,13 @@
+{
+    "id": "ptStops",
+    "type": "circle",
+    "source": "ptStopsSource",
+    "layout": {
+        "visibility": "visible"
+    },
+    "paint": {
+        "circle-color": "yellow",
+        "circle-radius": 5
+    },
+    "filter": ["in", ["get", "stopId"], ["literal", []]]
+}
