@@ -37,7 +37,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build --force",
-    "test": "react-scripts test",
+    "test": "react-scripts test --setupFilesAfterEnv='./src/setupTests.ts' --transformIgnorePatterns 'node_modules/(?!@codemirror)/'",
     "test:coverage": "yarn run test --coverage",
     "test:report": "yarn run test -- --watchAll=false --coverage --testResultsProcessor jest-sonar-reporter",
     "eject": "react-scripts eject",
@@ -56,6 +56,7 @@
       "react-app/jest"
     ]
   },
+  
   "browserslist": {
     "production": [
       ">0.2%",

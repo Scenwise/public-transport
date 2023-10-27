@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import Slider from '@mui/material/Slider';
 
 import allActions from '../../actions/allActions';
-import { RootStore } from '../../index';
 import loadLineStringLayer from '../../loadLayersFunc';
 import DropDownMenu from '../Filters/DropDownMenu/DropDownMenu';
 import TextInputFilter from '../Filters/TextInputFilter/TextInputFilter';
 import RouteInformation from '../RouteInformation/RouteInformation';
 import RoutesList from '../RoutesList/RoutesList';
 import styles from './mainComponentStyle.module.css';
+import { RootStore } from '../../store';
 
 const MainComponent = () => {
     const [map, setMap] = useState<mapboxgl.Map | null>(null);

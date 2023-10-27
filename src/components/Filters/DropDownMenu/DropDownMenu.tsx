@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import allActions from '../../../actions/allActions';
-import { RootStore } from '../../../index';
 import loadLineStringLayer from '../../../loadLayersFunc';
+import { RootStore } from '../../../store';
 import { addNewValueToFilter, removeAllFilters, removeSingleFilterValue } from '../filterFunctions';
 import styles from './dropDownMenu.module.css';
 
