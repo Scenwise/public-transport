@@ -24,9 +24,6 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     const ptRouteFeatures = useSelector(selectPTRoutesFeatureList);
     const ptStopFeatures = useSelector(selectPTStopsFeatureList);
 
-    useEffect(() => {
-        console.log(mapInitialized.current);
-    }, [mapInitialized.current]);
     // Fetch the data from the api and store them
     useEffect(() => {
         if (mapInitialized.current) {
@@ -47,6 +44,7 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
             };
             fetchData();
         }
+        /*eslint-disable react-hooks/exhaustive-deps*/
     }, [mapInitialized.current]);
 
     const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
@@ -88,6 +86,7 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
             console.log(map.getLayer('ptRoutes'));
             console.log(map.getSource('ptRoutesSource'));
         }
+        /*eslint-disable react-hooks/exhaustive-deps*/
     }, [ptRouteFeatures]);
 
     // Add the loaded source to the map

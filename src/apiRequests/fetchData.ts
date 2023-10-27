@@ -40,13 +40,15 @@ export const addPTRoutes = async (
 /**
  * Fetch the routes data and store the routes as a record(map) with the key of the shape id.
  * @param setPTRoutes Function to set the routes record
+ * @param setPTStops Function to set the stops record
+ * @param setStatus Function to set the routes and stops loading status
  */
 export const addPublicTransportData = async (
     setPTRoutes: (ptRoutes: FeatureRecord<PTRouteFeature>) => void,
     setPTStops: (ptStops: FeatureRecord<PTStopFeature>) => void,
     setStatus: (status: Status) => void,
 ): Promise<Status> => {
-    return new Promise((_) => {
+    return new Promise(() => {
         let ptRouteStatus = ReadyState.CONNECTING;
         let ptStopStatus = ReadyState.CONNECTING;
         setStatus({

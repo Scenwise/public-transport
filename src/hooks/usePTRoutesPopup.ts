@@ -1,5 +1,3 @@
-import { Popup } from 'mapbox-gl';
-
 import { updateSelectedRoute } from '../dataStoring/slice';
 import { useAppDispatch } from '../store';
 
@@ -8,7 +6,7 @@ export const usePopup = (map: mapboxgl.Map | null): void => {
     if (map) {
         map.on('click', 'ptRoutes', (e) => {
             if (e.features) {
-                const coords = e.lngLat;
+                // const coords = e.lngLat;
                 const temp = e?.features[0].properties;
                 if (temp) {
                     dispatch(updateSelectedRoute('' + temp.shape_id));

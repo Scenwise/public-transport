@@ -1,4 +1,3 @@
-import { LngLatLike } from 'mapbox-gl';
 import React, { useEffect, useRef } from 'react';
 
 import { Box, Card, ListItem, Typography } from '@mui/material';
@@ -29,8 +28,8 @@ const RouteListItem: React.FC<RouteListItemPropType> = ({ route }) => {
 
     const thisListItem = useRef<HTMLLIElement | null>(null); // Specify the expected DOM element type
 
-    const map = useAppSelector((store) => store.slice.map);
-    const ptRoutes = useAppSelector((state) => state.slice.ptRoutes);
+    // const map = useAppSelector((store) => store.slice.map);
+    // const ptRoutes = useAppSelector((state) => state.slice.ptRoutes);
 
     // Select the alert on the map when the item is clicked.
     const handleLocateClick = () => {
@@ -64,6 +63,7 @@ const RouteListItem: React.FC<RouteListItemPropType> = ({ route }) => {
         if (isSelected && thisListItem) {
             thisListItem.current?.scrollIntoView({ block: 'center' });
         }
+        /*eslint-disable react-hooks/exhaustive-deps*/
     }, [selectedRouteID]);
 
     return (

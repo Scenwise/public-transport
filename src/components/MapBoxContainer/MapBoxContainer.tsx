@@ -1,14 +1,9 @@
-import mapboxgl, { AnyLayer, LngLatLike } from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl';
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import getGtfsTable from '../../apiRequests/apiFunction';
-import { addPublicTransportData } from '../../apiRequests/fetchData';
-import { ReadyState } from '../../data/data';
-import { updateMap, updatePTRoutes, updatePTStops, updateStatus } from '../../dataStoring/slice';
-import { layerConfig } from '../../hooks/usePTRoutesLayerUpdate';
+import { updateMap } from '../../dataStoring/slice';
 import { usePublicTransport } from '../../hooks/usePublicTransport';
-import { useAppSelector } from '../../store';
 
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
@@ -31,23 +26,21 @@ const MapBoxContainer = (): JSX.Element => {
     const mapContainer = useRef<HTMLDivElement | null>(null);
     const dispatch = useDispatch();
 
-    const mapInitialized = useRef(false);
-
     const [lng] = useState(4.9041);
     const [lat] = useState(52.3676);
     // const offset = useSelector((state: RootStore) => state.offsetReducer.offset);
     // const [shapeIdStopsMapMBCont, setShapeIdStopsMapMBCont] = useState<Map<number, ShapeIdStops>|null>();
     // const [stopIdsMapMBCont, setStopIdsMapMBCont] = useState<Map<number, Stop>|null>();
 
-    const popupLine = new mapboxgl.Popup({
-        closeButton: false,
-        closeOnClick: false,
-    });
-
-    const popupPoint = new mapboxgl.Popup({
-        closeButton: false,
-        closeOnClick: false,
-    });
+    // const popupLine = new mapboxgl.Popup({
+    //     closeButton: false,
+    //     closeOnClick: false,
+    // });
+    //
+    // const popupPoint = new mapboxgl.Popup({
+    //     closeButton: false,
+    //     closeOnClick: false,
+    // });
 
     usePublicTransport(map);
 
@@ -329,9 +322,9 @@ const MapBoxContainer = (): JSX.Element => {
         });
     };
 
-    async function fetchGtfsTable(tableName: string) {
-        return await getGtfsTable(tableName);
-    }
+    // async function fetchGtfsTable(tableName: string) {
+    //     return await getGtfsTable(tableName);
+    // }
 
     const styles: React.CSSProperties = {
         width: '100%',

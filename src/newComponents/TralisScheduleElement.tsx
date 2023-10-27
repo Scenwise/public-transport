@@ -4,17 +4,15 @@ import { TimelineConnector, TimelineContent, TimelineDot, TimelineItem, Timeline
 
 interface TralisScheduleElementPropType {
     stop: PTStopProperties;
-    first: boolean;
     last: boolean;
 }
 
 /**
  * Provide ach station information of timeline schedule of the public transportation.
  * @param stop A public transportation station object contains arrived time, departure time and so on.
- * @param fist Use for check if the stop is the last, if so, there will be no arrival time for it.
  * @param last Use for check if the stop is the last, if so, there will be no departure time and a timeline connector won't be drawn below it.
  */
-const TPScheduleElement: React.FC<TralisScheduleElementPropType> = ({ stop, first, last }) => {
+const TPScheduleElement: React.FC<TralisScheduleElementPropType> = ({ stop, last }) => {
     return (
         <TimelineItem>
             <TimelineSeparator>

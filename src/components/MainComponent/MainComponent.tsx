@@ -10,9 +10,9 @@ import TextInputFilter from '../Filters/TextInputFilter/TextInputFilter';
 import RouteInformation from '../RouteInformation/RouteInformation';
 import RoutesList from '../RoutesList/RoutesList';
 import styles from './mainComponentStyle.module.css';
-import { RootStore } from '../../store';
 
 const MainComponent = () => {
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     const [map, setMap] = useState<mapboxgl.Map | null>(null);
     const [displayGeoDataPTLines, setDisplayGeoDataPTLines] = useState<GeoJSON.FeatureCollection<GeoJSON.Geometry>>();
 

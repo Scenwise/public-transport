@@ -159,7 +159,6 @@ const PTSchedule: React.FC = () => {
                                     {ptStopsProperty.map((stop, index) => (
                                         <TPScheduleElement
                                             stop={stop}
-                                            first={index === 0}
                                             last={index >= ptStopsProperty.length - 1}
                                             key={selectedRouteID + '_' + index}
                                         />
