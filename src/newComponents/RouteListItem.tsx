@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Card, ListItem, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 
+import { updateSelectedRoute } from '../dataStoring/slice';
 import { useAppDispatch, useAppSelector } from '../store';
 
 interface RouteListItemPropType {
@@ -20,6 +21,7 @@ const useStyles = makeStyles({
 });
 
 const RouteListItem: React.FC<RouteListItemPropType> = ({ route }) => {
+    const dispatch = useAppDispatch();
     const selectedRouteID = useAppSelector((store) => store.slice.selectedRoute);
     const isSelected = selectedRouteID && '' + route.shape_id === selectedRouteID;
     const bColor = isSelected ? 'grey.200' : 'white';
@@ -32,28 +34,28 @@ const RouteListItem: React.FC<RouteListItemPropType> = ({ route }) => {
 
     // Select the alert on the map when the item is clicked.
     const handleLocateClick = () => {
-        // dispatch(updateSelectedRoute('' + route.shape_id));]
-        const selectedPTRouteID = '' + route.shape_id;
-        const selectedPTRoute = ptRoutes[selectedPTRouteID];
-        if (map && selectedPTRoute) {
-            map.flyTo({ center: selectedPTRoute.geometry.coordinates[1] as LngLatLike, zoom: 10 });
-            if (map.getLayer('ptStops')) {
-                const selectedStopIDs = selectedPTRoute.properties.stops_ids;
-                map.setFilter('ptStops', ['in', ['get', 'stopId'], ['literal', selectedStopIDs]]);
-                map.setPaintProperty('ptRoutes', 'line-color', [
-                    'case',
-                    ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID],
-                    'red',
-                    'purple',
-                ]);
-                map.setPaintProperty('ptRoutes', 'line-width', [
-                    'case',
-                    ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID],
-                    5,
-                    1,
-                ]);
-            }
-        }
+        dispatch(updateSelectedRoute('' + route.shape_id));
+        // const selectedPTRouteID = '' + route.shape_id;
+        // const selectedPTRoute = ptRoutes[selectedPTRouteID];
+        // if (map && selectedPTRoute) {
+        //     map.flyTo({ center: selectedPTRoute.geometry.coordinates[1] as LngLatLike, zoom: 10 });
+        //     if (map.getLayer('ptStops')) {
+        //         const selectedStopIDs = selectedPTRoute.properties.stops_ids;
+        //         map.setFilter('ptStops', ['in', ['get', 'stopId'], ['literal', selectedStopIDs]]);
+        //         map.setPaintProperty('ptRoutes', 'line-color', [
+        //             'case',
+        //             ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID],
+        //             'red',
+        //             'purple',
+        //         ]);
+        //         map.setPaintProperty('ptRoutes', 'line-width', [
+        //             'case',
+        //             ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID],
+        //             5,
+        //             1,
+        //         ]);
+        //     }
+        // }
     };
 
     // Scroll to the selected alert
@@ -81,6 +83,7 @@ const RouteListItem: React.FC<RouteListItemPropType> = ({ route }) => {
                 className={classes.routeListItem}
             >
                 <Box
+                    ref={thisListItem}
                     style={{
                         width: '50vh',
                         whiteSpace: 'normal',

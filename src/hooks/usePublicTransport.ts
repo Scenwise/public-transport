@@ -1,3 +1,4 @@
+import { LngLatLike } from 'mapbox-gl';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -48,30 +49,38 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
         }
     }, [mapInitialized.current]);
 
-    // const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
-    // const ptRoutes = useAppSelector((state) => state.slice.ptRoutes);
+    const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
+    const ptRoutes = useAppSelector((state) => state.slice.ptRoutes);
 
     // Add the public transport popup and the schedule.
     usePopup(map);
 
     // Fly to selected alert
-    // useEffect((): void => {
-    //     const selectedPTRoute = ptRoutes[selectedPTRouteID];
-    //     console.log(selectedPTRouteID)
-    //
-    //     if (map && selectedPTRoute) {
-    //         map.flyTo({ center: selectedPTRoute.geometry.coordinates[1] as LngLatLike, zoom: 10 });
-    //         if(map.getLayer('ptStops')) {
-    //             const selectedStopIDs = selectedPTRoute.properties.stops_ids
-    //             map.setFilter('ptStops', ['in', ['get', 'stopId'], ['literal', selectedStopIDs]])
-    //             map.setPaintProperty('ptRoutes', 'line-color', [
-    //                 'case', ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID], 'red', 'purple'])
-    //             map.setPaintProperty('ptRoutes', 'line-width', [
-    //                 'case', ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID], 5, 1])
-    //         }
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [selectedPTRouteID]);
+    useEffect((): void => {
+        const selectedPTRoute = ptRoutes[selectedPTRouteID];
+        console.log(selectedPTRouteID);
+
+        if (map && selectedPTRoute) {
+            map.flyTo({ center: selectedPTRoute.geometry.coordinates[1] as LngLatLike, zoom: 10 });
+            if (map.getLayer('ptStops')) {
+                const selectedStopIDs = selectedPTRoute.properties.stops_ids;
+                map.setFilter('ptStops', ['in', ['get', 'stopId'], ['literal', selectedStopIDs]]);
+                map.setPaintProperty('ptRoutes', 'line-color', [
+                    'case',
+                    ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID],
+                    'red',
+                    'purple',
+                ]);
+                map.setPaintProperty('ptRoutes', 'line-width', [
+                    'case',
+                    ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID],
+                    5,
+                    1,
+                ]);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedPTRouteID]);
 
     useEffect(() => {
         console.log(ptRouteFeatures);
