@@ -4,10 +4,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import allActions from '../../actions/allActions';
-import { RootStore } from '../../index';
 import ShapeIdStops from '../../interfaces/ShapeIdStops';
 import Stop from '../../interfaces/Stops';
 import loadLineStringLayer from '../../loadLayersFunc';
+import { RootStore } from '../../store';
 import createLayer from './functions/createLayer';
 import getGtfsTable from './functions/dataRequest';
 import { jsonInterfaceConverter, jsonInterfaceConverterRoutes } from './functions/jsonInterfaceConverter';
@@ -21,7 +21,7 @@ import stopsLayer from './stops-layer.json';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
+// mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
 const Map = ({
     setDisplayGeoDataPTLines,

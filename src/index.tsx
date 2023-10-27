@@ -1,5 +1,5 @@
 //https://levelup.gitconnected.com/react-redux-hooks-useselector-and-usedispatch-f7d8c7f75cdd
-import { configureStore } from '@reduxjs/toolkit';
+
 import 'mapbox-gl/dist/mapbox-gl.css';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -8,17 +8,12 @@ import ReactDOM from 'react-dom/client';
 
 import App from './App';
 import './index.css';
-import rootReducer from './reducers/combineReducers';
-import reportWebVitals from './reportWebVitals';
 
-const store = configureStore({
-    reducer: rootReducer,
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: false,
-        }),
-});
-export type RootStore = ReturnType<typeof rootReducer>;
+import reportWebVitals from './reportWebVitals';
+import { store } from './store';
+
+
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
     <Provider store={store}>
