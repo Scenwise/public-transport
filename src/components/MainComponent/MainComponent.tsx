@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Slider from '@mui/material/Slider';
 
+import { RootStore } from '../..';
 import allActions from '../../actions/allActions';
 import loadLineStringLayer from '../../loadLayersFunc';
 import DropDownMenu from '../Filters/DropDownMenu/DropDownMenu';

@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 
-import { RootStore } from '../../store';
+import { RootStore } from '../..';
 import styles from './routeInformation.module.css';
 
 // selectedRoute={selectedRoute} setSelectedRoute={setSelectedRoute} stopIdsMapCont={stopIdsMapCont} stopsIds={shapeIdStopsMapCont?.get(selectedRoute[0])}

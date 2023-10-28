@@ -2,9 +2,9 @@ import { useState } from 'react';
 // import { useStore } from "react-context-hook";
 import { useDispatch, useSelector } from 'react-redux';
 
+import { RootStore } from '../../..';
 import allActions from '../../../actions/allActions';
 import loadLineStringLayer from '../../../loadLayersFunc';
-import { RootStore } from '../../../store';
 import { addNewValueToFilter, removeAllFilters, removeSingleFilterValue } from '../filterFunctions';
 import styles from './textInputFilter.module.css';
 
