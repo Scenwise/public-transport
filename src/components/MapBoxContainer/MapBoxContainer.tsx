@@ -20,7 +20,7 @@ type MapAndContainer = {
     mapContainer: React.MutableRefObject<HTMLDivElement | null>;
 };
 
-const MapBoxContainer = (): JSX.Element => {
+const MapBoxContainer: React.FC = () => {
     const [map, setMap] = useState<mapboxgl.Map | null>(null);
 
     const mapContainer = useRef<HTMLDivElement | null>(null);

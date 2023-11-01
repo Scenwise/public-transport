@@ -15,11 +15,11 @@ interface PTRouteProperties {
     shape_id: number; // id
     origin: string;
     destination: string;
-    route_id: number;
-    vehicle_type: string;
     line_number: string;
     agency_id: string;
     route_name: string;
+    route_id: number;
+    vehicle_type: string;
     stops_ids: string[];
 }
 

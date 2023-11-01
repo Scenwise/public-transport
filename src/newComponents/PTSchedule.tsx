@@ -50,7 +50,6 @@ const PTSchedule: React.FC = () => {
     const ptRoutesFeatures = useAppSelector((state) => state.slice.ptRoutes);
     const ptStopsFeatures = useAppSelector((state) => state.slice.ptStops);
 
-    // const ptRoutes = useAppSelector(selectPTRoutesFeatureList).map((feature) => feature.properties);
     const selectedRouteID = useAppSelector((state) => state.slice.selectedRoute);
 
     let ptRouteProperty = {} as PTRouteProperties;

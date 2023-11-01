@@ -36,7 +36,7 @@ module.exports = {
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
       'sonarjs/no-small-switch': 'off',
-      "sonarjs/no-duplicate-string": "off"
+      'sonarjs/no-duplicate-string': 'off'
 
 
   },

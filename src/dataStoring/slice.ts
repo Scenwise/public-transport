@@ -9,18 +9,20 @@ export const fetchGtfsGeoJSON = (tableName: string) =>
     createAsyncThunk(tableName, async () => await getGtfsTable(tableName));
 export interface State {
     ptRoutes: FeatureRecord<PTRouteFeature>; // A map of the public transport routes, the keys are the route ids
-    filters: Filters; // The filters applied to the public transport routes
     selectedRoute: string; // The id of te selected route
     ptStops: FeatureRecord<PTStopFeature>; // A map of stop ids to the stops
+    selectedStop: string; // The id of te selected stop
+    filters: Filters; // The filters applied to the public transport routes
     status: Status;
     map?: mapboxgl.Map;
 }
 
 export const initialState: State = {
     ptRoutes: {} as FeatureRecord<PTRouteFeature>,
-    filters: {} as Filters,
     selectedRoute: '',
     ptStops: {} as FeatureRecord<PTStopFeature>,
+    selectedStop: '',
+    filters: {} as Filters,
     status: {
         ptRoute: ReadyState.UNINSTANTIATED,
         ptStop: ReadyState.UNINSTANTIATED,
@@ -43,6 +45,9 @@ const slice = createSlice({
         updatePTStops(state: State, action: PayloadAction<FeatureRecord<PTStopFeature>>) {
             state.ptStops = action.payload;
         },
+        updateSelectedStop(state: State, action: PayloadAction<string>) {
+            state.selectedStop = action.payload;
+        },
         updateStatus(state: State, action: PayloadAction<Status>) {
             state.status = action.payload;
         },
@@ -52,8 +57,15 @@ const slice = createSlice({
     },
 });
 
-export const { updateMap, updatePTRoutes, updateFilters, updateSelectedRoute, updatePTStops, updateStatus } =
-    slice.actions;
+export const {
+    updateMap,
+    updatePTRoutes,
+    updateFilters,
+    updateSelectedRoute,
+    updatePTStops,
+    updateSelectedStop,
+    updateStatus,
+} = slice.actions;
 
 // Memoized selector for array of features
 export const selectPTRoutesFeatureList = createSelector(

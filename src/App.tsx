@@ -1,7 +1,9 @@
+import React from 'react';
+
 import './App.css';
 import MapBoxContainer from './components/MapBoxContainer/MapBoxContainer';
-import { PTSchedule } from './newComponents/PTSchedule';
-import { RouteList } from './newComponents/RouteList';
+import { RoutesTable } from './newComponents/Table/RoutesTable';
+import { StopsTable } from './newComponents/Table/StopsTable';
 import TopBar from './newComponents/TopBar/TopBar';
 
 function App() {
@@ -9,8 +11,8 @@ function App() {
         <div className='app'>
             <TopBar />
             <MapBoxContainer />
-            <RouteList />
-            <PTSchedule />
+            <RoutesTable />
+            <StopsTable />
         </div>
     );
 }

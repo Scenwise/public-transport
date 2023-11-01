@@ -1,4 +1,3 @@
-import { LngLatLike } from 'mapbox-gl';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -11,9 +10,11 @@ import {
     updatePTStops,
     updateStatus,
 } from '../dataStoring/slice';
-import { useAppDispatch, useAppSelector } from '../store';
-import { useApplyDataToSource, useInitializeSourcesAndLayers } from './usePTRoutesLayerUpdate';
-import { usePopup } from './usePTRoutesPopup';
+import { useAppDispatch } from '../store';
+import { usePTRoutesActionUpdate } from './usePTRoutesActionUpdate';
+import { useApplyDataToSource, useInitializeSourcesAndLayers, usePTRoutesLayerUpdate } from './usePTRoutesLayerUpdate';
+import { usePTStopsActionUpdate } from './usePTStopsActionUpdate';
+import { usePTStopsLayerUpdate } from './usePTStopsLayerUpdate';
 
 export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     const dispatch = useAppDispatch();
@@ -47,38 +48,13 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
         /*eslint-disable react-hooks/exhaustive-deps*/
     }, [mapInitialized.current]);
 
-    const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
-    const ptRoutes = useAppSelector((state) => state.slice.ptRoutes);
+    // Update the layers of the map when an action is triggered
+    usePTRoutesActionUpdate(map);
+    usePTStopsActionUpdate(map);
 
-    // Add the public transport popup and the schedule.
-    usePopup(map);
-
-    // Fly to selected alert
-    useEffect((): void => {
-        const selectedPTRoute = ptRoutes[selectedPTRouteID];
-        console.log(selectedPTRouteID);
-
-        if (map && selectedPTRoute) {
-            map.flyTo({ center: selectedPTRoute.geometry.coordinates[1] as LngLatLike, zoom: 10 });
-            if (map.getLayer('ptStops')) {
-                const selectedStopIDs = selectedPTRoute.properties.stops_ids;
-                map.setFilter('ptStops', ['in', ['get', 'stopId'], ['literal', selectedStopIDs]]);
-                map.setPaintProperty('ptRoutes', 'line-color', [
-                    'case',
-                    ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID],
-                    'red',
-                    'purple',
-                ]);
-                map.setPaintProperty('ptRoutes', 'line-width', [
-                    'case',
-                    ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID],
-                    5,
-                    1,
-                ]);
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedPTRouteID]);
+    // Update the layers of the map
+    usePTRoutesLayerUpdate(map);
+    usePTStopsLayerUpdate(map);
 
     useEffect(() => {
         console.log(ptRouteFeatures);
