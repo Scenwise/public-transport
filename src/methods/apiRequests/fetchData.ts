@@ -1,4 +1,4 @@
-import { ReadyState } from '../data/data';
+import { ReadyState } from '../../data/data';
 import getGtfsTable from './apiFunction';
 
 /**

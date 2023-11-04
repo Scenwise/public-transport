@@ -1,6 +1,14 @@
+import {
+    COLOR_ROUTE_DEFAULT,
+    COLOR_ROUTE_HOVERED,
+    COLOR_ROUTE_SELECTED,
+    LINE_WIDTH_DEFAULT,
+    LINE_WIDTH_HOVERED,
+    LINE_WIDTH_SELECTED,
+} from '../data/layerPaints';
 import { updateSelectedRoute } from '../dataStoring/slice';
 import { useAppDispatch, useAppSelector } from '../store';
-import { updateHoveredPaint } from './useHookUtil';
+import { routesPaintWhenSelected, updateLayerPaint } from './useHookUtil';
 
 /*
  * Update the map when a route is clicked or hovered.
@@ -21,7 +29,7 @@ export const usePTRoutesActionUpdate = (map: mapboxgl.Map | null): void => {
             }
         });
         map.on('mouseenter', 'ptRoutes', (e) => handleRouteMouseEnter(map, e, selectedRouteID));
-        map.on('mouseleave', 'ptRoutes', () => handleRouteMouseLeave(map));
+        map.on('mouseleave', 'ptRoutes', () => handleRouteMouseLeave(map, selectedRouteID));
     }
 };
 
@@ -36,45 +44,55 @@ const handleRouteMouseEnter = (map: mapboxgl.Map, e: mapboxgl.MapLayerMouseEvent
             const isEqualToHovered = ['==', ['to-string', ['get', 'shape_id']], shapeID];
             if (selectedRouteID !== '') {
                 const isEqualToSelected = ['==', ['to-string', ['get', 'shape_id']], selectedRouteID];
-                updateHoveredPaint(
+                updateLayerPaint(
                     map,
                     'ptRoutes',
                     'line-color',
+                    COLOR_ROUTE_DEFAULT,
                     isEqualToHovered,
-                    'orange',
-                    'purple',
+                    COLOR_ROUTE_HOVERED,
                     isEqualToSelected,
-                    'red',
+                    COLOR_ROUTE_SELECTED,
                 );
-                updateHoveredPaint(map, 'ptRoutes', 'line-width', isEqualToHovered, 7, 1, isEqualToSelected, 5);
+                updateLayerPaint(
+                    map,
+                    'ptRoutes',
+                    'line-width',
+                    LINE_WIDTH_DEFAULT,
+                    isEqualToHovered,
+                    LINE_WIDTH_HOVERED,
+                    isEqualToSelected,
+                    LINE_WIDTH_SELECTED,
+                );
             } else {
-                updateHoveredPaint(map, 'ptRoutes', 'line-color', isEqualToHovered, 'orange', 'purple');
-                updateHoveredPaint(map, 'ptRoutes', 'line-width', isEqualToHovered, 5, 1);
+                updateLayerPaint(
+                    map,
+                    'ptRoutes',
+                    'line-color',
+                    COLOR_ROUTE_DEFAULT,
+                    isEqualToHovered,
+                    COLOR_ROUTE_HOVERED,
+                );
+                updateLayerPaint(
+                    map,
+                    'ptRoutes',
+                    'line-width',
+                    LINE_WIDTH_DEFAULT,
+                    isEqualToHovered,
+                    LINE_WIDTH_SELECTED,
+                );
             }
         }
     }
 };
 
 // This function is called whenever the mouse leaves a route.
-const handleRouteMouseLeave = (map: mapboxgl.Map) => {
+const handleRouteMouseLeave = (map: mapboxgl.Map, selectedRouteID: string) => {
+    if (selectedRouteID !== '') {
+        routesPaintWhenSelected(map, selectedRouteID);
+    } else {
+        updateLayerPaint(map, 'ptRoutes', 'line-color', COLOR_ROUTE_DEFAULT);
+        updateLayerPaint(map, 'ptRoutes', 'line-width', LINE_WIDTH_DEFAULT);
+    }
     map.getCanvas().style.cursor = '';
-};
-
-/**
- * Changes the pointer style to tell the user that an element is clickable.
- * @param layer clickable layer
- * @param map
- */
-export const changeMousePointers = (layer: string, map: mapboxgl.Map): void => {
-    //next two listeners change the pointer style
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    map.on('mouseenter', layer, function (_) {
-        // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = 'pointer';
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    map.on('mouseleave', layer, function (_) {
-        // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = '';
-    });
 };

@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 
-import { addPublicTransportData } from '../apiRequests/fetchData';
 import { ReadyState } from '../data/data';
 import {
     selectPTRoutesFeatureList,
@@ -10,7 +8,10 @@ import {
     updatePTStops,
     updateStatus,
 } from '../dataStoring/slice';
-import { useAppDispatch } from '../store';
+import { addPublicTransportData } from '../methods/apiRequests/fetchData';
+import { useAppDispatch, useAppSelector } from '../store';
+import { useInitiateFilterOptions } from './filterHook/useInitiateFilterOptions';
+import { useUpdateRoutesWithFilter } from './filterHook/useUpdateRoutesWithFilter';
 import { usePTRoutesActionUpdate } from './usePTRoutesActionUpdate';
 import { useApplyDataToSource, useInitializeSourcesAndLayers, usePTRoutesLayerUpdate } from './usePTRoutesLayerUpdate';
 import { usePTStopsActionUpdate } from './usePTStopsActionUpdate';
@@ -22,10 +23,11 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     // Initialize the routes and the stops
     const mapInitialized = useInitializeSourcesAndLayers(map);
 
-    const ptRouteFeatures = useSelector(selectPTRoutesFeatureList);
-    const ptStopFeatures = useSelector(selectPTStopsFeatureList);
+    const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
+    const ptStopFeatures = useAppSelector(selectPTStopsFeatureList);
 
     // Fetch the data from the api and store them
+    // Update the filter options
     useEffect(() => {
         if (mapInitialized.current) {
             const fetchData = async () => {
@@ -48,6 +50,8 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
         /*eslint-disable react-hooks/exhaustive-deps*/
     }, [mapInitialized.current]);
 
+    useInitiateFilterOptions(['Line Number', 'Vehicle Type', 'Agency'], ['line_number', 'vehicle_type', 'agency_id']);
+
     // Update the layers of the map when an action is triggered
     usePTRoutesActionUpdate(map);
     usePTStopsActionUpdate(map);
@@ -56,14 +60,11 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     usePTRoutesLayerUpdate(map);
     usePTStopsLayerUpdate(map);
 
-    useEffect(() => {
-        console.log(ptRouteFeatures);
-        if (map) {
-            console.log(map.getLayer('ptRoutes'));
-            console.log(map.getSource('ptRoutesSource'));
-        }
-        /*eslint-disable react-hooks/exhaustive-deps*/
-    }, [ptRouteFeatures]);
+    // Update the style of the map
+    // useUpdateMapStyle(map);
+
+    //Update the filtered list
+    useUpdateRoutesWithFilter();
 
     // Add the loaded source to the map
     useApplyDataToSource(mapInitialized.current, 'ptRoutes', ptRouteFeatures, map);

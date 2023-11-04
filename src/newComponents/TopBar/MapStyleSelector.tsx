@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
@@ -6,20 +6,51 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
+import { updateMapStyle } from '../../dataStoring/slice';
+import { useAppDispatch, useAppSelector } from '../../store';
+
 const MapStyleSelector: React.FC = () => {
-    const [selectedStyle, setSelectedStyle] = useState('streets-v11');
+    const dispatch = useAppDispatch();
+    const mapStyleID = useAppSelector((state) => state.slice.mapStyle);
+
+    const map = useAppSelector((state) => state.slice.map);
 
     const handleChange = (event: SelectChangeEvent) => {
-        setSelectedStyle(event.target.value as string);
+        const id = Object.keys(mapStyles).find((key) => mapStyles[key] === event.target.value) as string;
+
+        if (map) {
+            switch (id) {
+                case 'streets-v12':
+                    map.setStyle('mapbox://styles/mapbox/streets-v12');
+                    break;
+                case 'outdoors-v12':
+                    map.setStyle('mapbox://styles/mapbox/outdoors-v12');
+                    break;
+                case 'light-v11':
+                    map.setStyle('mapbox://styles/mapbox/light-v11');
+                    break;
+                case 'dark-v11':
+                    map.setStyle('mapbox://styles/mapbox/dark-v11');
+                    break;
+                case 'satellite-streets-v12':
+                    map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
+                    break;
+            }
+        }
+
+        dispatch(updateMapStyle(id));
     };
 
-    const mapStyles = [
-        { value: 'streets-v11', label: 'Streets' },
-        { value: 'outdoors-v11', label: 'Outdoors' },
-        { value: 'light-v10', label: 'Light' },
-        { value: 'dark-v10', label: 'Dark' },
-        { value: 'satellite-v9', label: 'Satellite' },
-    ];
+    interface MapStyle {
+        [key: string]: string;
+    }
+    const mapStyles: MapStyle = {
+        'streets-v12': 'Streets',
+        'outdoors-v12': 'Outdoors',
+        'light-v11': 'Light',
+        'dark-v11': 'Dark',
+        'satellite-streets-v12': 'Satellite',
+    };
 
     return (
         <Box sx={{ minWidth: 120 }}>
@@ -30,13 +61,13 @@ const MapStyleSelector: React.FC = () => {
                 <Select
                     labelId='map-style-label'
                     id='map-style-select'
-                    value={selectedStyle}
+                    value={mapStyles[mapStyleID]}
+                    sx={{ color: 'white' }}
                     onChange={handleChange}
-                    sx={{ color: 'white' }} // Set the color using CSS
                 >
-                    {mapStyles.map((style) => (
-                        <MenuItem key={style.value} value={style.value}>
-                            {style.label}
+                    {Object.entries(mapStyles).map(([id, label]) => (
+                        <MenuItem id={id} key={id} value={label}>
+                            {label}
                         </MenuItem>
                     ))}
                 </Select>

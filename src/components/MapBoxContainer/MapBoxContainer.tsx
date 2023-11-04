@@ -2,7 +2,9 @@ import mapboxgl from 'mapbox-gl';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateMap } from '../../dataStoring/slice';
+import { SelectChangeEvent } from '@mui/material/Select';
+
+import { updateMap, updateMapStyle } from '../../dataStoring/slice';
 import { usePublicTransport } from '../../hooks/usePublicTransport';
 
 // The following is required to stop "npm build" from transpiling mapbox code.
@@ -54,11 +56,20 @@ const MapBoxContainer: React.FC = () => {
         } else {
             throw new Error('Missing accesstoken for mapboxgl');
         }
-
         if (!map) initializeMap({ setMap, mapContainer });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [map]);
 
+    interface MapStyle {
+        [key: string]: string;
+    }
+    const mapStyles: MapStyle = {
+        'streets-v12': 'Streets',
+        'outdoors-v12': 'Outdoors',
+        'light-v11': 'Light',
+        'dark-v11': 'Dark',
+        'satellite-streets-v12': 'Satellite',
+    };
     /**
      * Initializaes the map with styles,
      * load the geoJSON for the public transport segments.
@@ -68,7 +79,7 @@ const MapBoxContainer: React.FC = () => {
     const initializeMap = ({ setMap, mapContainer }: MapAndContainer): void => {
         const map = new mapboxgl.Map({
             container: mapContainer.current as string | HTMLElement,
-            style: 'mapbox://styles/ecuzmici/ckxhn19g40e1p14moxofji6oh',
+            style: 'mapbox://styles/mapbox/light-v11',
             center: [lng, lat], //coordinates for Amsterdam
             zoom: 10,
         });
@@ -78,6 +89,40 @@ const MapBoxContainer: React.FC = () => {
             map.resize();
 
             dispatch(updateMap(map));
+
+            // console.log(document.getElementById('map-style-select'))
+            const Select = document.getElementById('map-select');
+            if (Select) {
+                console.log(Select);
+                Select.addEventListener('change', (event) => {
+                    const id = Object.keys(mapStyles).find(
+                        (key) => mapStyles[key] === (event as SelectChangeEvent).target?.value,
+                    ) as string;
+
+                    console.log(id);
+                    if (map) {
+                        switch (id) {
+                            case 'streets-v12':
+                                map.setStyle('mapbox://styles/mapbox/streets-v12');
+                                break;
+                            case 'outdoors-v12':
+                                map.setStyle('mapbox://styles/mapbox/outdoors-v12');
+                                break;
+                            case 'light-v11':
+                                map.setStyle('mapbox://styles/mapbox/light-v11');
+                                break;
+                            case 'dark-v11':
+                                map.setStyle('mapbox://styles/mapbox/dark-v11');
+                                break;
+                            case 'satellite-streets-v12':
+                                map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
+                                break;
+                        }
+                    }
+
+                    dispatch(updateMapStyle(id));
+                });
+            }
 
             // TODO: refactor this
             // Initialize map when component mounts

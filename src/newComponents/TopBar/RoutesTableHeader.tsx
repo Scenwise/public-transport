@@ -1,17 +1,16 @@
 import * as React from 'react';
 
 import { SvgIconComponent } from '@mui/icons-material';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import PendingIcon from '@mui/icons-material/Pending';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SyncIcon from '@mui/icons-material/Sync';
 import SyncDisabledIcon from '@mui/icons-material/SyncDisabled';
 import { Stack, SvgIconTypeMap, Tooltip } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { ReadyState } from '../../data/data';
 import { useAppSelector } from '../../store';
+import { FilterList } from '../Filter/FilterList';
 
 const statusIcons: { [key in ReadyState]: [SvgIconComponent, SvgIconTypeMap['props']['color']] } = {
     [ReadyState.UNINSTANTIATED]: [RemoveCircleIcon, 'action'],
@@ -45,9 +44,7 @@ const RoutesTableHeader: React.FC = () => {
                 <PTRouteStatusIcon fontSize='small' color={ptRouteStatusColor} />
             </Tooltip>
             <Typography noWrap={true}>list of routes</Typography>
-            <IconButton color='inherit'>
-                <FilterListIcon />
-            </IconButton>
+            <FilterList />
         </Stack>
     );
 };

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { selectPTRoutesFeatureList, updateSelectedRoute } from '../../dataStoring/slice';
+import { updateSelectedRoute } from '../../dataStoring/slice';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { GeneralTable } from './GeneralTable';
 
@@ -9,7 +9,9 @@ import { GeneralTable } from './GeneralTable';
  */
 const RoutesTable: React.FC = () => {
     const dispatch = useAppDispatch();
-    const ptRoutes = useAppSelector(selectPTRoutesFeatureList).map((feature) => feature.properties);
+
+    // Filter the routes.
+    const ptRoutes = useAppSelector((state) => state.slice.filteredRoutes).map((feature) => feature.properties);
 
     const headers = ['index', 'origin', 'destination', 'line number', 'agency', 'vehicle type', 'route id', 'shape id'];
     const tables = ptRoutes.map((route, index) => [
@@ -25,11 +27,10 @@ const RoutesTable: React.FC = () => {
 
     // Find the index of the selected route to highlight it in the table
     const selectedRouteID = useAppSelector((state) => state.slice.selectedRoute);
-    const ptRoutesFeatures = useAppSelector((state) => state.slice.ptRoutes);
 
     const selectedRouteIndex = useMemo(() => {
-        return Object.keys(ptRoutesFeatures).findIndex((routeID) => routeID === selectedRouteID);
-    }, [selectedRouteID, ptRoutesFeatures]);
+        return ptRoutes.map((route) => '' + route.shape_id).findIndex((routeID) => routeID === selectedRouteID);
+    }, [selectedRouteID, ptRoutes]);
 
     if (ptRoutes.length == 0) return null;
     return (

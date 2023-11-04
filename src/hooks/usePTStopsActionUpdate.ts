@@ -1,6 +1,16 @@
+import {
+    COLOR_STOP_DEFAULT,
+    COLOR_STOP_HOVERED,
+    COLOR_STOP_SELECTED,
+    RADIUS_STOP_DEFAULT,
+    RADIUS_STOP_HOVERED,
+    RADIUS_STOP_SELECTED,
+    STROKE_COLOR_STOP_DEFAULT,
+    STROKE_WIDTH_STOP_DEFAULT,
+} from '../data/layerPaints';
 import { updateSelectedStop } from '../dataStoring/slice';
 import { useAppDispatch, useAppSelector } from '../store';
-import { updateHoveredPaint } from './useHookUtil';
+import { stopsPaintWhenSelected, updateLayerPaint } from './useHookUtil';
 
 /*
  * Update the map when a stop is clicked or hovered.
@@ -20,7 +30,7 @@ export const usePTStopsActionUpdate = (map: mapboxgl.Map | null): void => {
             }
         });
         map.on('mouseenter', 'ptStops', (e) => handleStopMouseEnter(map, e, selectedStopID));
-        map.on('mouseleave', 'ptStops', () => handleStopMouseLeave(map));
+        map.on('mouseleave', 'ptStops', () => handleStopMouseLeave(map, selectedStopID));
     }
 };
 
@@ -34,25 +44,56 @@ const handleStopMouseEnter = (map: mapboxgl.Map, e: mapboxgl.MapLayerMouseEvent,
             const isEqualToHovered = ['==', ['to-string', ['get', 'stopId']], hoveredStopID];
             if (selectedStopID !== '') {
                 const isEqualToSelected = ['==', ['to-string', ['get', 'stopId']], selectedStopID];
-                updateHoveredPaint(
+                updateLayerPaint(
                     map,
                     'ptStops',
                     'circle-color',
+                    COLOR_STOP_DEFAULT,
                     isEqualToHovered,
-                    'orange',
-                    'yellow',
+                    COLOR_STOP_HOVERED,
                     isEqualToSelected,
-                    'orange',
+                    COLOR_STOP_SELECTED,
                 );
-                updateHoveredPaint(map, 'ptStops', 'circle-radius', isEqualToHovered, 10, 5, isEqualToSelected, 8);
+                updateLayerPaint(
+                    map,
+                    'ptStops',
+                    'circle-radius',
+                    RADIUS_STOP_DEFAULT,
+                    isEqualToHovered,
+                    RADIUS_STOP_HOVERED,
+                    isEqualToSelected,
+                    RADIUS_STOP_SELECTED,
+                );
             } else {
-                updateHoveredPaint(map, 'ptStops', 'circle-color', isEqualToHovered, 'orange', 'yellow');
-                updateHoveredPaint(map, 'ptStops', 'circle-radius', isEqualToHovered, 10, 5);
+                updateLayerPaint(
+                    map,
+                    'ptStops',
+                    'circle-color',
+                    COLOR_STOP_DEFAULT,
+                    isEqualToHovered,
+                    COLOR_STOP_HOVERED,
+                );
+                updateLayerPaint(
+                    map,
+                    'ptStops',
+                    'circle-radius',
+                    RADIUS_STOP_DEFAULT,
+                    isEqualToHovered,
+                    RADIUS_STOP_HOVERED,
+                );
             }
         }
     }
 };
 // This function is called whenever the mouse leaves a stop.
-const handleStopMouseLeave = (map: mapboxgl.Map) => {
+const handleStopMouseLeave = (map: mapboxgl.Map, selectedStopID: string) => {
+    if (selectedStopID) {
+        stopsPaintWhenSelected(map, selectedStopID);
+    } else {
+        updateLayerPaint(map, 'ptStops', 'circle-color', COLOR_STOP_DEFAULT);
+        updateLayerPaint(map, 'ptStops', 'circle-stroke-color', STROKE_COLOR_STOP_DEFAULT);
+        updateLayerPaint(map, 'ptStops', 'circle-stroke-width', STROKE_WIDTH_STOP_DEFAULT);
+        updateLayerPaint(map, 'ptStops', 'circle-radius', RADIUS_STOP_DEFAULT);
+    }
     map.getCanvas().style.cursor = '';
 };

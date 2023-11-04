@@ -1,9 +1,10 @@
 type Filter = {
     optionTitle: string;
+    optionKey: string;
     type: string;
-    options?: string[]; //number[] | string[];
-    variants?: string[]; //number[] | string[];
-    variant?: string; //number | string;
+    options: string[];
+    availableOptions: string[]; // Keep track of the options that will not make the filtered list empty if clicking them
+    variants: string[];
 };
 
 type Filters = Record<string, Filter>;
@@ -12,6 +13,8 @@ type FeatureRecord<T extends GeoJSON.Feature> = Record<string, T>;
 type PTRouteFeature = GeoJSON.Feature<PTRouteGeometry, PTRouteProperties>;
 type PTRouteGeometry = GeoJSON.LineString;
 interface PTRouteProperties {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any; // index signature
     shape_id: number; // id
     origin: string;
     destination: string;

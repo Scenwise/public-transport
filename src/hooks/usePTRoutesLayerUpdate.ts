@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import ptRoutesLayer from '../data/layers/ptRoutesLayer.json';
 import ptStopsLayer from '../data/layers/ptStopsLayer.json';
 import { useAppSelector } from '../store';
-import { updateSelectedPaint } from './useHookUtil';
+import { routesPaintWhenSelected } from './useHookUtil';
 
 /*
  * This hook is used to update the mapbox map with the routes layer when the selected route changes.
@@ -13,7 +13,7 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
     const ptRoutes = useAppSelector((state) => state.slice.ptRoutes);
 
-    // Fly to selected alert
+    // Fly to selected route + set the paint of the selected route different
     useEffect((): void => {
         const selectedPTRoute = ptRoutes[selectedPTRouteID];
 
@@ -35,13 +35,26 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
                 map.setFilter('ptStops', ['in', ['get', 'stopId'], ['literal', selectedStopIDs]]);
 
                 // Update the paint properties of the selected route
-                const isEqualToSelected = ['==', ['to-string', ['get', 'shape_id']], selectedPTRouteID];
-                updateSelectedPaint(map, 'ptRoutes', 'line-color', isEqualToSelected, 'red', 'purple');
-                updateSelectedPaint(map, 'ptRoutes', 'line-width', isEqualToSelected, 5, 1);
+                routesPaintWhenSelected(map, selectedPTRouteID);
             }
+        }
+        // If the selected route is removed, move its corresponding stops
+        if (map && !selectedPTRoute && map.getLayer('ptStops')) {
+            // Display the stops of the selected route
+            map.setFilter('ptStops', ['in', ['get', 'stopId'], ['literal', []]]);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedPTRouteID]);
+
+    const filteredRoutes = useAppSelector((state) => state.slice.filteredRoutes);
+    useEffect(() => {
+        if (map && map.getLayer('ptRoutes')) {
+            const filteredRouteIDs = filteredRoutes.map((route) => route.properties.shape_id);
+
+            map.setFilter('ptRoutes', ['in', ['get', 'shape_id'], ['literal', filteredRouteIDs]]);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filteredRoutes]);
 };
 
 export const layerConfig: { [key: string]: AnyLayer } = {
@@ -74,9 +87,7 @@ export const useInitializeSourcesAndLayers = (map: mapboxgl.Map | null): React.M
             });
 
             hasInitialized.current = true;
-            console.log(map.getLayer(`ptRoutes`));
-
-            console.log(map.getSource(`ptStopsSource`));
+            console.log('generate layers');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [map]);
