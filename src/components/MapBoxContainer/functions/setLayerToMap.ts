@@ -6,8 +6,6 @@ const setLayerToMap = (
     featureCollection: FeatureCollection<Geometry, GeoJsonProperties>,
     map: mapboxgl.Map | null,
 ) => {
-    // console.log(featureCollection);
-
     map?.addSource(layerSource, {
         type: 'geojson',
         data: featureCollection,

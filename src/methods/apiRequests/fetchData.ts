@@ -140,15 +140,7 @@ export const addPTStops = async (
         ptStopsData
             .then((ptStopsRes) => {
                 const ptRoutes = {} as FeatureRecord<PTRouteFeature>;
-                // TODO: when routes are loaded, put this into the routes
-                // ptRoutesRes.features.forEach((feature) => {
-                //     const id = "" + feature.id //the id is shape_id which is a number
-                //     ptRoutes[id] = feature as PTRouteFeature
-                // })
-
                 const ptStops = {} as FeatureRecord<PTStopFeature>;
-
-                console.log(ptStopsRes.features);
 
                 ptStopsRes.features.forEach((feature) => {
                     const id = '' + feature.id; //the id is shape_id which is a number
@@ -157,7 +149,6 @@ export const addPTStops = async (
                     const stopIds = stopProperties.stops_ids;
                     const stopNames = stopProperties.stop_names;
                     const stopGeometries = JSON.parse(JSON.stringify(feature.geometry)).coordinates;
-                    // console.log({properties: {stops_ids: stopIds} as PTRouteProperties} as PTRouteFeature)
 
                     // Add the stop ids to the route
                     ptRoutes[id] = {

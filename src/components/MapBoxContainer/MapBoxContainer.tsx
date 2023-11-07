@@ -111,16 +111,13 @@ const MapBoxContainer: React.FC = () => {
 
             dispatch(updateMap(map));
 
-            // console.log(document.getElementById('map-style-select'))
             const Select = document.getElementById('map-select');
             if (Select) {
-                console.log(Select);
                 Select.addEventListener('change', (event) => {
                     const id = Object.keys(mapStyles).find(
                         (key) => mapStyles[key] === (event as SelectChangeEvent).target?.value,
                     ) as string;
 
-                    console.log(id);
                     if (map) {
                         switch (id) {
                             case 'streets-v12':

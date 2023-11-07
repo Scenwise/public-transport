@@ -7,10 +7,10 @@ import {
     RADIUS_STOP_SELECTED,
     STROKE_COLOR_STOP_DEFAULT,
     STROKE_WIDTH_STOP_DEFAULT,
-} from '../data/layerPaints';
-import { updateSelectedStop } from '../dataStoring/slice';
-import { useAppDispatch, useAppSelector } from '../store';
-import { stopsPaintWhenSelected, updateLayerPaint } from './useHookUtil';
+} from '../../data/layerPaints';
+import { updateSelectedStop } from '../../dataStoring/slice';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { stopsPaintWhenSelected, updateLayerPaint } from '../useHookUtil';
 
 /*
  * Update the map when a stop is clicked or hovered.

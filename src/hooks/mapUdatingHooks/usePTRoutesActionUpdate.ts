@@ -5,10 +5,10 @@ import {
     LINE_WIDTH_DEFAULT,
     LINE_WIDTH_HOVERED,
     LINE_WIDTH_SELECTED,
-} from '../data/layerPaints';
-import { updateSelectedRoute } from '../dataStoring/slice';
-import { useAppDispatch, useAppSelector } from '../store';
-import { routesPaintWhenSelected, updateLayerPaint } from './useHookUtil';
+} from '../../data/layerPaints';
+import { updateSelectedRoute } from '../../dataStoring/slice';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { routesPaintWhenSelected, updateLayerPaint } from '../useHookUtil';
 
 /*
  * Update the map when a route is clicked or hovered.

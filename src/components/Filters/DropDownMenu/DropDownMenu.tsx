@@ -108,7 +108,6 @@ const Option = ({
     const filter = useSelector((state: RootStore) => state.filterReducer.filter);
     const dispatch = useDispatch();
     const addRemoveOption = () => {
-        console.log(geoDataPTLines);
         let filterResult = undefined;
         if (containsDictionaryKey(ddMenuName) === false) {
             setState(false);

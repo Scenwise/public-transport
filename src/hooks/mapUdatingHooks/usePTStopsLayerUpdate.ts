@@ -1,8 +1,8 @@
 import { LngLatLike } from 'mapbox-gl';
 import { useEffect } from 'react';
 
-import { useAppSelector } from '../store';
-import { stopsPaintWhenSelected } from './useHookUtil';
+import { useAppSelector } from '../../store';
+import { stopsPaintWhenSelected } from '../useHookUtil';
 
 /*
  * This hook is used to update the stops layer in the map when the selected stop is changed.

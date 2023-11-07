@@ -13,10 +13,14 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { useInitiateFilterOptions } from './filterHook/useInitiateFilterOptions';
 import { useUpdateRoutesWithFilter } from './filterHook/useUpdateRoutesWithFilter';
 import { useVisibleRoutesUpdate } from './filterHook/useVisibleRoutesUpdate';
-import { usePTRoutesActionUpdate } from './usePTRoutesActionUpdate';
-import { useApplyDataToSource, useInitializeSourcesAndLayers, usePTRoutesLayerUpdate } from './usePTRoutesLayerUpdate';
-import { usePTStopsActionUpdate } from './usePTStopsActionUpdate';
-import { usePTStopsLayerUpdate } from './usePTStopsLayerUpdate';
+import { usePTRoutesActionUpdate } from './mapUdatingHooks/usePTRoutesActionUpdate';
+import {
+    useApplyDataToSource,
+    useInitializeSourcesAndLayers,
+    usePTRoutesLayerUpdate,
+} from './mapUdatingHooks/usePTRoutesLayerUpdate';
+import { usePTStopsActionUpdate } from './mapUdatingHooks/usePTStopsActionUpdate';
+import { usePTStopsLayerUpdate } from './mapUdatingHooks/usePTStopsLayerUpdate';
 
 export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     const dispatch = useAppDispatch();

@@ -1,10 +1,10 @@
 import { AnyLayer, GeoJSONSource, LngLatBounds } from 'mapbox-gl';
 import { useEffect, useRef } from 'react';
 
-import ptRoutesLayer from '../data/layers/ptRoutesLayer.json';
-import ptStopsLayer from '../data/layers/ptStopsLayer.json';
-import { useAppSelector } from '../store';
-import { routesPaintWhenSelected } from './useHookUtil';
+import ptRoutesLayer from '../../data/layers/ptRoutesLayer.json';
+import ptStopsLayer from '../../data/layers/ptStopsLayer.json';
+import { useAppSelector } from '../../store';
+import { routesPaintWhenSelected } from '../useHookUtil';
 
 /*
  * This hook is used to update the mapbox map with the routes layer when the selected route changes.
