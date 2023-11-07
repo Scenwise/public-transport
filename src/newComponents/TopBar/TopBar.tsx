@@ -1,11 +1,10 @@
 import React from 'react';
 
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import AppBar from '@mui/material/AppBar';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 
+import { CsvExport } from './CsvExport';
 import { LocationSearchBar } from './LocationSearchBar';
 import MapStyleSelector from './MapStyleSelector';
 import { OffsetSlider } from './OffsetSlider';
@@ -21,9 +20,7 @@ const TopBar: React.FC = () => {
                         <LocationSearchBar />
                         <OffsetSlider />
                         <MapStyleSelector />
-                        <IconButton color='inherit'>
-                            <CloudDownloadIcon />
-                        </IconButton>
+                        <CsvExport />
                     </Stack>
                 </Stack>
             </Toolbar>
