@@ -7,19 +7,26 @@ import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 
+import { updateRouteOffset } from '../../dataStoring/slice';
+import { useAppDispatch, useAppSelector } from '../../store';
+
 const Input = styled(MuiInput)`
     width: 42px;
 `;
 
 const OffsetSlider: React.FC = () => {
-    const [value, setValue] = React.useState(30);
+    const dispatch = useAppDispatch();
+    const routeOffset = useAppSelector((state) => state.slice.routeOffset);
+    const [value, setValue] = React.useState(0);
 
     const handleSliderChange = (event: Event, newValue: number | number[]) => {
         setValue(newValue as number);
+        dispatch(updateRouteOffset(newValue as number));
     };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value === '' ? 0 : Number(event.target.value));
+        dispatch(updateRouteOffset(event.target.value === '' ? 0 : Number(event.target.value)));
     };
 
     const handleBlur = () => {
@@ -41,7 +48,7 @@ const OffsetSlider: React.FC = () => {
                 <Grid item xs={8}>
                     <Slider
                         color='secondary'
-                        value={typeof value === 'number' ? value : 0}
+                        value={routeOffset}
                         onChange={handleSliderChange}
                         aria-labelledby='input-slider'
                         max={10}

@@ -18,6 +18,7 @@ export interface State {
     visibleRoutes: VisibleFiltering; // State of the visible filtering
     status: Status;
     mapStyle: string; // The id of the current map style
+    routeOffset: number;
     map?: mapboxgl.Map;
 }
 
@@ -37,6 +38,7 @@ export const initialState: State = {
         ptRoute: ReadyState.UNINSTANTIATED,
         ptStop: ReadyState.UNINSTANTIATED,
     },
+    routeOffset: 0,
     mapStyle: 'light-v11',
 };
 
@@ -74,6 +76,9 @@ const slice = createSlice({
         updateStatus(state: State, action: PayloadAction<Status>) {
             state.status = action.payload;
         },
+        updateRouteOffset(state: State, action: PayloadAction<number>) {
+            state.routeOffset = action.payload;
+        },
         updateMapStyle(state: State, action: PayloadAction<string>) {
             state.mapStyle = action.payload;
         },
@@ -95,6 +100,7 @@ export const {
     updatePTStops,
     updateSelectedStop,
     updateStatus,
+    updateRouteOffset,
     updateMapStyle,
 } = slice.actions;
 
