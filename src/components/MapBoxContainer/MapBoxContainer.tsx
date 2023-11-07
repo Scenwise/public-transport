@@ -4,8 +4,10 @@ import { useDispatch } from 'react-redux';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
-import { updateMap, updateMapStyle } from '../../dataStoring/slice';
+import { updateMap, updateMapStyle, updateVisibleRouteState } from '../../dataStoring/slice';
+import { getVisibleRoutes } from '../../hooks/filterHook/useVisibleRoutesUpdate';
 import { usePublicTransport } from '../../hooks/usePublicTransport';
+import { useAppSelector } from '../../store';
 
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
@@ -30,6 +32,9 @@ const MapBoxContainer: React.FC = () => {
 
     const [lng] = useState(4.9041);
     const [lat] = useState(52.3676);
+
+    const visibleRoutes = useAppSelector((state) => state.slice.visibleRoutes);
+
     // const offset = useSelector((state: RootStore) => state.offsetReducer.offset);
     // const [shapeIdStopsMapMBCont, setShapeIdStopsMapMBCont] = useState<Map<number, ShapeIdStops>|null>();
     // const [stopIdsMapMBCont, setStopIdsMapMBCont] = useState<Map<number, Stop>|null>();
@@ -59,6 +64,22 @@ const MapBoxContainer: React.FC = () => {
         if (!map) initializeMap({ setMap, mapContainer });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [map]);
+
+    // Update the visible routes when map is moved.
+    useEffect(() => {
+        if (!map || !visibleRoutes.isOn) return;
+        const listener = () => {
+            setMap(newMap);
+            const updatedVisibleFiltering = getVisibleRoutes(map, visibleRoutes);
+            dispatch(updateVisibleRouteState(updatedVisibleFiltering));
+        };
+
+        const newMap = map.on('moveend', listener);
+
+        return () => {
+            map.off('moveend', listener);
+        };
+    }, [map, dispatch, visibleRoutes]);
 
     interface MapStyle {
         [key: string]: string;

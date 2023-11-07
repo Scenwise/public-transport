@@ -9,6 +9,8 @@ import { Stack, SvgIconTypeMap, Tooltip } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
 import { ReadyState } from '../../data/data';
+import { selectPTRoutesFeatureList } from '../../dataStoring/slice';
+import { filterRoutesByVisibleIds } from '../../hooks/filterHook/useVisibleRoutesUpdate';
 import { useAppSelector } from '../../store';
 import { FilterList } from '../Filter/FilterList';
 
@@ -32,6 +34,15 @@ const connectionStatus = (readyState: ReadyState) => {
 
 const RoutesTableHeader: React.FC = () => {
     const status = useAppSelector((state) => state.slice.status);
+    // Display the total number of routes and the number of visible routes
+    const totalRoutesNr = useAppSelector(selectPTRoutesFeatureList).length;
+    const filteredRoutes = useAppSelector((state) => state.slice.filteredRoutes).map((feature) => feature.properties);
+    const visibleRoutes = useAppSelector((state) => state.slice.visibleRoutes);
+    const filteredVisibleRoutesNr = filterRoutesByVisibleIds(
+        visibleRoutes.isOn,
+        visibleRoutes.ids,
+        filteredRoutes,
+    ).length;
 
     const getStatusIcon = (readystate: ReadyState): [SvgIconComponent, SvgIconTypeMap['props']['color']] => {
         return statusIcons[readystate];
@@ -43,7 +54,12 @@ const RoutesTableHeader: React.FC = () => {
             <Tooltip title={connectionStatus(status.ptRoute)} placement='right' sx={{ marginRight: 0.5 }}>
                 <PTRouteStatusIcon fontSize='small' color={ptRouteStatusColor} />
             </Tooltip>
-            <Typography noWrap={true}>list of routes</Typography>
+            <Stack direction='column'>
+                <Typography noWrap={true}>list of routes</Typography>
+                <Typography variant='caption'>
+                    {filteredVisibleRoutesNr} / {totalRoutesNr}
+                </Typography>
+            </Stack>
             <FilterList />
         </Stack>
     );

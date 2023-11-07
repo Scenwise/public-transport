@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { updateSelectedRoute } from '../../dataStoring/slice';
+import { filterRoutesByVisibleIds } from '../../hooks/filterHook/useVisibleRoutesUpdate';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { GeneralTable } from './GeneralTable';
 
@@ -11,10 +12,12 @@ const RoutesTable: React.FC = () => {
     const dispatch = useAppDispatch();
 
     // Filter the routes.
-    const ptRoutes = useAppSelector((state) => state.slice.filteredRoutes).map((feature) => feature.properties);
+    const filteredRoutes = useAppSelector((state) => state.slice.filteredRoutes).map((feature) => feature.properties);
+    const visibleRoutes = useAppSelector((state) => state.slice.visibleRoutes);
+    const filteredVisibleRoutes = filterRoutesByVisibleIds(visibleRoutes.isOn, visibleRoutes.ids, filteredRoutes);
 
     const headers = ['index', 'origin', 'destination', 'line number', 'agency', 'vehicle type', 'route id', 'shape id'];
-    const tables = ptRoutes.map((route, index) => [
+    const tables = filteredVisibleRoutes.map((route, index) => [
         index + '',
         route.origin,
         route.destination,
@@ -29,10 +32,13 @@ const RoutesTable: React.FC = () => {
     const selectedRouteID = useAppSelector((state) => state.slice.selectedRoute);
 
     const selectedRouteIndex = useMemo(() => {
-        return ptRoutes.map((route) => '' + route.shape_id).findIndex((routeID) => routeID === selectedRouteID);
-    }, [selectedRouteID, ptRoutes]);
+        return filteredVisibleRoutes
+            .map((route) => '' + route.shape_id)
+            .findIndex((routeID) => routeID === selectedRouteID);
+    }, [selectedRouteID, filteredVisibleRoutes]);
 
-    if (ptRoutes.length == 0) return null;
+    if (filteredVisibleRoutes.length == 0) return null;
+
     return (
         <GeneralTable
             headers={headers}

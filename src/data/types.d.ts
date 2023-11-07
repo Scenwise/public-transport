@@ -33,13 +33,12 @@ interface PTStopProperties {
     stopName: string;
 }
 
-// type Stops =  Record<string, Stop>;
-// type Stop =  {
-//     stopName: string;
-//     geometry: number[];
-// }
-
 type Status = {
     ptRoute: import('./data').ReadyState;
     ptStop: import('./data').ReadyState;
 };
+
+interface VisibleFiltering {
+    isOn: boolean; // if only shows routes on the current map screen
+    ids: string[]; // the ids of the public transport routes that are visible on the map
+}

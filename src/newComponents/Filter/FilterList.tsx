@@ -9,6 +9,7 @@ import Stack from '@mui/material/Stack';
 import { selectFilterList, selectPTStopsFeatureList, updateFilters } from '../../dataStoring/slice';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { FilterItem } from './FilterItem';
+import FilterVisibleSwitch from './FilterVisibleSwitch';
 
 const FilterList: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -67,6 +68,7 @@ const FilterList: React.FC = () => {
                     {filters.map((filter) => (
                         <FilterItem key={filter.optionTitle} filterItem={filter} />
                     ))}
+                    <FilterVisibleSwitch />
                     <Button variant='contained' endIcon={<DeleteIcon />} onClick={handleClearFilters}>
                         Clear filters
                     </Button>

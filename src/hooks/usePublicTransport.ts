@@ -12,6 +12,7 @@ import { addPublicTransportData } from '../methods/apiRequests/fetchData';
 import { useAppDispatch, useAppSelector } from '../store';
 import { useInitiateFilterOptions } from './filterHook/useInitiateFilterOptions';
 import { useUpdateRoutesWithFilter } from './filterHook/useUpdateRoutesWithFilter';
+import { useVisibleRoutesUpdate } from './filterHook/useVisibleRoutesUpdate';
 import { usePTRoutesActionUpdate } from './usePTRoutesActionUpdate';
 import { useApplyDataToSource, useInitializeSourcesAndLayers, usePTRoutesLayerUpdate } from './usePTRoutesLayerUpdate';
 import { usePTStopsActionUpdate } from './usePTStopsActionUpdate';
@@ -63,8 +64,11 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     // Update the style of the map
     // useUpdateMapStyle(map);
 
-    //Update the filtered list
+    // Update the filtered list
     useUpdateRoutesWithFilter();
+
+    // Update the visible routes from the current map screen
+    useVisibleRoutesUpdate(map);
 
     // Add the loaded source to the map
     useApplyDataToSource(mapInitialized.current, 'ptRoutes', ptRouteFeatures, map);

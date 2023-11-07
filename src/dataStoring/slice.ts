@@ -15,7 +15,7 @@ export interface State {
     filters: Filters; // The filters applied to the public transport routes
     initialFilters: Filters; // Keep the initial filters with the filled with options
     filteredRoutes: PTRouteFeature[]; // Keep the filtered routes
-    visibleRouteIDs: string[]; // The ids of the public transport routes that are visible on the map
+    visibleRoutes: VisibleFiltering; // State of the visible filtering
     status: Status;
     mapStyle: string; // The id of the current map style
     map?: mapboxgl.Map;
@@ -29,7 +29,10 @@ export const initialState: State = {
     filters: {} as Filters,
     initialFilters: {},
     filteredRoutes: [] as PTRouteFeature[],
-    visibleRouteIDs: [],
+    visibleRoutes: {
+        isOn: false,
+        ids: [],
+    },
     status: {
         ptRoute: ReadyState.UNINSTANTIATED,
         ptStop: ReadyState.UNINSTANTIATED,
@@ -56,8 +59,8 @@ const slice = createSlice({
         updateFilteredRoutes(state: State, action: PayloadAction<PTRouteFeature[]>) {
             state.filteredRoutes = action.payload;
         },
-        updateVisibleRouteIDs(state: State, action: PayloadAction<string[]>) {
-            state.visibleRouteIDs = action.payload;
+        updateVisibleRouteState(state: State, action: PayloadAction<VisibleFiltering>) {
+            state.visibleRoutes = deepcopy(action.payload);
         },
         updateSelectedRoute(state: State, action: PayloadAction<string>) {
             state.selectedRoute = action.payload;
@@ -87,7 +90,7 @@ export const {
     updateInitialFilters,
     updateFilter,
     updateFilteredRoutes,
-    updateVisibleRouteIDs,
+    updateVisibleRouteState,
     updateSelectedRoute,
     updatePTStops,
     updateSelectedStop,
