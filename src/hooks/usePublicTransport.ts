@@ -8,7 +8,7 @@ import {
     updatePTStops,
     updateStatus,
 } from '../dataStoring/slice';
-import { addPublicTransportData } from '../methods/apiRequests/fetchData';
+import { addPublicTransportData } from '../methods/apiRequests/addPublicTransportData';
 import { useAppDispatch, useAppSelector } from '../store';
 import { useInitiateFilterOptions } from './filterHook/useInitiateFilterOptions';
 import { useUpdateRoutesWithFilter } from './filterHook/useUpdateRoutesWithFilter';
@@ -17,6 +17,7 @@ import { usePTRoutesActionUpdate } from './mapUdatingHooks/usePTRoutesActionUpda
 import { usePTRoutesLayerUpdate } from './mapUdatingHooks/usePTRoutesLayerUpdate';
 import { usePTStopsActionUpdate } from './mapUdatingHooks/usePTStopsActionUpdate';
 import { usePTStopsLayerUpdate } from './mapUdatingHooks/usePTStopsLayerUpdate';
+import { useUpdateMapStyle } from './mapUdatingHooks/useUpdateMapStyle';
 import { useApplyDataToSource, useInitializeSourcesAndLayers } from './useInitializeSourcesAndLayers';
 
 export const usePublicTransport = (map: mapboxgl.Map | null): void => {
@@ -63,7 +64,7 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     usePTStopsLayerUpdate(map);
 
     // Update the style of the map
-    // useUpdateMapStyle(map);
+    useUpdateMapStyle(map);
 
     // Update the filtered list
     useUpdateRoutesWithFilter();

@@ -2,10 +2,9 @@ import mapboxgl from 'mapbox-gl';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { SelectChangeEvent } from '@mui/material/Select';
-
-import { updateMapStyle, updateVisibleRouteState } from '../dataStoring/slice';
+import { selectPTRoutesFeatureList, selectPTStopsFeatureList, updateVisibleRouteState } from '../dataStoring/slice';
 import { getVisibleRoutes } from '../hooks/filterHook/useVisibleRoutesUpdate';
+import { updateSourcesAndLayers } from '../hooks/useInitializeSourcesAndLayers';
 import { usePublicTransport } from '../hooks/usePublicTransport';
 import { useAppSelector } from '../store';
 
@@ -29,25 +28,15 @@ const MapBoxContainer: React.FC = () => {
 
     const mapContainer = useRef<HTMLDivElement | null>(null);
     const dispatch = useDispatch();
+    const mapStyle = useAppSelector((state) => state.slice.mapStyle);
 
     const [lng] = useState(4.9041);
     const [lat] = useState(52.3676);
 
     const visibleRoutes = useAppSelector((state) => state.slice.visibleRoutes);
 
-    // const offset = useSelector((state: RootStore) => state.offsetReducer.offset);
-    // const [shapeIdStopsMapMBCont, setShapeIdStopsMapMBCont] = useState<Map<number, ShapeIdStops>|null>();
-    // const [stopIdsMapMBCont, setStopIdsMapMBCont] = useState<Map<number, Stop>|null>();
-
-    // const popupLine = new mapboxgl.Popup({
-    //     closeButton: false,
-    //     closeOnClick: false,
-    // });
-    //
-    // const popupPoint = new mapboxgl.Popup({
-    //     closeButton: false,
-    //     closeOnClick: false,
-    // });
+    const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
+    const ptStopFeatures = useAppSelector(selectPTStopsFeatureList);
 
     usePublicTransport(map);
 
@@ -81,16 +70,6 @@ const MapBoxContainer: React.FC = () => {
         };
     }, [map, dispatch, visibleRoutes]);
 
-    interface MapStyle {
-        [key: string]: string;
-    }
-    const mapStyles: MapStyle = {
-        'streets-v12': 'Streets',
-        'outdoors-v12': 'Outdoors',
-        'light-v11': 'Light',
-        'dark-v11': 'Dark',
-        'satellite-streets-v12': 'Satellite',
-    };
     /**
      * Initializaes the map with styles,
      * load the geoJSON for the public transport segments.
@@ -100,7 +79,7 @@ const MapBoxContainer: React.FC = () => {
     const initializeMap = ({ setMap, mapContainer }: MapAndContainer): void => {
         const map = new mapboxgl.Map({
             container: mapContainer.current as string | HTMLElement,
-            style: 'mapbox://styles/mapbox/light-v11',
+            style: 'mapbox://styles/mapbox/' + mapStyle,
             center: [lng, lat], //coordinates for Amsterdam
             zoom: 10,
         });
@@ -108,284 +87,14 @@ const MapBoxContainer: React.FC = () => {
         map.on('load', async () => {
             setMap(map);
             map.resize();
+        });
 
-            const Select = document.getElementById('map-select');
-            if (Select) {
-                Select.addEventListener('change', (event) => {
-                    const id = Object.keys(mapStyles).find(
-                        (key) => mapStyles[key] === (event as SelectChangeEvent).target?.value,
-                    ) as string;
-
-                    if (map) {
-                        switch (id) {
-                            case 'streets-v12':
-                                map.setStyle('mapbox://styles/mapbox/streets-v12');
-                                break;
-                            case 'outdoors-v12':
-                                map.setStyle('mapbox://styles/mapbox/outdoors-v12');
-                                break;
-                            case 'light-v11':
-                                map.setStyle('mapbox://styles/mapbox/light-v11');
-                                break;
-                            case 'dark-v11':
-                                map.setStyle('mapbox://styles/mapbox/dark-v11');
-                                break;
-                            case 'satellite-streets-v12':
-                                map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
-                                break;
-                        }
-                    }
-
-                    dispatch(updateMapStyle(id));
-                });
-            }
-
-            // TODO: refactor this
-            // Initialize map when component mounts
-            // TODO: solve the cognitive-complexity problem
-            // eslint-disable-next-line sonarjs/cognitive-complexity
-            //     let routesMap: Map<number, ShapeIdStops> | null = null;
-            //     let stopsMap: Map<number, Stop> | null = null;
-            //     let dataComponent: GeoJSON.FeatureCollection<GeoJSON.Geometry> | null = null;
-            //
-            //     fetchGtfsTable('gtfs_stop_shape_ids_geom').then((dataShapeStops) => {
-            //         const { shapeIdStopsMap, stopIdsMap } = jsonInterfaceConverter(dataShapeStops);
-            //
-            //         routesMap = shapeIdStopsMap;
-            //         stopsMap = stopIdsMap;
-            //
-            //         dispatch(
-            //             allActions.setShapeIdStopsMapContainerAction.setShapeIdStopsMapContainerAction(shapeIdStopsMap),
-            //         );
-            //         dispatch(allActions.setStopIdsMapContAction.setStopIdsMapContAction(stopIdsMap));
-            //     });
-            //
-            //     map.on('load', async function () {
-            //         const data = await fetchGtfsTable('gtfs_shapes_agency_vehicle_type_number_stops_info');
-            //         dataComponent = data;
-            //
-            //         // const [routeLayer, agenciesSet, modalitiesSet] = loadLineStringLayer(
-            //         //     map,
-            //         //     data,
-            //         //     {
-            //         //         Agency: new Set<string>(),
-            //         //         'Vehicle Type': new Set<string>(),
-            //         //         'Line Number': new Set<string>(),
-            //         //     },
-            //         //     offset as number,
-            //         // );
-            //         // dispatch(allActions.setAgencieSetAction.setAgenciesSetAction(agenciesSet));
-            //         //
-            //         // dispatch(allActions.setModalitiesSetAction.setModlitiesSetAction(modalitiesSet));
-            //
-            //         // if (routeLayer !== null) {
-            //         //     setDisplayGeoDataPTLines(routeLayer);
-            //         // }
-            //         // dispatch(allActions.setGeoDataPTLinesActions.setGeoDataPTLinesAction(data));
-            //         // setDisplayGeoDataPTLines(data);
-            //     });
-            //
-            //     map.on('click', function (e) {
-            //         dispatch(allActions.setSelectedRouteAction.setSelectedRouteAction([-1, '', '', '', '', '', false]));
-            //
-            //         try {
-            //             if (map.getLayer('stops-fill') !== undefined) {
-            //                 map.removeLayer('stops-fill');
-            //                 map.removeSource('gtfs_shape_id_stops');
-            //             }
-            //
-            //             if (map.getLayer('selected_line') !== undefined) {
-            //                 map.removeLayer('selected_line');
-            //                 map.removeSource('selected_line-layer');
-            //             }
-            //         } catch (error) {
-            //             console.log(error);
-            //         }
-            //
-            //         const selectedFeature = selectFeaturesFunc(e)['lines'];
-            //         if (selectedFeature !== undefined && selectedFeature !== null) {
-            //             const properties = JSON.parse(JSON.stringify(selectedFeature));
-            //
-            //             const gid = properties['route_id'] as number;
-            //
-            //             const id = selectedFeature['shape_id'];
-            //             const origin = selectedFeature['origin'];
-            //             const destination = selectedFeature['destination'];
-            //             const lineNumber = selectedFeature['line_number'];
-            //             const agency = selectedFeature['agency_id'];
-            //
-            //             if (dataComponent === null) {
-            //                 return;
-            //             }
-            //
-            //             const [dataRoutesMap, ,] = jsonInterfaceConverterRoutes(dataComponent, {
-            //                 Agency: new Set<string>(),
-            //                 'Vehicle Type': new Set<string>(),
-            //                 'Line Number': new Set<string>(),
-            //             });
-            //             const shape = dataRoutesMap?.get(gid);
-            //
-            //             const routeLayer = createLayer('LineString', [shape]);
-            //
-            //             setLayerToMap(
-            //                 'selected_line-layer',
-            //                 JSON.parse(JSON.stringify(selectedLineLayer)),
-            //                 routeLayer as FeatureCollection<Geometry, GeoJsonProperties>,
-            //                 map,
-            //             );
-            //
-            //             // map?.setPaintProperty('selected_line', 'line-offset', offset);
-            //             // dispatch(
-            //             //     allActions.setSelectedRouteAction.setSelectedRouteAction([
-            //             //         gid as number,
-            //             //         id,
-            //             //         agency,
-            //             //         lineNumber,
-            //             //         origin,
-            //             //         destination,
-            //             //         true,
-            //             //     ]),
-            //             // );
-            //
-            //             // displayStopsForGidId(gid);
-            //         }
-            //     });
-            //
-            //     map.on('mousemove', (e) => {
-            //         let selectedFeatureLines = null;
-            //         let selectedFeaturePoints = null;
-            //         try {
-            //             selectedFeatureLines = selectFeaturesFunc(e)['lines'];
-            //             selectedFeaturePoints = selectFeaturesFunc(e)['points'];
-            //         } catch (error) {
-            //             return;
-            //         }
-            //
-            //         try {
-            //             if (selectedFeaturePoints !== undefined) {
-            //                 map.getCanvas().style.cursor = 'pointer';
-            //
-            //                 if (selectedFeaturePoints !== null) {
-            //                     const id = selectedFeaturePoints['stopId'];
-            //                     const name = selectedFeaturePoints['stopName'];
-            //
-            //                     const descr = document.createElement('div');
-            //                     descr.style.textAlign = 'left';
-            //                     descr.innerHTML = `<div>
-            //   <div>Stop ID: ${id}</div>
-            //   <div>Stop Name: ${name}</div>
-            // </div>`;
-            //                     popupPoint.setLngLat(e.lngLat).setHTML(descr.outerHTML).addTo(map);
-            //                 }
-            //             } else {
-            //                 map.getCanvas().style.cursor = '';
-            //                 popupPoint.remove();
-            //             }
-            //         } catch (error) {
-            //             console.log(error);
-            //         }
-            //
-            //         try {
-            //             if (selectedFeatureLines !== undefined && selectedFeaturePoints === undefined) {
-            //                 map.getCanvas().style.cursor = 'pointer';
-            //
-            //                 if (selectedFeatureLines !== null) {
-            //                     const id = selectedFeatureLines['shape_id'];
-            //                     const origin = selectedFeatureLines['origin'];
-            //                     const destination = selectedFeatureLines['destination'];
-            //                     const lineNumber = selectedFeatureLines['line_number'];
-            //                     const agency = selectedFeatureLines['agency_id'];
-            //
-            //                     const descr = document.createElement('div');
-            //                     descr.style.textAlign = 'left';
-            //                     descr.innerHTML = `<div>
-            //   <div>Shape ID: ${id}</div>
-            //   <div>Agency: ${agency}</div>
-            //   <div>Line Number: ${lineNumber}</div>
-            //   <div>Origin: ${origin}</div>
-            //   <div>Destination: ${destination}</div>
-            // </div>`;
-            //                     popupLine.setLngLat(e.lngLat).setHTML(descr.outerHTML).addTo(map);
-            //                 }
-            //             } else {
-            //                 map.getCanvas().style.cursor = '';
-            //                 popupLine.remove();
-            //             }
-            //         } catch (error) {
-            //             console.log(error);
-            //         }
-            //     });
-            //
-            //     const selectFeaturesFunc = (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
-            //         const offset = 0.5;
-            //         const mapLinePoint: {
-            //             lines: GeoJsonProperties | undefined;
-            //             points: GeoJsonProperties | undefined;
-            //         } = {
-            //             lines: undefined,
-            //             points: undefined,
-            //         };
-            //
-            //         if (map.getLayer('connecting-lines-fill') !== undefined) {
-            //             const selectedFeaturesLine = map.queryRenderedFeatures(
-            //                 [
-            //                     new mapboxgl.Point(e.point.x - offset, e.point.y - offset),
-            //                     new mapboxgl.Point(e.point.x + offset, e.point.y + offset),
-            //                 ],
-            //                 {
-            //                     layers: ['connecting-lines-fill'],
-            //                 },
-            //             );
-            //             if (selectedFeaturesLine.length > 0) {
-            //                 mapLinePoint['lines'] = selectedFeaturesLine[0].properties;
-            //             }
-            //         }
-            //
-            //         if (map.getLayer('stops-fill') !== undefined) {
-            //             const selectedFeaturesPoint = map.queryRenderedFeatures(
-            //                 [
-            //                     new mapboxgl.Point(e.point.x - offset, e.point.y - offset),
-            //                     new mapboxgl.Point(e.point.x + offset, e.point.y + offset),
-            //                 ],
-            //                 {
-            //                     layers: ['stops-fill'],
-            //                 },
-            //             );
-            //             if (selectedFeaturesPoint.length > 0) {
-            //                 mapLinePoint['points'] = selectedFeaturesPoint[0].properties;
-            //             }
-            //         }
-            //
-            //         return mapLinePoint;
-            //     };
-            //
-            //     // const displayStopsForGidId = (gid: number) => {
-            //     //     const stopIds: Array<number> | undefined = routesMap?.get(gid)?.stops_ids;
-            //     //     const stopsArray: (Stop | undefined)[] = [];
-            //     //     stopIds?.forEach((stopId: number) => {
-            //     //         if (stopsMap?.has(stopId)) {
-            //     //             stopsArray.push(stopsMap?.get(stopId));
-            //     //         }
-            //     //     });
-            //     //     const pointLayer = createLayer('Point', stopsArray);
-            //     //
-            //     //     setLayerToMap(
-            //     //         'gtfs_shape_id_stops',
-            //     //         JSON.parse(JSON.stringify(stopsLayer)),
-            //     //         pointLayer as FeatureCollection<Geometry, GeoJsonProperties>,
-            //     //         map,
-            //     //     );
-            //     //     map?.setPaintProperty('stops-fill', 'circle-translate', [offset, 0]);
-            //     // };
-            //
-            //     return () => map.remove();
-            // TODO: refactor
+        //     // If the style is changed, reload the layers and the source
+        map.on('style.load', () => {
+            updateSourcesAndLayers('ptRoutes', ptRouteFeatures, map);
+            updateSourcesAndLayers('ptStops', ptStopFeatures, map);
         });
     };
-
-    // async function fetchGtfsTable(tableName: string) {
-    //     return await getGtfsTable(tableName);
-    // }
 
     const styles: React.CSSProperties = {
         width: '100%',
