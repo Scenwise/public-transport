@@ -1,14 +1,13 @@
 import React from 'react';
 
-import './App.css';
-import MapBoxContainer from './components/MapBoxContainer/MapBoxContainer';
-import { RoutesTable } from './newComponents/Table/RoutesTable';
-import { StopsTable } from './newComponents/Table/StopsTable';
-import TopBar from './newComponents/TopBar/TopBar';
+import MapBoxContainer from './components/MapBoxContainer';
+import { RoutesTable } from './components/Table/RoutesTable';
+import { StopsTable } from './components/Table/StopsTable';
+import TopBar from './components/TopBar/TopBar';
 
 function App() {
     return (
-        <div className='app'>
+        <div>
             <TopBar />
             <MapBoxContainer />
             <RoutesTable />

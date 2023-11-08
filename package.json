@@ -34,6 +34,7 @@
     "react-window": "^1.8.9",
     "redux": "^4.2.1",
     "redux-devtools-extension": "^2.13.9",
+    "sonarqube-scanner": "^3.2.0",
     "styled-components": "^5.3.6",
     "typescript": "^4.9.4",
     "web-vitals": "^2.1.4",
@@ -53,7 +54,8 @@
     "format:fix": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md,json} --config ./.prettierrc",
     "stylelint": "stylelint src/**/*.css",
     "stylelint:fix": "stylelint src/**/*.css --fix",
-    "stylelint:report": "yarn run stylelint -- -f json -o stylelint-report.json"
+    "stylelint:report": "yarn run stylelint -- -f json -o stylelint-report.json",
+    "sonar": "node sonarqube-scanner.mjs"
   },
   "eslintConfig": {
     "extends": [

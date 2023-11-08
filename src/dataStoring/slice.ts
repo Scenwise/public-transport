@@ -19,7 +19,6 @@ export interface State {
     status: Status;
     mapStyle: string; // The id of the current map style
     routeOffset: number;
-    map?: mapboxgl.Map;
 }
 
 export const initialState: State = {
@@ -82,14 +81,10 @@ const slice = createSlice({
         updateMapStyle(state: State, action: PayloadAction<string>) {
             state.mapStyle = action.payload;
         },
-        updateMap(state: State, action: PayloadAction<mapboxgl.Map>) {
-            state.map = action.payload;
-        },
     },
 });
 
 export const {
-    updateMap,
     updatePTRoutes,
     updateFilters,
     updateInitialFilters,

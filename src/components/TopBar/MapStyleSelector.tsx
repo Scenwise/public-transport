@@ -13,30 +13,8 @@ const MapStyleSelector: React.FC = () => {
     const dispatch = useAppDispatch();
     const mapStyleID = useAppSelector((state) => state.slice.mapStyle);
 
-    const map = useAppSelector((state) => state.slice.map);
-
     const handleChange = (event: SelectChangeEvent) => {
         const id = Object.keys(mapStyles).find((key) => mapStyles[key] === event.target.value) as string;
-
-        if (map) {
-            switch (id) {
-                case 'streets-v12':
-                    map.setStyle('mapbox://styles/mapbox/streets-v12');
-                    break;
-                case 'outdoors-v12':
-                    map.setStyle('mapbox://styles/mapbox/outdoors-v12');
-                    break;
-                case 'light-v11':
-                    map.setStyle('mapbox://styles/mapbox/light-v11');
-                    break;
-                case 'dark-v11':
-                    map.setStyle('mapbox://styles/mapbox/dark-v11');
-                    break;
-                case 'satellite-streets-v12':
-                    map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
-                    break;
-            }
-        }
 
         dispatch(updateMapStyle(id));
     };

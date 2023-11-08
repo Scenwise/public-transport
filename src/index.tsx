@@ -7,18 +7,9 @@ import ReactDOM from 'react-dom/client';
 
 import App from './App';
 import './index.css';
-import rootReducer from './reducers/combineReducers';
 import reportWebVitals from './reportWebVitals';
 import store from './store';
 
-// const store = configureStore({
-//     reducer: rootReducer,
-//     middleware: (getDefaultMiddleware) =>
-//         getDefaultMiddleware({
-//             serializableCheck: false,
-//         }),
-// });
-export type RootStore = ReturnType<typeof rootReducer>;
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
     <Provider store={store}>

@@ -8,7 +8,7 @@ export enum ReadyState {
 
 export const FilterType = {
     checkbox: 'checkbox',
-    sub_checkbox: 'sub-checkbox',
+    subCheckbox: 'sub-checkbox',
     range: 'range', // determine range with a slider
     inputRange: 'inputRange', // determine range with two inputs
     switch: 'switch',

@@ -39,7 +39,7 @@ export const useUpdateRoutesWithFilter = () => {
 };
 
 /**
- * If the filter is a checkbox or sub_checkbox type, determine if a value/property of an alert should be filtered
+ * If the filter is a checkbox or subCheckbox type, determine if a value/property of an alert should be filtered
  * @param filter The filter to apply
  * @param value The value to be checked if it is included after the filter is applied
  */

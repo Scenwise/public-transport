@@ -4,10 +4,10 @@ import { useDispatch } from 'react-redux';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
-import { updateMap, updateMapStyle, updateVisibleRouteState } from '../../dataStoring/slice';
-import { getVisibleRoutes } from '../../hooks/filterHook/useVisibleRoutesUpdate';
-import { usePublicTransport } from '../../hooks/usePublicTransport';
-import { useAppSelector } from '../../store';
+import { updateMapStyle, updateVisibleRouteState } from '../dataStoring/slice';
+import { getVisibleRoutes } from '../hooks/filterHook/useVisibleRoutesUpdate';
+import { usePublicTransport } from '../hooks/usePublicTransport';
+import { useAppSelector } from '../store';
 
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
@@ -108,8 +108,6 @@ const MapBoxContainer: React.FC = () => {
         map.on('load', async () => {
             setMap(map);
             map.resize();
-
-            dispatch(updateMap(map));
 
             const Select = document.getElementById('map-select');
             if (Select) {
