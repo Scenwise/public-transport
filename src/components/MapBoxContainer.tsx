@@ -1,10 +1,10 @@
-import mapboxgl from 'mapbox-gl';
+import mapboxgl, { AnyLayer } from 'mapbox-gl';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { selectPTRoutesFeatureList, selectPTStopsFeatureList, updateVisibleRouteState } from '../dataStoring/slice';
 import { getVisibleRoutes } from '../hooks/filterHook/useVisibleRoutesUpdate';
-import { updateSourcesAndLayers } from '../hooks/useInitializeSourcesAndLayers';
+import { layerConfig, updateSourcesAndLayers } from '../hooks/useInitializeSourcesAndLayers';
 import { usePublicTransport } from '../hooks/usePublicTransport';
 import { useAppSelector } from '../store';
 
@@ -38,7 +38,9 @@ const MapBoxContainer: React.FC = () => {
     const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
     const ptStopFeatures = useAppSelector(selectPTStopsFeatureList);
 
-    usePublicTransport(map);
+    const mapInitialized = useRef(false);
+
+    usePublicTransport(map, mapInitialized);
 
     /**
      * First initialization of map called on first render.
@@ -87,9 +89,25 @@ const MapBoxContainer: React.FC = () => {
         map.on('load', async () => {
             setMap(map);
             map.resize();
+
+            Object.entries(layerConfig).forEach(([layerId, layer]: [string, AnyLayer]) => {
+                const sourceId = `${layerId}Source`;
+
+                if (!map.getSource(sourceId)) {
+                    map.addSource(sourceId, {
+                        type: 'geojson',
+                        data: { type: 'FeatureCollection', features: [] },
+                    });
+
+                    if (!map.getLayer(layer.id)) {
+                        map.addLayer(layer);
+                    }
+                }
+            });
+            mapInitialized.current = true;
         });
 
-        //     // If the style is changed, reload the layers and the source
+        // If the style is changed, reload the layers and the source
         map.on('style.load', () => {
             updateSourcesAndLayers('ptRoutes', ptRouteFeatures, map);
             updateSourcesAndLayers('ptStops', ptStopFeatures, map);

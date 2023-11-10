@@ -17,14 +17,13 @@ import { usePTRoutesActionUpdate } from './mapUdatingHooks/usePTRoutesActionUpda
 import { usePTRoutesLayerUpdate } from './mapUdatingHooks/usePTRoutesLayerUpdate';
 import { usePTStopsActionUpdate } from './mapUdatingHooks/usePTStopsActionUpdate';
 import { usePTStopsLayerUpdate } from './mapUdatingHooks/usePTStopsLayerUpdate';
-import { useUpdateMapStyle } from './mapUdatingHooks/useUpdateMapStyle';
-import { useApplyDataToSource, useInitializeSourcesAndLayers } from './useInitializeSourcesAndLayers';
+import { useApplyDataToSource } from './useInitializeSourcesAndLayers';
 
-export const usePublicTransport = (map: mapboxgl.Map | null): void => {
+export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: React.MutableRefObject<boolean>): void => {
     const dispatch = useAppDispatch();
 
     // Initialize the routes and the stops
-    const mapInitialized = useInitializeSourcesAndLayers(map);
+    // const mapInitialized = useInitializeSourcesAndLayers(map);
 
     const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
     const ptStopFeatures = useAppSelector(selectPTStopsFeatureList);
@@ -64,7 +63,7 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     usePTStopsLayerUpdate(map);
 
     // Update the style of the map
-    useUpdateMapStyle(map);
+    // useUpdateMapStyle(map);
 
     // Update the filtered list
     useUpdateRoutesWithFilter();
