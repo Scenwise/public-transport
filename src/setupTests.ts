@@ -3,3 +3,10 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+
+// Mock mapbox, otherwise the component wont render as WebGL is not available during testing
+jest.mock('mapbox-gl');
+
+window.URL.createObjectURL = function () {
+    return '';
+};
