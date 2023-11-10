@@ -32,7 +32,7 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     // Fetch the data from the api and store them
     // Update the filter options
     useEffect(() => {
-        if (mapInitialized.current) {
+        if (map && mapInitialized.current) {
             const fetchData = async () => {
                 dispatch(updateStatus({ ptRoute: ReadyState.CONNECTING, ptStop: ReadyState.CONNECTING }));
 

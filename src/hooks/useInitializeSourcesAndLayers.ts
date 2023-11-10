@@ -16,7 +16,7 @@ export const useInitializeSourcesAndLayers = (map: mapboxgl.Map | null): React.M
     const hasInitialized = useRef(false);
 
     useEffect(() => {
-        if (map) {
+        if (map && !hasInitialized.current) {
             Object.entries(layerConfig).forEach(([layerId, layer]: [string, AnyLayer]) => {
                 const sourceId = `${layerId}Source`;
 
