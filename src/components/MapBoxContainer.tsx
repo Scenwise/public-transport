@@ -70,6 +70,24 @@ const MapBoxContainer: React.FC = () => {
         };
     }, [map, dispatch, visibleRoutes]);
 
+    // Update the visible routes when map is moved.
+    useEffect(() => {
+        if (!map) return;
+
+        const listener = () => {
+            setMap(newMap);
+
+            updateSourcesAndLayers('ptRoutes', ptRouteFeatures, map);
+            updateSourcesAndLayers('ptStops', ptStopFeatures, map);
+        };
+
+        const newMap = map.on('style.load', listener);
+
+        return () => {
+            map.off('style.load', listener);
+        };
+    }, [mapStyle, ptRouteFeatures, ptStopFeatures, map]);
+
     /**
      * Initializaes the map with styles,
      * load the geoJSON for the public transport segments.
@@ -83,17 +101,18 @@ const MapBoxContainer: React.FC = () => {
             center: [lng, lat], //coordinates for Amsterdam
             zoom: 10,
         });
+        // map.addControl(new MapboxStyleSwitcherControl());
 
         map.on('load', async () => {
             setMap(map);
             map.resize();
         });
 
-        //     // If the style is changed, reload the layers and the source
-        map.on('style.load', () => {
-            updateSourcesAndLayers('ptRoutes', ptRouteFeatures, map);
-            updateSourcesAndLayers('ptStops', ptStopFeatures, map);
-        });
+        // If the style is changed, reload the layers and the source
+        // map.on('style.load', () => {
+        //     updateSourcesAndLayers('ptRoutes', ptRouteFeatures, map);
+        //     updateSourcesAndLayers('ptStops', ptStopFeatures, map);
+        // });
     };
 
     const styles: React.CSSProperties = {
