@@ -33,7 +33,7 @@ const StopsTable: React.FC = () => {
     const selectedStopIndex = ptStopsProperty.findIndex((stop) => stop.stopId == selectedStopID);
 
     return (
-        <>
+        <div id={'stops-table'}>
             {selectedRouteID !== '' && (
                 <GeneralTable
                     key={selectedRouteID}
@@ -41,6 +41,7 @@ const StopsTable: React.FC = () => {
                     tables={tables}
                     updateSelectedFeature={(selectedStopID) => dispatch(updateSelectedStop(selectedStopID))}
                     selectedRowIndex={selectedStopIndex}
+                    id={selectedRouteID}
                     style={{
                         position: 'absolute',
                         right: 0,
@@ -51,7 +52,7 @@ const StopsTable: React.FC = () => {
                     }}
                 />
             )}
-        </>
+        </div>
     );
 };
 

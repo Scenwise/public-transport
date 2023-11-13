@@ -9,6 +9,7 @@ interface GeneralTableProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateSelectedFeature: (feature: any) => void; // Click on a row to select a feature
     selectedRowIndex: number;
+    id?: string;
     style?: React.CSSProperties; // Add style as an optional prop
 }
 
