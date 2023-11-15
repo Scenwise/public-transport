@@ -44,27 +44,34 @@ export const addPublicTransportData = async (
                         const ptStops = {} as FeatureRecord<PTStopFeature>;
 
                         ptStopsRes.features.forEach((feature) => {
-                            const id = '' + feature.id; //the id is shape_id which is a number
+                            const id = '' + feature.id; //This id is shape_id which is a number
 
+                            // The stop properties to be put on the table
                             const stopProperties = JSON.parse(JSON.stringify(feature.properties));
-                            const stopIds = stopProperties.stops_ids;
-                            const stopNames = stopProperties.stop_names;
+                            const stopIds: string[] = stopProperties.stops_ids;
+                            const stopNames: string[] = stopProperties.stop_names;
                             const stopGeometries = JSON.parse(JSON.stringify(feature.geometry)).coordinates;
 
-                            // Add the stop ids to the route
-                            ptRoutes[id].properties.stops_ids = stopIds;
+                            const stops: PTStopFeature[] = stopIds.map((stopId, index) => ({
+                                id: stopId,
+                                type: 'Feature',
+                                geometry: { type: 'Point', coordinates: stopGeometries[index] },
+                                properties: {
+                                    stopId: stopId,
+                                    stopName: stopNames[index],
+                                },
+                            }));
 
-                            stopIds.forEach((id: string, index: number) => {
-                                const stopFeature = {
-                                    id: id,
-                                    type: 'Feature',
-                                    geometry: { type: 'Point', coordinates: stopGeometries[index] },
-                                    properties: {
-                                        stopId: id,
-                                        stopName: stopNames[index],
-                                    },
-                                };
-                                ptStops[id] = stopFeature as PTStopFeature;
+                            const sortedStops: PTStopFeature[] = removeDuplicateStops(
+                                sortStops(ptRoutes[id], stopGeometries, stops),
+                            );
+
+                            // Add the stop ids to the route
+                            ptRoutes[id].properties.stops_ids = sortedStops.map((stop) => stop.properties.stopId);
+
+                            // Store each individual stops into the general stop map.
+                            sortedStops.forEach((stop: PTStopFeature) => {
+                                ptStops[stop.properties.stopId] = stop;
                             });
                         });
 
@@ -87,4 +94,50 @@ export const addPublicTransportData = async (
                 ptRouteStatus = ReadyState.CLOSED;
             });
     });
+};
+
+// Function to sort stops
+const sortStops = (ptRoute: PTRouteFeature, stopGeometries: number[][], stops: PTStopFeature[]): PTStopFeature[] => {
+    const sortedStops: PTStopFeature[] = new Array(stopGeometries.length).fill(null);
+
+    // For finding the indices of the stop coordinates from the route coordinates
+    // (the decimal need to be limited in order to match up)
+    const routeCoordinates = ptRoute.geometry.coordinates.map((coordinate) => limitDecimalPlaces(coordinate));
+    const limitDecimalStopGeometries = stopGeometries.map((coordinate: number[]) => limitDecimalPlaces(coordinate));
+
+    // The places of the coordinates of the stops in the route
+    // Each entry of the coordinateIndices: [The place of the coordinate of a stop in the route, The original index of the stop]
+    const coordinateIndices = limitDecimalStopGeometries.map((stopCoordinate: number[], index: number) => [
+        routeCoordinates.findIndex((routeCoordinate) => arraysMatch(stopCoordinate, routeCoordinate)),
+        index,
+    ]);
+
+    // Sort the function with the correct indices order
+    coordinateIndices
+        .sort((a: number[], b: number[]) => a[0] - b[0])
+        .forEach((coordinateIndex: number[], index: number) => {
+            sortedStops[index] = stops[coordinateIndex[1]];
+        });
+
+    return sortedStops;
+};
+
+// After sorting, it is found that some cases there are duplicate stops next to each other, remove one of them.
+const removeDuplicateStops = (sortedStops: PTStopFeature[]): PTStopFeature[] => {
+    return sortedStops.reduce((processedStops: PTStopFeature[], stop: PTStopFeature, index: number) => {
+        if (index === sortedStops.length - 1 || stop.properties.stopId !== sortedStops[index + 1].properties.stopId) {
+            return [...processedStops, stop];
+        }
+        return processedStops;
+    }, []);
+};
+
+// Function to limit decimal places to four
+const limitDecimalPlaces = (coordinates: number[]): number[] => {
+    return [Number(coordinates[0].toFixed(3)), Number(coordinates[1].toFixed(3))];
+};
+
+// Function to compare arrays by values
+const arraysMatch = (arr1: number[], arr2: number[]): boolean => {
+    return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 };

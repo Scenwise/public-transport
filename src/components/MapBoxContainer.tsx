@@ -37,6 +37,10 @@ const MapBoxContainer: React.FC = () => {
     const [lat] = useState(52.3676);
     const [zoom, setZoom] = useState<number>(10);
 
+    const OVERVIEW_DIFFERENCE = 4;
+    const OVERVIEW_MIN_ZOOM = 5;
+    const OVERVIEW_MAX_ZOOM = 10;
+
     const visibleRoutes = useAppSelector((state) => state.slice.visibleRoutes);
 
     const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
@@ -45,10 +49,6 @@ const MapBoxContainer: React.FC = () => {
     const selectedRouteID = useAppSelector((state) => state.slice.selectedRoute);
 
     usePublicTransport(map);
-
-    const OVERVIEW_DIFFERENCE = 3;
-    const OVERVIEW_MIN_ZOOM = 5;
-    const OVERVIEW_MAX_ZOOM = 10;
 
     /**
      * First initialization of map called on first render.
