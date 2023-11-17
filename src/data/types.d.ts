@@ -42,3 +42,37 @@ interface VisibleFiltering {
     isOn: boolean; // if only shows routes on the current map screen
     ids: string[]; // the ids of the public transport routes that are visible on the map
 }
+
+
+interface VehicleRoutePair {
+    marker: mapboxgl.Marker;
+    route: PTRouteFeature;
+    vehicle: PTVechileProperties;
+}
+
+interface PTVechileProperties {
+    messageType: string,
+    dataOwnerCode: string,
+    linePlanningNumber: string,
+    operatingDay: Array<number>,
+    journeyNumber: number,
+    reinforcementNumber: number,
+    userStopCode: string,
+    passageSequenceNumber: number,
+    timestamp: number,
+    source: string,
+    vehicleNumber: number,
+    punctuality: number,
+    rdX: number,
+    rdY: number,
+    longitude: number,
+    latitude: number
+  };
+
+interface PTRouteIndex {
+    minX: number,
+    minY: number,
+    maxX: number,
+    maxY: number,
+    route: PTRouteFeature
+}

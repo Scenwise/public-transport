@@ -16,3 +16,5 @@ export const STROKE_COLOR_STOP_SELECTED = 'red';
 export const STROKE_COLOR_STOP_DEFAULT = 'transparent';
 export const STROKE_WIDTH_STOP_SELECTED = 3;
 export const STROKE_WIDTH_STOP_DEFAULT = 0;
+
+export const COLOR_VEHICLE_DEFAULT = 'mediumorchid';

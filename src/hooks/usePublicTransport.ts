@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { ReadyState } from '../data/data';
 import {
@@ -18,6 +18,9 @@ import { usePTRoutesLayerUpdate } from './mapUdatingHooks/usePTRoutesLayerUpdate
 import { usePTStopsActionUpdate } from './mapUdatingHooks/usePTStopsActionUpdate';
 import { usePTStopsLayerUpdate } from './mapUdatingHooks/usePTStopsLayerUpdate';
 import { useApplyDataToSource } from './useInitializeSourcesAndLayers';
+import useRBush from './vehicles/useRBush';
+import RBush from 'rbush';
+import { useKV6Websocket } from './vehicles/useKV6Websocket';
 
 export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: React.MutableRefObject<boolean>): void => {
     const dispatch = useAppDispatch();
@@ -27,7 +30,7 @@ export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: Rea
 
     const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
     const ptStopFeatures = useAppSelector(selectPTStopsFeatureList);
-
+    
     // Fetch the data from the api and store them
     // Update the filter options
     useEffect(() => {
@@ -51,6 +54,11 @@ export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: Rea
         }
         /*eslint-disable react-hooks/exhaustive-deps*/
     }, [mapInitialized.current]);
+
+    // Initialize bounding boxes for routes and vehicle websocket
+    const routeTree = useRef(new RBush<PTRouteIndex>());
+    useRBush(routeTree, ptRouteFeatures);
+    useKV6Websocket(map, routeTree, ptRouteFeatures);
 
     useInitiateFilterOptions(['Line Number', 'Vehicle Type', 'Agency'], ['line_number', 'vehicle_type', 'agency_id']);
 
