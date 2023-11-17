@@ -2,6 +2,11 @@ import * as turf from '@turf/turf';
 import RBush from 'rbush';
 import { useEffect } from 'react';
 
+interface BboxFeaturePair {
+    bbox: turf.BBox;
+    feature: PTRouteFeature;
+}
+
 const useRBush = (routeTree: React.MutableRefObject<RBush<PTRouteIndex>>, routesData: PTRouteFeature[]): void => {
     // Create RBush structure with bulk insertion for increased efficiency
     useEffect(() => {
@@ -10,9 +15,8 @@ const useRBush = (routeTree: React.MutableRefObject<RBush<PTRouteIndex>>, routes
             .map((feature: PTRouteFeature) => ({
                 bbox: turf.bbox(feature.geometry),
                 feature: feature,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             }))
-            .map((tuple: any) => ({
+            .map((tuple: BboxFeaturePair) => ({
                 minX: tuple.bbox[0],
                 minY: tuple.bbox[1],
                 maxX: tuple.bbox[2],
