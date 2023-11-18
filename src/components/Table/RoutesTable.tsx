@@ -50,8 +50,8 @@ const RoutesTable: React.FC = () => {
                 height: 'calc(100vh - 64px)', // Fill remaining height
                 width: '28%',
                 float: 'left',
-                resize: "horizontal",
-                overflow: 'hidden'
+                resize: 'horizontal',
+                overflow: 'hidden',
             }}
         />
     );

@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { updateSelectedStop } from '../../dataStoring/slice';
 import { useAppDispatch, useAppSelector } from '../../store';
@@ -27,7 +27,7 @@ const StopsTable: React.FC = () => {
                     // Get the updated offsetWidth
                     const updatedWidth = routesTable.offsetWidth;
                     // Do something with the updated width, like updating state or performing other actions
-                    setRoutesTableWidth((updatedWidth / window.innerWidth) * 100)
+                    setRoutesTableWidth((updatedWidth / window.innerWidth) * 100);
                 }
             }
         });
@@ -41,7 +41,6 @@ const StopsTable: React.FC = () => {
             observer.disconnect();
         };
     }, []); // Empty dependency array to run the effect once on mount
-
 
     // Get the table headers and content
     let ptRouteProperty = {} as PTRouteProperties;

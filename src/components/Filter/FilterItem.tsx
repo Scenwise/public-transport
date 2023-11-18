@@ -27,7 +27,6 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
     const dispatch = useAppDispatch();
 
     const filters = useAppSelector(selectFilterList);
-    const filteredRoutes = useAppSelector((state) => state.slice.filteredRoutes);
     const fullRoutes = useAppSelector(selectPTRoutesFeatureList);
 
     const filter = deepcopy(filterItem);
@@ -46,15 +45,6 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
                         availableOptions: getOptions(otherFilter, filteredList),
                     }),
                 );
-            } else {
-                if (filter.variants.length == 0) {
-                    dispatch(
-                        updateFilter({
-                            ...otherFilter,
-                            availableOptions: getOptions(otherFilter, filteredRoutes),
-                        }),
-                    );
-                }
             }
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
