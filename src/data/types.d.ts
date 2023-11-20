@@ -45,7 +45,7 @@ interface VisibleFiltering {
 
 interface VehicleRoutePair {
     marker: mapboxgl.Marker;
-    route: PTRouteFeature;
+    routeId: string; // key of the route in the routes map
     vehicle: PTVechileProperties;
 }
 

@@ -11,14 +11,14 @@ export const useKV6Websocket = (
     mapInitialized: boolean,
     map: mapboxgl.Map | null,
     routeTree: RBush<PTRouteIndex>,
-    routesData: PTRouteFeature[],
+    routesMap: FeatureRecord<PTRouteFeature>,
     vehicleMarkers: Map<string, VehicleRoutePair>, 
     setVehicleMarkers: React.Dispatch<React.SetStateAction<Map<string, VehicleRoutePair>>>,
     loadedTree: React.MutableRefObject<boolean>
 ): void => {
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
-        if (map && mapInitialized && routesData && loadedTree.current) {
+        if (map && mapInitialized && routesMap && loadedTree.current) {
             const webSocketURL = 'wss://prod.dataservice.scenwise.nl/kv6';
             const socket = new WebSocket(webSocketURL);
 
@@ -70,6 +70,7 @@ export const useKV6Websocket = (
                                 // animateVehicles returns true if the route and vehicle are matched correctly and false
                                 const correct = animateVehicles(
                                     vehicleRoutePair,
+                                    routesMap,
                                     [vehicle.longitude, vehicle.latitude],
                                     map,
                                 );
@@ -78,7 +79,7 @@ export const useKV6Websocket = (
                                         new Map(
                                             vehicleMarkers.set(mapKey, {
                                                 marker: vehicleRoutePair.marker,
-                                                route: vehicleRoutePair.route,
+                                                routeId: vehicleRoutePair.routeId,
                                                 vehicle: vehicle, // update delay, timestamp, position
                                             }),
                                         ),
@@ -110,7 +111,7 @@ export const useKV6Websocket = (
                                         new Map(
                                             vehicleMarkers.set(mapKey, {
                                                 marker: marker,
-                                                route: intersectedRoads[0].route,
+                                                routeId: intersectedRoads[0].route.properties.shape_id + '',
                                                 vehicle: vehicle,
                                             }),
                                         ),
@@ -135,5 +136,5 @@ export const useKV6Websocket = (
             };
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [routesData]);
+    }, [routesMap]);
 };
