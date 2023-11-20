@@ -42,7 +42,9 @@ export const useKV6Websocket = (
             };
 
             // On each socket message, process vehicles and find their corresponding route
-            socket.onmessage = (event) => {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const _ = require('lodash');
+            socket.onmessage = _.throttle((event: MessageEvent) => {
                 const message = event.data; // Take the data of the websocket message
                 if (message === 'Successfully connected!') console.log(message);
                 else {
@@ -118,7 +120,7 @@ export const useKV6Websocket = (
                         }
                     }
                 }
-            };
+            }, 250);
 
             socket.onerror = (error) => {
                 console.error('WebSocket error:', error);
