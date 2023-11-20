@@ -35,6 +35,8 @@ export const addPublicTransportData = async (
                         // Initialize the routes data
                         const ptRoutes = {} as FeatureRecord<PTRouteFeature>;
 
+                        if (ptRoutesRes.features === undefined)
+                            throw new Error('The data failed to fetch: ' + ptRoutesRes);
                         ptRoutesRes.features.forEach((feature) => {
                             const id = '' + feature.id; //the id is shape_id which is a number
                             ptRoutes[id] = feature as PTRouteFeature;
@@ -42,31 +44,32 @@ export const addPublicTransportData = async (
 
                         // Initialize the stops data
                         const ptStops = {} as FeatureRecord<PTStopFeature>;
+                        // if (ptStopsRes.features === undefined)
+                        //     throw new Error('The data failed to fetch: ' + ptStopsRes);
+                        // ptStopsRes.features.forEach((feature) => {
+                        //     const id = '' + feature.id; //the id is shape_id which is a number
 
-                        ptStopsRes.features.forEach((feature) => {
-                            const id = '' + feature.id; //the id is shape_id which is a number
+                        //     const stopProperties = JSON.parse(JSON.stringify(feature.properties));
+                        //     const stopIds = stopProperties.stops_ids;
+                        //     const stopNames = stopProperties.stop_names;
+                        //     const stopGeometries = JSON.parse(JSON.stringify(feature.geometry)).coordinates;
 
-                            const stopProperties = JSON.parse(JSON.stringify(feature.properties));
-                            const stopIds = stopProperties.stops_ids;
-                            const stopNames = stopProperties.stop_names;
-                            const stopGeometries = JSON.parse(JSON.stringify(feature.geometry)).coordinates;
+                        //     // Add the stop ids to the route
+                        //     ptRoutes[id].properties.stops_ids = stopIds;
 
-                            // Add the stop ids to the route
-                            ptRoutes[id].properties.stops_ids = stopIds;
-
-                            stopIds.forEach((id: string, index: number) => {
-                                const stopFeature = {
-                                    id: id,
-                                    type: 'Feature',
-                                    geometry: { type: 'Point', coordinates: stopGeometries[index] },
-                                    properties: {
-                                        stopId: id,
-                                        stopName: stopNames[index],
-                                    },
-                                };
-                                ptStops[id] = stopFeature as PTStopFeature;
-                            });
-                        });
+                        //     stopIds.forEach((id: string, index: number) => {
+                        //         const stopFeature = {
+                        //             id: id,
+                        //             type: 'Feature',
+                        //             geometry: { type: 'Point', coordinates: stopGeometries[index] },
+                        //             properties: {
+                        //                 stopId: id,
+                        //                 stopName: stopNames[index],
+                        //             },
+                        //         };
+                        //         ptStops[id] = stopFeature as PTStopFeature;
+                        //     });
+                        // });
 
                         setPTStops(ptStops);
                         setPTRoutes(ptRoutes);

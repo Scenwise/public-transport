@@ -1,5 +1,5 @@
 import RBush from 'rbush';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ReadyState } from '../data/data';
 import {
@@ -57,8 +57,10 @@ export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: Rea
 
     // Initialize bounding boxes for routes and vehicle websocket
     const routeTree = useRef(new RBush<PTRouteIndex>());
-    useRBush(routeTree, ptRouteFeatures);
-    useKV6Websocket(map, routeTree, ptRouteFeatures);
+    // Keys are of format: "[DataOwnerCode]-[VehicleNumber]"
+    const [vehicleMarkers, setVehicleMarkers] = useState(new Map<string, VehicleRoutePair>());
+    useRBush(mapInitialized.current, routeTree, ptRouteFeatures);
+    useKV6Websocket(mapInitialized.current, map, routeTree, ptRouteFeatures, vehicleMarkers, setVehicleMarkers);
 
     useInitiateFilterOptions(['Line Number', 'Vehicle Type', 'Agency'], ['line_number', 'vehicle_type', 'agency_id']);
 

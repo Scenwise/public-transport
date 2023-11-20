@@ -2,7 +2,7 @@ import React from 'react';
 
 import MapBoxContainer from './components/MapBoxContainer';
 import { RoutesTable } from './components/Table/RoutesTable';
-import { StopsTable } from './components/Table/StopsTable';
+// import { StopsTable } from './components/Table/StopsTable';
 import TopBar from './components/TopBar/TopBar';
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
             <TopBar />
             <MapBoxContainer />
             <RoutesTable />
-            <StopsTable />
+            {/* <StopsTable /> */}
         </div>
     );
 }
