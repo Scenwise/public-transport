@@ -1,12 +1,12 @@
 import * as turf from '@turf/turf';
 import RBush from 'rbush';
 
-const findMatchingRoutes = (vehicle: PTVechileProperties, routeTree: React.MutableRefObject<RBush<PTRouteIndex>>) => {
+const findMatchingRoutes = (vehicle: PTVechileProperties, routeTree: RBush<PTRouteIndex>) => {
     // Find corresponding road
     const vehiclePoint = turf.point([vehicle.longitude, vehicle.latitude]);
 
     // Query the spatial index to find intersecting route bounding boxes
-    let intersectingBB = routeTree.current.search({
+    let intersectingBB = routeTree.search({
         minX: vehicle.longitude,
         minY: vehicle.latitude,
         maxX: vehicle.longitude,

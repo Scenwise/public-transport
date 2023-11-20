@@ -10,14 +10,15 @@ import findMatchingRoutes from './findMatchingRoutes';
 export const useKV6Websocket = (
     mapInitialized: boolean,
     map: mapboxgl.Map | null,
-    routeTree: React.MutableRefObject<RBush<PTRouteIndex>>,
+    routeTree: RBush<PTRouteIndex>,
     routesData: PTRouteFeature[],
     vehicleMarkers: Map<string, VehicleRoutePair>, 
-    setVehicleMarkers: React.Dispatch<React.SetStateAction<Map<string, VehicleRoutePair>>>
+    setVehicleMarkers: React.Dispatch<React.SetStateAction<Map<string, VehicleRoutePair>>>,
+    loadedTree: React.MutableRefObject<boolean>
 ): void => {
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
-        if (map && mapInitialized && routesData) {
+        if (map && mapInitialized && routesData && loadedTree.current) {
             const webSocketURL = 'wss://prod.dataservice.scenwise.nl/kv6';
             const socket = new WebSocket(webSocketURL);
 
@@ -64,6 +65,7 @@ export const useKV6Websocket = (
                                 vehicleRoutePair !== undefined &&
                                 vehicleRoutePair.vehicle.timestamp < vehicle.timestamp
                             ) {
+                                // animateVehicles returns true if the route and vehicle are matched correctly and false
                                 const correct = animateVehicles(
                                     vehicleRoutePair,
                                     [vehicle.longitude, vehicle.latitude],

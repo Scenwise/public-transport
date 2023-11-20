@@ -11,11 +11,11 @@ const useRBush = (
     mapInitialized: boolean,
     routeTree: React.MutableRefObject<RBush<PTRouteIndex>>,
     routesData: PTRouteFeature[],
+    treeLoaded: React.MutableRefObject<boolean>
 ): void => {
     // Create RBush structure with bulk insertion for increased efficiency
     useEffect(() => {
         if (mapInitialized && routesData) {
-            const routeIndex = new RBush<PTRouteIndex>();
             const mappedData = routesData
                 .map((feature: PTRouteFeature) => ({
                     bbox: turf.bbox(feature.geometry),
@@ -28,9 +28,9 @@ const useRBush = (
                     maxY: tuple.bbox[3],
                     route: tuple.feature,
                 }));
-            routeIndex.load(mappedData);
-            routeTree.current = routeIndex;
-            console.log("Constructed RBush")
+            routeTree.current.load(mappedData)
+            treeLoaded.current = true;
+            console.log("Constructed RBush!")
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [routesData]);
