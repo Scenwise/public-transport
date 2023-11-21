@@ -11,7 +11,7 @@ type Filters = Record<string, Filter>;
 type FeatureRecord<T extends GeoJSON.Feature> = Record<string, T>;
 
 type PTRouteFeature = GeoJSON.Feature<PTRouteGeometry, PTRouteProperties>;
-type PTRouteGeometry = GeoJSON.LineString;
+type PTRouteGeometry = GeoJSON.MultiLineString;
 interface PTRouteProperties {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any; // index signature

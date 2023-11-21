@@ -9,7 +9,9 @@ function App() {
     return (
         <div>
             <TopBar />
-            <MapBoxContainer />
+            <div>
+                <MapBoxContainer />
+            </div>
             <RoutesTable />
             {/* <StopsTable /> */}
         </div>

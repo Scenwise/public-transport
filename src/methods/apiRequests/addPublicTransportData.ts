@@ -1,3 +1,5 @@
+import { MultiLineString } from '@turf/turf';
+
 import { ReadyState } from '../../data/data';
 import getGtfsTable from './apiFunction';
 
@@ -20,7 +22,7 @@ export const addPublicTransportData = async (
             ptStop: ptStopStatus,
         });
 
-        const ptRoutesData = getGtfsTable('gtfs_shapes_agency_vehicle_type_number_stops_info');
+        const ptRoutesData = getGtfsTable('gtfs_shapes_agency_vehicle_type_number_stops_info_corrected');
         const ptStopsData = getGtfsTable('gtfs_stop_shape_ids_geom');
 
         // Update the status of the data loading
@@ -31,6 +33,7 @@ export const addPublicTransportData = async (
         ptRoutesData
             .then((ptRoutesRes) => {
                 ptStopsData
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     .then((ptStopsRes) => {
                         // Initialize the routes data
                         const ptRoutes = {} as FeatureRecord<PTRouteFeature>;
@@ -39,7 +42,20 @@ export const addPublicTransportData = async (
                             throw new Error('The data failed to fetch: ' + ptRoutesRes);
                         ptRoutesRes.features.forEach((feature) => {
                             const id = '' + feature.id; //the id is shape_id which is a number
-                            ptRoutes[id] = feature as PTRouteFeature;
+                            const ptRoutesProperties = {
+                                origin: feature.properties?.origin,
+                                route_id: feature.properties?.route_id,
+                                shape_id: feature.properties?.shape_id,
+                                agency_id: feature.properties?.agency_id,
+                                destination: feature.properties?.destinatio,
+                                line_number: feature.properties?.line_numbe,
+                                route_name: feature.properties?.route_name,
+                                vehicle_type: feature.properties?.vehicle_ty,
+                            } as PTRouteProperties;
+                            ptRoutes[id] = {
+                                geometry: feature.geometry as MultiLineString,
+                                properties: ptRoutesProperties,
+                            } as PTRouteFeature;
                         });
 
                         // Initialize the stops data

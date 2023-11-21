@@ -12,9 +12,9 @@ export const useKV6Websocket = (
     map: mapboxgl.Map | null,
     routeTree: RBush<PTRouteIndex>,
     routesMap: FeatureRecord<PTRouteFeature>,
-    vehicleMarkers: Map<string, VehicleRoutePair>, 
+    vehicleMarkers: Map<string, VehicleRoutePair>,
     setVehicleMarkers: React.Dispatch<React.SetStateAction<Map<string, VehicleRoutePair>>>,
-    loadedTree: React.MutableRefObject<boolean>
+    loadedTree: React.MutableRefObject<boolean>,
 ): void => {
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
@@ -101,7 +101,9 @@ export const useKV6Websocket = (
                                         'Route: ' +
                                             intersectedRoads[0].route.properties.line_number +
                                             '\nVehicle: ' +
-                                            mapKey,
+                                            mapKey +
+                                            '\nDelay: ' +
+                                            vehicle.punctuality,
                                     );
                                     const marker = new Marker({ color: COLOR_VEHICLE_DEFAULT })
                                         .setLngLat([vehicle.longitude, vehicle.latitude])

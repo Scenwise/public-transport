@@ -1,9 +1,14 @@
 import * as turf from '@turf/turf';
 import mapboxgl from 'mapbox-gl';
 
-const animateVehicles = (vehicleRoutePair: VehicleRoutePair, routesMap:  FeatureRecord<PTRouteFeature>, newPosition: Array<number>, map: mapboxgl.Map) => {
+const animateVehicles = (
+    vehicleRoutePair: VehicleRoutePair,
+    routesMap: FeatureRecord<PTRouteFeature>,
+    newPosition: Array<number>,
+    map: mapboxgl.Map,
+) => {
     // Reduce the multiline string into a single linestring for easier traversal
-    const line = routesMap[vehicleRoutePair.routeId].geometry.coordinates;
+    const line = routesMap[vehicleRoutePair.routeId].geometry.coordinates.flat();
 
     // Find current and new positions on route and slice the route to that zone only
     const convertedLine = turf.featureCollection(
