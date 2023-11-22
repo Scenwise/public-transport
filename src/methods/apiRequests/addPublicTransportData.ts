@@ -1,4 +1,4 @@
-import { ReadyState } from '../../data/data';
+import { ReadyState, RouteType } from '../../data/data';
 import getGtfsTable from './apiFunction';
 
 /**
@@ -20,7 +20,7 @@ export const addPublicTransportData = async (
             ptStop: ptStopStatus,
         });
 
-        const ptRoutesData = getGtfsTable('gtfs_shapes_agency_vehicle_type_number_stops_info');
+        const ptRoutesData = getGtfsTable('gtfs_shapes_agency_vehicle_type_number_stops_info_corrected');
         const ptStopsData = getGtfsTable('gtfs_stop_shape_ids_geom');
 
         // Update the status of the data loading
@@ -37,7 +37,27 @@ export const addPublicTransportData = async (
 
                         ptRoutesRes.features.forEach((feature) => {
                             const id = '' + feature.id; //the id is shape_id which is a number
-                            ptRoutes[id] = feature as PTRouteFeature;
+                            const ptRoutesProperties = {
+                                origin: feature.properties?.origin,
+                                route_id: feature.properties?.route_id,
+                                shape_id: feature.properties?.shape_id,
+                                agency_id: feature.properties?.agency_id,
+                                destination: feature.properties?.destinatio,
+                                line_number: feature.properties?.line_numbe,
+                                route_name: feature.properties?.route_name,
+                                vehicle_type: feature.properties?.vehicle_ty,
+                                route_type: getRouteTypeString(feature.properties?.route_type),
+                                route_color: feature.properties?.route_color
+                                    ? '#' + feature.properties?.route_color
+                                    : null,
+                            } as PTRouteProperties;
+                            ptRoutes[id] = {
+                                geometry: {
+                                    type: 'LineString',
+                                    coordinates: (feature.geometry as GeoJSON.MultiLineString).coordinates[0],
+                                },
+                                properties: ptRoutesProperties,
+                            } as PTRouteFeature;
                         });
 
                         // Initialize the stops data
@@ -94,6 +114,12 @@ export const addPublicTransportData = async (
                 ptRouteStatus = ReadyState.CLOSED;
             });
     });
+};
+
+const getRouteTypeString = (value: number): string => {
+    const routeTypeString = Object.keys(RouteType).find((key) => RouteType[key as keyof typeof RouteType] === value);
+
+    return routeTypeString ? routeTypeString : '';
 };
 
 // Function to sort stops

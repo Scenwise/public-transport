@@ -7,7 +7,7 @@
         "visibility": "visible"
     },
     "paint": {
-        "line-color": "purple",
+        "line-color": ["case", ["==", ["get", "route_color"], null], "purple", ["to-string", ["get", "route_color"]]],
         "line-width": 2
     }
 }

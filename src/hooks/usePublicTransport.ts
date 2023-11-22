@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { ReadyState } from '../data/data';
+import { ReadyState, filterKeys, filterNames } from '../data/data';
 import {
     selectPTRoutesFeatureList,
     selectPTStopsFeatureList,
@@ -53,7 +53,7 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
         /*eslint-disable react-hooks/exhaustive-deps*/
     }, [mapInitialized.current]);
 
-    useInitiateFilterOptions(['Line Number', 'Vehicle Type', 'Agency'], ['line_number', 'vehicle_type', 'agency_id']);
+    useInitiateFilterOptions(filterNames, filterKeys);
 
     // Update the layers of the map when an action is triggered
     usePTRoutesActionUpdate(map);
