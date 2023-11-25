@@ -57,11 +57,19 @@ export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: Rea
 
     // Initialize bounding boxes for routes and vehicle websocket
     const routeTree = useRef(new RBush<PTRouteIndex>(3));
-    const loadedTree = useRef(false)
+    const loadedTree = useRef(false);
     const [vehicleMarkers, setVehicleMarkers] = useState(new Map<string, VehicleRoutePair>()); // Keys are of format: "[DataOwnerCode]-[VehicleNumber]"
-    const routesMap = useAppSelector((state: RootState) => state.slice.ptRoutes)
+    const routesMap = useAppSelector((state: RootState) => state.slice.ptRoutes);
     useRBush(mapInitialized.current, routeTree, ptRouteFeatures, loadedTree);
-    useKV6Websocket(mapInitialized.current, map, routeTree.current, routesMap, vehicleMarkers, setVehicleMarkers, loadedTree);
+    useKV6Websocket(
+        mapInitialized.current,
+        map,
+        routeTree.current,
+        routesMap,
+        vehicleMarkers,
+        setVehicleMarkers,
+        loadedTree,
+    );
 
     useInitiateFilterOptions(['Line Number', 'Vehicle Type', 'Agency'], ['line_number', 'vehicle_type', 'agency_id']);
 
