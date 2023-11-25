@@ -22,6 +22,8 @@ interface PTRouteProperties {
     agency_id: string;
     route_name: string;
     route_id: number;
+    route_type: string;
+    route_color: string;
     vehicle_type: string;
     stops_ids: string[];
 }

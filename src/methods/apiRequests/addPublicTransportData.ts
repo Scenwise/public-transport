@@ -1,6 +1,6 @@
 import { MultiLineString } from '@turf/turf';
 
-import { ReadyState } from '../../data/data';
+import { ReadyState, RouteType } from '../../data/data';
 import getGtfsTable from './apiFunction';
 
 /**
@@ -51,6 +51,10 @@ export const addPublicTransportData = async (
                                 line_number: feature.properties?.line_numbe,
                                 route_name: feature.properties?.route_name,
                                 vehicle_type: feature.properties?.vehicle_ty,
+                                route_type: getRouteTypeString(feature.properties?.route_type),
+                                route_color: feature.properties?.route_color
+                                    ? '#' + feature.properties?.route_color
+                                    : null,
                             } as PTRouteProperties;
                             ptRoutes[id] = {
                                 geometry: feature.geometry as MultiLineString,
@@ -106,4 +110,10 @@ export const addPublicTransportData = async (
                 ptRouteStatus = ReadyState.CLOSED;
             });
     });
+};
+
+const getRouteTypeString = (value: number): string => {
+    const routeTypeString = Object.keys(RouteType).find((key) => RouteType[key as keyof typeof RouteType] === value);
+
+    return routeTypeString ? routeTypeString : '';
 };

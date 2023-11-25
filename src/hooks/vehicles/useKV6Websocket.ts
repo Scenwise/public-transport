@@ -2,9 +2,9 @@ import { Marker, Popup } from 'mapbox-gl';
 import RBush from 'rbush';
 import { useEffect } from 'react';
 
-import { COLOR_VEHICLE_DEFAULT } from '../../data/layerPaints';
 import animateVehicles from './animateVehicles';
 import findMatchingRoutes from './findMatchingRoutes';
+import { getMarkerColorBasedOnVehicleType, getVehiclePopupText } from './vehicleMarkerUtilities';
 
 // Create websocket connection
 export const useKV6Websocket = (
@@ -97,15 +97,18 @@ export const useKV6Websocket = (
                             else if (vehicleRoutePair === undefined) {
                                 const intersectedRoads = findMatchingRoutes(vehicle, routeTree);
                                 if (intersectedRoads.length === 1) {
-                                    const popup = new Popup().setText(
-                                        'Route: ' +
-                                            intersectedRoads[0].route.properties.line_number +
-                                            '\nVehicle: ' +
-                                            mapKey +
-                                            '\nDelay: ' +
+                                    const popup = new Popup().setHTML(
+                                        getVehiclePopupText(
+                                            mapKey,
+                                            intersectedRoads[0].route.properties.line_number,
                                             vehicle.punctuality,
+                                        ),
                                     );
-                                    const marker = new Marker({ color: COLOR_VEHICLE_DEFAULT })
+                                    const marker = new Marker({
+                                        color: getMarkerColorBasedOnVehicleType(
+                                            intersectedRoads[0].route.properties.route_type,
+                                        ),
+                                    })
                                         .setLngLat([vehicle.longitude, vehicle.latitude])
                                         .addTo(map)
                                         .setPopup(popup);

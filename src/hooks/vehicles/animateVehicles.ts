@@ -1,5 +1,7 @@
 import * as turf from '@turf/turf';
-import mapboxgl from 'mapbox-gl';
+import mapboxgl, { Popup } from 'mapbox-gl';
+
+import { getVehiclePopupText } from './vehicleMarkerUtilities';
 
 const animateVehicles = (
     vehicleRoutePair: VehicleRoutePair,
@@ -7,8 +9,20 @@ const animateVehicles = (
     newPosition: Array<number>,
     map: mapboxgl.Map,
 ) => {
+    // Find the route from the routes map
+    const route = routesMap[vehicleRoutePair.routeId];
+    // Display the new vehicle delay
+    const popup = new Popup().setHTML(
+        getVehiclePopupText(
+            vehicleRoutePair.vehicle.dataOwnerCode + '-' + vehicleRoutePair.vehicle.vehicleNumber,
+            route.properties.line_number,
+            vehicleRoutePair.vehicle.punctuality,
+        ),
+    );
+    vehicleRoutePair.marker.setPopup(popup);
+
     // Reduce the multiline string into a single linestring for easier traversal
-    const line = routesMap[vehicleRoutePair.routeId].geometry.coordinates.flat();
+    const line = route.geometry.coordinates.flat();
 
     // Find current and new positions on route and slice the route to that zone only
     const convertedLine = turf.featureCollection(
