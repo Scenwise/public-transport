@@ -1,5 +1,5 @@
 import RBush from 'rbush';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { ReadyState } from '../data/data';
 import {
@@ -21,10 +21,10 @@ import { usePTStopsLayerUpdate } from './mapUdatingHooks/usePTStopsLayerUpdate';
 import { useApplyDataToSource } from './useInitializeSourcesAndLayers';
 import { useKV6Websocket } from './vehicles/useKV6Websocket';
 import useRBush from './vehicles/useRBush';
+import { useVehicleMarkers } from '../components/Vehicles/VehicleMapContext';
 
 export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: React.MutableRefObject<boolean>): void => {
     const dispatch = useAppDispatch();
-
     // Initialize the routes and the stops
     // const mapInitialized = useInitializeSourcesAndLayers(map);
 
@@ -58,7 +58,9 @@ export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: Rea
     // Initialize bounding boxes for routes and vehicle websocket
     const routeTree = useRef(new RBush<PTRouteIndex>(3));
     const loadedTree = useRef(false);
-    const [vehicleMarkers, setVehicleMarkers] = useState(new Map<string, VehicleRoutePair>()); // Keys are of format: "[DataOwnerCode]-[VehicleNumber]"
+    // VehicleMarkers keys are of format: "[DataOwnerCode]-[VehicleNumber]"
+    const context = useVehicleMarkers()
+    const [vehicleMarkers, setVehicleMarkers] = [context.vehicleMarkers, context.setVehicleMarkers]
     const routesMap = useAppSelector((state: RootState) => state.slice.ptRoutes);
     useRBush(mapInitialized.current, routeTree, ptRouteFeatures, loadedTree);
     useKV6Websocket(
