@@ -53,8 +53,14 @@ const StopsTable: React.FC = () => {
     // If there are no stops, no table is displayed
     if (ptStopsProperty.length == 0) return null;
 
-    const headers = ['index', 'stop name', 'stop id'];
-    const tables = ptStopsProperty.map((stop, index) => [index + '', stop.stopName, stop.stopId]);
+    const headers = ['index', 'stop name', 'platform code', 'wheelchair boarding', 'stop id'];
+    const tables = ptStopsProperty.map((stop, index) => [
+        index + '',
+        stop.stopName,
+        stop.platformCode,
+        stop.wheelchairBoarding,
+        stop.stopId,
+    ]);
 
     // Find the index of the selected stop to highlight it in the table
     const selectedStopIndex = ptStopsProperty.findIndex((stop) => stop.stopId == selectedStopID);

@@ -19,6 +19,8 @@ export enum RouteType {
     Monorail = 12,
 }
 
+export const wheelchairBoarding = ['No information', 'Some vehicles', 'Not possible'];
+
 export const FilterType = {
     checkbox: 'checkbox',
     subCheckbox: 'subCheckbox',

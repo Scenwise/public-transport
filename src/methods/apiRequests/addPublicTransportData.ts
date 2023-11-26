@@ -1,4 +1,4 @@
-import { ReadyState, RouteType } from '../../data/data';
+import { ReadyState, RouteType, wheelchairBoarding } from '../../data/data';
 import getGtfsTable from './apiFunction';
 
 /**
@@ -71,7 +71,6 @@ export const addPublicTransportData = async (
                             // The stop properties to be put on the table
                             const stopProperties = JSON.parse(JSON.stringify(feature.properties));
                             const stopIds: string[] = stopProperties.stops_ids;
-                            const stopNames: string[] = stopProperties.stop_names;
                             const stopGeometries = JSON.parse(JSON.stringify(feature.geometry)).coordinates;
 
                             const stops: PTStopFeature[] = stopIds.map((stopId, index) => ({
@@ -80,7 +79,11 @@ export const addPublicTransportData = async (
                                 geometry: { type: 'Point', coordinates: stopGeometries[index] },
                                 properties: {
                                     stopId: stopId,
-                                    stopName: stopNames[index],
+                                    stopName: stopProperties.stop_names[index],
+                                    platformCode: stopProperties.platform_code[index],
+                                    wheelchairBoarding: getWheelchairBoarding(
+                                        stopProperties.wheelchair_boarding[index],
+                                    ),
                                 },
                             }));
 
@@ -122,6 +125,10 @@ const getRouteTypeString = (value: number): string => {
     const routeTypeString = Object.keys(RouteType).find((key) => RouteType[key as keyof typeof RouteType] === value);
 
     return routeTypeString ? routeTypeString : '';
+};
+
+const getWheelchairBoarding = (value: number): string => {
+    return wheelchairBoarding[value ? value : 0];
 };
 
 // Function to sort stops
