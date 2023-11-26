@@ -28,6 +28,7 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
 
     const filters = useAppSelector(selectFilterList);
     const fullRoutes = useAppSelector(selectPTRoutesFeatureList);
+    const ptStops = useAppSelector((state) => state.slice.ptStops);
 
     const filter = deepcopy(filterItem);
     const [flag, setFlag] = useState(true);
@@ -42,7 +43,15 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
                 dispatch(
                     updateFilter({
                         ...otherFilter,
-                        availableOptions: getOptions(otherFilter, filteredList),
+                        availableOptions: getOptions(
+                            otherFilter,
+                            filteredList,
+                            filteredList
+                                .map((item) => item.properties.stops_ids)
+                                .flat()
+                                .filter((v, i, a) => a.indexOf(v) == i)
+                                .map((item) => ptStops[item]),
+                        ),
                     }),
                 );
             }

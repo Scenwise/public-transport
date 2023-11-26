@@ -1,13 +1,19 @@
 import { useEffect, useRef } from 'react';
 
 import { FilterType } from '../../data/data';
-import { selectPTRoutesFeatureList, updateFilters, updateInitialFilters } from '../../dataStoring/slice';
+import {
+    selectPTRoutesFeatureList,
+    selectPTStopsFeatureList,
+    updateFilters,
+    updateInitialFilters,
+} from '../../dataStoring/slice';
 import { useAppDispatch, useAppSelector } from '../../store';
 
 // Filters: agency, line number, vehicle type
 export const useInitiateFilterOptions = (filterNames: string[], filterKeys: string[]): void => {
     const dispatch = useAppDispatch();
     const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
+    const ptStopFeatures = useAppSelector(selectPTStopsFeatureList);
 
     // const filters = useAppSelector(state => state.slice.filters);
     const initialFilters = {} as Filters;
@@ -31,7 +37,7 @@ export const useInitiateFilterOptions = (filterNames: string[], filterKeys: stri
         if (prevListRef.current !== ptRouteFeatures) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             Object.entries(initialFilters).forEach(([_filterKey, filter]: [string, Filter]) => {
-                const options = getOptions(filter, ptRouteFeatures);
+                const options = getOptions(filter, ptRouteFeatures, ptStopFeatures);
                 filter.options = options;
                 filter.availableOptions = options;
             });
@@ -43,7 +49,15 @@ export const useInitiateFilterOptions = (filterNames: string[], filterKeys: stri
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ptRouteFeatures]);
 };
-export const getOptions = (filter: Filter, ptRouteFeatures: PTRouteFeature[]): string[] => {
+export const getOptions = (
+    filter: Filter,
+    ptRouteFeatures: PTRouteFeature[],
+    ptStopFeatures: PTStopFeature[],
+): string[] => {
+    if (filter.optionKey == 'stop') {
+        return ptStopFeatures.map((feature) => feature.properties.stopName).sort();
+    }
+
     return ptRouteFeatures
         .map((feature) => feature.properties[filter.optionKey])
         .filter((v, i, a) => a.indexOf(v) == i) // Only get the unique values

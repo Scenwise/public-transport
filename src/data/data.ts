@@ -27,5 +27,5 @@ export const FilterType = {
     switch: 'switch',
 };
 
-export const filterNames = ['Line Number', 'Vehicle Type', 'Agency', 'Route Type', 'color'];
-export const filterKeys = ['line_number', 'vehicle_type', 'agency_id', 'route_type', 'route_color'];
+export const filterNames = ['Line Number', 'Vehicle Type', 'Agency', 'Route Type', 'Stop name'];
+export const filterKeys = ['line_number', 'vehicle_type', 'agency_id', 'route_type', 'stop'];

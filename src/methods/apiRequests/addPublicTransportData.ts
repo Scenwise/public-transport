@@ -21,7 +21,7 @@ export const addPublicTransportData = async (
         });
 
         const ptRoutesData = getGtfsTable('gtfs_shapes_agency_vehicle_type_number_stops_info_corrected');
-        const ptStopsData = getGtfsTable('gtfs_stop_shape_ids_geom');
+        const ptStopsData = getGtfsTable('stops_sequence_info_along_shape');
 
         // Update the status of the data loading
         if (!ptRoutesData) ptRouteStatus = ReadyState.CLOSED;
@@ -35,30 +35,32 @@ export const addPublicTransportData = async (
                         // Initialize the routes data
                         const ptRoutes = {} as FeatureRecord<PTRouteFeature>;
 
-                        ptRoutesRes.features.forEach((feature) => {
-                            const id = '' + feature.id; //the id is shape_id which is a number
-                            const ptRoutesProperties = {
-                                origin: feature.properties?.origin,
-                                route_id: feature.properties?.route_id,
-                                shape_id: feature.properties?.shape_id,
-                                agency_id: feature.properties?.agency_id,
-                                destination: feature.properties?.destinatio,
-                                line_number: feature.properties?.line_numbe,
-                                route_name: feature.properties?.route_name,
-                                vehicle_type: feature.properties?.vehicle_ty,
-                                route_type: getRouteTypeString(feature.properties?.route_type),
-                                route_color: feature.properties?.route_color
-                                    ? '#' + feature.properties?.route_color
-                                    : null,
-                            } as PTRouteProperties;
-                            ptRoutes[id] = {
-                                geometry: {
-                                    type: 'LineString',
-                                    coordinates: (feature.geometry as GeoJSON.MultiLineString).coordinates[0],
-                                },
-                                properties: ptRoutesProperties,
-                            } as PTRouteFeature;
-                        });
+                        ptRoutesRes.features
+                            .filter((feature) => feature.id === 899524)
+                            .forEach((feature) => {
+                                const id = '' + feature.id; //the id is shape_id which is a number
+                                const ptRoutesProperties = {
+                                    origin: feature.properties?.origin,
+                                    route_id: feature.properties?.route_id,
+                                    shape_id: feature.properties?.shape_id,
+                                    agency_id: feature.properties?.agency_id,
+                                    destination: feature.properties?.destinatio,
+                                    line_number: feature.properties?.line_numbe,
+                                    route_name: feature.properties?.route_name,
+                                    vehicle_type: feature.properties?.vehicle_ty,
+                                    route_type: getRouteTypeString(feature.properties?.route_type),
+                                    route_color: feature.properties?.route_color
+                                        ? '#' + feature.properties?.route_color
+                                        : null,
+                                } as PTRouteProperties;
+                                ptRoutes[id] = {
+                                    geometry: {
+                                        type: 'LineString',
+                                        coordinates: (feature.geometry as GeoJSON.MultiLineString).coordinates[0],
+                                    },
+                                    properties: ptRoutesProperties,
+                                } as PTRouteFeature;
+                            });
 
                         // Initialize the stops data
                         const ptStops = {} as FeatureRecord<PTStopFeature>;
