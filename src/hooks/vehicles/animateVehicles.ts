@@ -1,5 +1,5 @@
 import * as turf from '@turf/turf';
-import mapboxgl, { Popup } from 'mapbox-gl';
+import { Popup } from 'mapbox-gl';
 
 import { getVehiclePopupText } from './vehicleMarkerUtilities';
 
@@ -7,7 +7,6 @@ const animateVehicles = (
     vehicleRoutePair: VehicleRoutePair,
     routesMap: FeatureRecord<PTRouteFeature>,
     newPosition: Array<number>,
-    map: mapboxgl.Map,
 ) => {
     // Find the route from the routes map
     const route = routesMap[vehicleRoutePair.routeId];
@@ -32,10 +31,11 @@ const animateVehicles = (
         .coordinates;
     const endPosition = turf.nearestPoint(newPosition, convertedLine).geometry.coordinates;
 
-    // If distance between actual location and location on route is > 100 meters, we misintersected
-    if (turf.distance(turf.point(endPosition), turf.point(newPosition)) > 0.1) return false;
+    // If distance between actual location and route is > 100 meters, we misintersected
+    if (turf.pointToLineDistance(turf.point(newPosition), turf.lineString(line)) > 0.1) return false;
 
     const startIndex = line.findIndex(
+        
         (coord: Array<number>) => coord[0] === startPosition[0] && coord[1] === startPosition[1],
     );
     const endIndex = line.findIndex(
@@ -49,7 +49,7 @@ const animateVehicles = (
     function animate() {
         // If decreasing, we start from endIndex
         if (counter === endIndex + increment) return;
-        vehicleRoutePair.marker.setLngLat([line[counter][0], line[counter][1]]).addTo(map);
+        vehicleRoutePair.marker.setLngLat([line[counter][0], line[counter][1]]);
 
         // Request the next frame of animation
         counter += increment;

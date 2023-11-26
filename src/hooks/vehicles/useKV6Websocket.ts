@@ -3,7 +3,7 @@ import RBush from 'rbush';
 import { useEffect } from 'react';
 
 import animateVehicles from './animateVehicles';
-import findMatchingRoutes from './findMatchingRoutes';
+import findMatchingRoute from './findMatchingRoute';
 import { getMarkerColorBasedOnVehicleType, getVehiclePopupText } from './vehicleMarkerUtilities';
 
 // Create websocket connection
@@ -23,6 +23,7 @@ export const useKV6Websocket = (
             const socket = new WebSocket(webSocketURL);
 
             socket.onopen = () => {
+                setTimeout(() => 5000);
                 const message = JSON.stringify({
                     Command: {
                         Set: {
@@ -38,7 +39,6 @@ export const useKV6Websocket = (
 
                 // Send the message to the server
                 socket.send(message);
-                setTimeout(() => 5000);
             };
 
             // On each socket message, process vehicles and find their corresponding route
@@ -68,12 +68,10 @@ export const useKV6Websocket = (
                                 vehicleRoutePair.vehicle.timestamp < vehicle.timestamp
                             ) {
                                 // animateVehicles returns true if the route and vehicle are matched correctly and false
-                                const correct = animateVehicles(
-                                    vehicleRoutePair,
-                                    routesMap,
-                                    [vehicle.longitude, vehicle.latitude],
-                                    map,
-                                );
+                                const correct = animateVehicles(vehicleRoutePair, routesMap, [
+                                    vehicle.longitude,
+                                    vehicle.latitude,
+                                ]);
                                 if (correct) {
                                     setVehicleMarkers(
                                         new Map(
@@ -95,18 +93,18 @@ export const useKV6Websocket = (
 
                             // If we do not have this vehicle, find its route
                             else if (vehicleRoutePair === undefined) {
-                                const intersectedRoads = findMatchingRoutes(vehicle, routeTree);
-                                if (intersectedRoads.length === 1) {
+                                const intersectedRoad = findMatchingRoute(vehicle, routeTree);
+                                if (intersectedRoad != null) {
                                     const popup = new Popup().setHTML(
                                         getVehiclePopupText(
                                             mapKey,
-                                            intersectedRoads[0].route.properties.line_number,
+                                            intersectedRoad.route.properties.line_number,
                                             vehicle.punctuality,
                                         ),
                                     );
                                     const marker = new Marker({
                                         color: getMarkerColorBasedOnVehicleType(
-                                            intersectedRoads[0].route.properties.route_type,
+                                            intersectedRoad.route.properties.route_type,
                                         ),
                                     })
                                         .setLngLat([vehicle.longitude, vehicle.latitude])
@@ -116,7 +114,7 @@ export const useKV6Websocket = (
                                         new Map(
                                             vehicleMarkers.set(mapKey, {
                                                 marker: marker,
-                                                routeId: intersectedRoads[0].route.properties.shape_id + '',
+                                                routeId: intersectedRoad.route.properties.shape_id + '',
                                                 vehicle: vehicle,
                                             }),
                                         ),
