@@ -35,7 +35,6 @@ const animateVehicles = (
     if (turf.pointToLineDistance(turf.point(newPosition), turf.lineString(line)) > 0.1) return false;
 
     const startIndex = line.findIndex(
-        
         (coord: Array<number>) => coord[0] === startPosition[0] && coord[1] === startPosition[1],
     );
     const endIndex = line.findIndex(

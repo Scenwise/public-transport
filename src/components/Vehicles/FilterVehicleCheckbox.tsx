@@ -53,7 +53,13 @@ const FilterVehicleCheckbox: React.FC = () => {
                     {vehicleTypes.map((type, index) => (
                         <FormControlLabel
                             key={index}
-                            control={<Checkbox defaultChecked={true} onChange={() => handleCheckboxChange(index)} style={{color: type.color}}/>}
+                            control={
+                                <Checkbox
+                                    defaultChecked={true}
+                                    onChange={() => handleCheckboxChange(index)}
+                                    style={{ color: type.color }}
+                                />
+                            }
                             label={<Typography fontSize={'15px'}> {type.name} </Typography>}
                         />
                     ))}

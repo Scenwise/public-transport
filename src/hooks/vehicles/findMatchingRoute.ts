@@ -13,7 +13,9 @@ const findMatchingRoute = (vehicle: PTVechileProperties, routeTree: RBush<PTRout
             maxX: vehicle.longitude,
             maxY: vehicle.latitude,
         })
-        .filter((route: PTRouteIndex) => route.route.properties.agency_id.toLowerCase().includes(vehicle.dataOwnerCode.toLowerCase()));
+        .filter((route: PTRouteIndex) =>
+            route.route.properties.agency_id.toLowerCase().includes(vehicle.dataOwnerCode.toLowerCase()),
+        );
 
     // Find the route the vehicle is on
     let bufferSize = 0.001; // Start with a 1 meter buffer
