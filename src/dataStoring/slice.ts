@@ -19,6 +19,7 @@ export interface State {
     status: Status;
     mapStyle: string; // The id of the current map style
     routeOffset: number;
+    filteredVehicleTypes: VehicleType[]; // Trigger for vehicle type filtering
 }
 
 export const initialState: State = {
@@ -39,6 +40,7 @@ export const initialState: State = {
     },
     routeOffset: 0,
     mapStyle: 'light-v11',
+    filteredVehicleTypes: [],
 };
 
 const slice = createSlice({
@@ -81,6 +83,9 @@ const slice = createSlice({
         updateMapStyle(state: State, action: PayloadAction<string>) {
             state.mapStyle = action.payload;
         },
+        updateFilteredVehicleTypes(state: State, action: PayloadAction<VehicleType[]>) {
+            state.filteredVehicleTypes = action.payload;
+        },
     },
 });
 
@@ -97,6 +102,7 @@ export const {
     updateStatus,
     updateRouteOffset,
     updateMapStyle,
+    updateFilteredVehicleTypes,
 } = slice.actions;
 
 // Memoized selector for array of features

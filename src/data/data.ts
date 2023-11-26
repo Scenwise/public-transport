@@ -1,3 +1,17 @@
+import {
+    COLOR_VEHICLE_AERIAL_LIFT,
+    COLOR_VEHICLE_BUS,
+    COLOR_VEHICLE_CABLE_TRAM,
+    COLOR_VEHICLE_DEFAULT,
+    COLOR_VEHICLE_FERRY,
+    COLOR_VEHICLE_FUNICULAR,
+    COLOR_VEHICLE_MONORAIL,
+    COLOR_VEHICLE_RAIL,
+    COLOR_VEHICLE_SUBWAY,
+    COLOR_VEHICLE_TRAM,
+    COLOR_VEHICLE_TROLLEYBUS,
+} from '../data/layerPaints';
+
 export enum ReadyState {
     UNINSTANTIATED = -1,
     CONNECTING = 0,
@@ -25,4 +39,18 @@ export const FilterType = {
     range: 'range', // determine range with a slider
     inputRange: 'inputRange', // determine range with two inputs
     switch: 'switch',
+};
+
+export const vehicleTypesMap = {
+    Bus: { color: COLOR_VEHICLE_BUS, checked: true },
+    Trolleybus: { color: COLOR_VEHICLE_TROLLEYBUS, checked: true },
+    Tram: { color: COLOR_VEHICLE_TRAM, checked: true },
+    CableTram: { color: COLOR_VEHICLE_CABLE_TRAM, checked: true },
+    Subway: { color: COLOR_VEHICLE_SUBWAY, checked: true },
+    Rail: { color: COLOR_VEHICLE_RAIL, checked: true },
+    Monorail: { color: COLOR_VEHICLE_MONORAIL, checked: true },
+    Funicular: { color: COLOR_VEHICLE_FUNICULAR, checked: true },
+    Ferry: { color: COLOR_VEHICLE_FERRY, checked: true },
+    AerialLift: { color: COLOR_VEHICLE_AERIAL_LIFT, checked: true },
+    Other: { color: COLOR_VEHICLE_DEFAULT, checked: true },
 };

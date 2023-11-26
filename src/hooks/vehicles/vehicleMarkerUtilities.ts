@@ -1,16 +1,4 @@
-import { RouteType } from '../../data/data';
-import {
-    COLOR_VEHICLE_AERIAL_LIFT,
-    COLOR_VEHICLE_BUS,
-    COLOR_VEHICLE_CABLE_TRAM,
-    COLOR_VEHICLE_FERRY,
-    COLOR_VEHICLE_FUNICULAR,
-    COLOR_VEHICLE_MONORAIL,
-    COLOR_VEHICLE_RAIL,
-    COLOR_VEHICLE_SUBWAY,
-    COLOR_VEHICLE_TRAM,
-    COLOR_VEHICLE_TROLLEYBUS,
-} from '../../data/layerPaints';
+import { vehicleTypesMap } from '../../data/data';
 
 export const getVehiclePopupText = (vehicle: string, route: string, delay: number): string => {
     return (
@@ -35,42 +23,10 @@ const formatDelay = (delay: number): string => {
     else return '<b> on time </b>';
 };
 
-const RouteTypeStrings: { [key: string]: RouteType } = {
-    Tram: RouteType.Tram,
-    Subway: RouteType.Subway,
-    Rail: RouteType.Rail,
-    Bus: RouteType.Bus,
-    Ferry: RouteType.Ferry,
-    CableTram: RouteType.CableTram,
-    AerialLift: RouteType.AerialLift,
-    Funicular: RouteType.Funicular,
-    Trolleybus: RouteType.Trolleybus,
-    Monorail: RouteType.Monorail,
-};
-
 export const getMarkerColorBasedOnVehicleType = (type: string): string => {
-    const enumValue = RouteTypeStrings[type];
-    switch (enumValue) {
-        case RouteType.Tram:
-            return COLOR_VEHICLE_TRAM;
-        case RouteType.Subway:
-            return COLOR_VEHICLE_SUBWAY;
-        case RouteType.Rail:
-            return COLOR_VEHICLE_RAIL;
-        case RouteType.Ferry:
-            return COLOR_VEHICLE_FERRY;
-        case RouteType.CableTram:
-            return COLOR_VEHICLE_CABLE_TRAM;
-        case RouteType.AerialLift:
-            return COLOR_VEHICLE_AERIAL_LIFT;
-        case RouteType.Funicular:
-            return COLOR_VEHICLE_FUNICULAR;
-        case RouteType.Trolleybus:
-            return COLOR_VEHICLE_TROLLEYBUS;
-        case RouteType.Monorail:
-            return COLOR_VEHICLE_MONORAIL;
-        // For vehicles with no type, we consider them busses by default
-        default:
-            return COLOR_VEHICLE_BUS;
+    if (type === '') {
+        type = 'Other';
     }
+    const enumValue = vehicleTypesMap[type as keyof typeof vehicleTypesMap];
+    return enumValue.color;
 };

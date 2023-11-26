@@ -7,13 +7,13 @@ interface VehicleRoutePair {
 }
 
 type VehicleMarkersContextType = {
-    vehicleMarkers:  Map<string, VehicleRoutePair>;
-    setVehicleMarkers: Dispatch<SetStateAction< Map<string, VehicleRoutePair>>>;
+    vehicleMarkers: Map<string, VehicleRoutePair>;
+    setVehicleMarkers: Dispatch<SetStateAction<Map<string, VehicleRoutePair>>>;
 };
 
 type VehicleMarkersComponentProps = {
-    children: ReactNode
-}
+    children: ReactNode;
+};
 
 const VehicleMarkersContext = createContext<VehicleMarkersContextType | undefined>(undefined);
 

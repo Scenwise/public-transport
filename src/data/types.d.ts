@@ -70,6 +70,12 @@ interface PTVechileProperties {
     latitude: number;
 }
 
+type VehicleType = {
+    name: string;
+    color: string;
+    checked: boolean;
+};
+
 interface PTRouteIndex {
     minX: number;
     minY: number;

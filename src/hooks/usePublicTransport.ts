@@ -1,6 +1,7 @@
 import RBush from 'rbush';
 import { useEffect, useRef } from 'react';
 
+import { useVehicleMarkers } from '../components/Vehicles/VehicleMapContext';
 import { ReadyState } from '../data/data';
 import {
     selectPTRoutesFeatureList,
@@ -19,9 +20,9 @@ import { usePTRoutesLayerUpdate } from './mapUdatingHooks/usePTRoutesLayerUpdate
 import { usePTStopsActionUpdate } from './mapUdatingHooks/usePTStopsActionUpdate';
 import { usePTStopsLayerUpdate } from './mapUdatingHooks/usePTStopsLayerUpdate';
 import { useApplyDataToSource } from './useInitializeSourcesAndLayers';
+import useFilterVehicleTypes from './vehicles/useFilterVehicleTypes';
 import { useKV6Websocket } from './vehicles/useKV6Websocket';
 import useRBush from './vehicles/useRBush';
-import { useVehicleMarkers } from '../components/Vehicles/VehicleMapContext';
 
 export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: React.MutableRefObject<boolean>): void => {
     const dispatch = useAppDispatch();
@@ -59,8 +60,8 @@ export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: Rea
     const routeTree = useRef(new RBush<PTRouteIndex>(3));
     const loadedTree = useRef(false);
     // VehicleMarkers keys are of format: "[DataOwnerCode]-[VehicleNumber]"
-    const context = useVehicleMarkers()
-    const [vehicleMarkers, setVehicleMarkers] = [context.vehicleMarkers, context.setVehicleMarkers]
+    const context = useVehicleMarkers();
+    const [vehicleMarkers, setVehicleMarkers] = [context.vehicleMarkers, context.setVehicleMarkers];
     const routesMap = useAppSelector((state: RootState) => state.slice.ptRoutes);
     useRBush(mapInitialized.current, routeTree, ptRouteFeatures, loadedTree);
     useKV6Websocket(
@@ -72,6 +73,7 @@ export const usePublicTransport = (map: mapboxgl.Map | null, mapInitialized: Rea
         setVehicleMarkers,
         loadedTree,
     );
+    useFilterVehicleTypes(mapInitialized.current, map, vehicleMarkers);
 
     useInitiateFilterOptions(['Line Number', 'Vehicle Type', 'Agency'], ['line_number', 'vehicle_type', 'agency_id']);
 
