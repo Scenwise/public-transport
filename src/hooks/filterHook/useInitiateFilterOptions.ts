@@ -54,12 +54,14 @@ export const getOptions = (
     ptRouteFeatures: PTRouteFeature[],
     ptStopFeatures: PTStopFeature[],
 ): string[] => {
+    let list = [];
     if (filter.optionKey == 'stop') {
-        return ptStopFeatures.map((feature) => feature.properties.stopName).sort();
+        list = ptStopFeatures.map((feature) => feature.properties.stopName);
+    } else {
+        list = ptRouteFeatures.map((feature) => feature.properties[filter.optionKey]);
     }
 
-    return ptRouteFeatures
-        .map((feature) => feature.properties[filter.optionKey])
+    return list
         .filter((v, i, a) => a.indexOf(v) == i) // Only get the unique values
         .filter((option) => option !== '' && option !== null) // Remove undefined values
         .sort();

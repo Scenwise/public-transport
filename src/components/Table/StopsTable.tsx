@@ -32,7 +32,6 @@ const StopsTable: React.FC = () => {
             }
         });
 
-        // Define what attributes you want to observe
         observer.observe(routesTable, { attributes: true });
 
         // Cleanup function for when the component unmounts or changes

@@ -72,11 +72,14 @@ export const useApplyDataToSource = <T extends GeoJSON.Feature>(
     useEffect((): void => {
         if (map && mapInitialized) {
             const source = map.getSource(`${layerId}Source`) as GeoJSONSource;
-            if (source)
+            if (source) {
                 source.setData({
                     type: 'FeatureCollection',
                     features: features,
                 });
+            } else {
+                updateSourcesAndLayers(layerId, features, map);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mapInitialized, features]);
