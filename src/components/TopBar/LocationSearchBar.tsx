@@ -90,23 +90,20 @@ const LocationSearchBar: React.FC = () => {
         setDepartureAnchorEl(null);
     };
 
-    useEffect(() => {
-        console.log(departureValue);
-        console.log(destinationValue);
-    }, [departureValue, destinationValue]);
-
     const handleDestinationSelection = (selectedValue: string) => {
-        console.log(selectedValue);
         handleDestinationChange(selectedValue);
         setDestinationValue(selectedValue);
         setDestinationAnchorEl(null);
     };
 
     const handleClick = () => {
-        const res = ptRoutes.filter(
-            (route) => route.properties.origin == departureValue && route.properties.destination == destinationValue,
-        )[0];
-        dispatch(updateSelectedRoute(res.properties.shape_id + ''));
+        if (departureValue && destinationValue) {
+            const res = ptRoutes.filter(
+                (route) =>
+                    route.properties.origin == departureValue && route.properties.destination == destinationValue,
+            )[0];
+            dispatch(updateSelectedRoute(res.properties.shape_id + ''));
+        }
     };
 
     const departureRow = ({ index, style }: { index: number; style: React.CSSProperties }) => (

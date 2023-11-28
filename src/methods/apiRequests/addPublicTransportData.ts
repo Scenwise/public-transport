@@ -79,11 +79,11 @@ export const addPublicTransportData = async (
                             const stopGeometries = JSON.parse(JSON.stringify(feature.geometry)).coordinates;
 
                             const stops: PTStopFeature[] = stopIds.map((stopId, index) => ({
-                                id: stopId,
+                                id: stopId + '',
                                 type: 'Feature',
                                 geometry: { type: 'Point', coordinates: stopGeometries[index] },
                                 properties: {
-                                    stopId: stopId,
+                                    stopId: stopId + '',
                                     stopName: stopProperties.stop_names[index],
                                     stopsCode: stopProperties.stops_code[index],
                                     platformCode: stopProperties.platform_code[index],

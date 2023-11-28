@@ -17,8 +17,8 @@ const StopsTable: React.FC = () => {
 
     const [routesTableWidth, setRoutesTableWidth] = useState<number>(28);
 
+    const routesTable = document.getElementById('routes-table');
     useEffect(() => {
-        const routesTable = document.getElementById('routes-table');
         if (!routesTable) return;
 
         const observer = new MutationObserver((mutationsList) => {
@@ -39,7 +39,7 @@ const StopsTable: React.FC = () => {
             // Disconnect the observer when the component unmounts
             observer.disconnect();
         };
-    }, []); // Empty dependency array to run the effect once on mount
+    }, [routesTable]);
 
     // Get the table headers and content
     let ptRouteProperty = {} as PTRouteProperties;
