@@ -35,10 +35,13 @@ export const addPublicTransportData = async (
                         // Initialize the routes data
                         const ptRoutes = {} as FeatureRecord<PTRouteFeature>;
 
-                        ptRoutesRes.features
-                            .filter((feature) => feature.id === 899524)
-                            .forEach((feature) => {
-                                const id = '' + feature.id; //the id is shape_id which is a number
+                        const ptStopsResIds = ptStopsRes.features.map((feature) => feature.id + '');
+
+                        ptRoutesRes.features.forEach((feature) => {
+                            const id = '' + feature.id; //the id is shape_id which is a number
+                            // TODO: TO be removed after the graph service fixed the problem that ptRoutesRes and ptStopsRes does not have the equal amount of data
+                            // Currently shape ids are not consistent in stop table and route table.
+                            if (ptStopsResIds.includes(id)) {
                                 const ptRoutesProperties = {
                                     origin: feature.properties?.origin,
                                     route_id: feature.properties?.route_id,
@@ -60,7 +63,8 @@ export const addPublicTransportData = async (
                                     },
                                     properties: ptRoutesProperties,
                                 } as PTRouteFeature;
-                            });
+                            }
+                        });
 
                         // Initialize the stops data
                         const ptStops = {} as FeatureRecord<PTStopFeature>;
@@ -68,36 +72,41 @@ export const addPublicTransportData = async (
                         ptStopsRes.features.forEach((feature) => {
                             const id = '' + feature.id; //This id is shape_id which is a number
 
-                            // The stop properties to be put on the table
-                            const stopProperties = JSON.parse(JSON.stringify(feature.properties));
-                            const stopIds: string[] = stopProperties.stops_ids;
-                            const stopGeometries = JSON.parse(JSON.stringify(feature.geometry)).coordinates;
+                            // TODO: TO be removed after the graph service fixed the problem that ptRoutesRes and ptStopsRes does not have the equal amount of data
+                            // Currently shape ids are not consistent in stop table and route table.
+                            if (ptRoutes[id]) {
+                                // The stop properties to be put on the table
+                                const stopProperties = JSON.parse(JSON.stringify(feature.properties));
+                                const stopIds: string[] = stopProperties.stops_ids;
+                                const stopGeometries = JSON.parse(JSON.stringify(feature.geometry)).coordinates;
 
-                            const stops: PTStopFeature[] = stopIds.map((stopId, index) => ({
-                                id: stopId,
-                                type: 'Feature',
-                                geometry: { type: 'Point', coordinates: stopGeometries[index] },
-                                properties: {
-                                    stopId: stopId,
-                                    stopName: stopProperties.stop_names[index],
-                                    platformCode: stopProperties.platform_code[index],
-                                    wheelchairBoarding: getWheelchairBoarding(
-                                        stopProperties.wheelchair_boarding[index],
-                                    ),
-                                },
-                            }));
+                                const stops: PTStopFeature[] = stopIds.map((stopId, index) => ({
+                                    id: stopId,
+                                    type: 'Feature',
+                                    geometry: { type: 'Point', coordinates: stopGeometries[index] },
+                                    properties: {
+                                        stopId: stopId,
+                                        stopName: stopProperties.stop_names[index],
+                                        stopsCode: stopProperties.stops_code[index],
+                                        platformCode: stopProperties.platform_code[index],
+                                        wheelchairBoarding: getWheelchairBoarding(
+                                            stopProperties.wheelchair_boarding[index],
+                                        ),
+                                    },
+                                }));
 
-                            const sortedStops: PTStopFeature[] = removeDuplicateStops(
-                                sortStops(ptRoutes[id], stopGeometries, stops),
-                            );
+                                const sortedStops: PTStopFeature[] = removeDuplicateStops(
+                                    sortStops(ptRoutes[id], stopGeometries, stops),
+                                );
 
-                            // Add the stop ids to the route
-                            ptRoutes[id].properties.stops_ids = sortedStops.map((stop) => stop.properties.stopId);
+                                // Add the stop ids to the route
+                                ptRoutes[id].properties.stops_ids = sortedStops.map((stop) => stop.properties.stopId);
 
-                            // Store each individual stops into the general stop map.
-                            sortedStops.forEach((stop: PTStopFeature) => {
-                                ptStops[stop.properties.stopId] = stop;
-                            });
+                                // Store each individual stops into the general stop map.
+                                sortedStops.forEach((stop: PTStopFeature) => {
+                                    ptStops[stop.properties.stopId] = stop;
+                                });
+                            }
                         });
 
                         setPTStops(ptStops);

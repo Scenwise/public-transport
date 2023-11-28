@@ -33,6 +33,7 @@ type PTStopGeometry = GeoJSON.Point;
 interface PTStopProperties {
     stopId: string;
     stopName: string;
+    stopsCode: string;
     platformCode: string;
     wheelchairBoarding: string;
 }
