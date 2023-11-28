@@ -8,6 +8,7 @@
     },
     "paint": {
         "line-color": ["case", ["==", ["get", "route_color"], null], "purple", ["to-string", ["get", "route_color"]]],
-        "line-width": 2
+        "line-width": 2,
+        "line-offset": 2
     }
 }
