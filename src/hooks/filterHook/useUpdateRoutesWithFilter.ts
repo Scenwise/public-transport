@@ -12,6 +12,7 @@ export const useUpdateRoutesWithFilter = () => {
     const dispatch = useAppDispatch();
     const filters = useAppSelector((state) => state.slice.filters);
     const routes = useAppSelector(selectPTRoutesFeatureList);
+    const stops = useAppSelector((state) => state.slice.ptStops);
     const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
 
     // If the filter is changed, we need to update the routes.
@@ -19,8 +20,16 @@ export const useUpdateRoutesWithFilter = () => {
         const filteredRoutes = routes.filter((route) => {
             let isRouteKept = true;
             Object.entries(filters).forEach(([key, filter]) => {
-                const value = route.properties[key];
-                isRouteKept = isRouteKept && checkCheckboxFilter(filter, value);
+                if (key == 'stop') {
+                    isRouteKept =
+                        isRouteKept &&
+                        checkCheckboxFilterList(
+                            filter,
+                            route.properties.stops_ids.map((id) => stops[id].properties.stopName),
+                        );
+                } else {
+                    isRouteKept = isRouteKept && checkCheckboxFilter(filter, route.properties[key]);
+                }
             });
             return isRouteKept;
         });
@@ -39,11 +48,15 @@ export const useUpdateRoutesWithFilter = () => {
 };
 
 /**
- * If the filter is a checkbox or subCheckbox type, determine if a value/property of an alert should be filtered
+ * If the filter is a checkbox or subCheckbox type, determine if a value/property of an route should be filtered
  * @param filter The filter to apply
  * @param value The value to be checked if it is included after the filter is applied
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const checkCheckboxFilter = (filter: Filter, value: string): boolean => {
     return filter.variants.includes(value) || !filter.variants.length;
+};
+
+const checkCheckboxFilterList = (filter: Filter, valueList: string[]): boolean => {
+    return !filter.variants.length || valueList.some((value) => filter.variants.includes(value));
 };

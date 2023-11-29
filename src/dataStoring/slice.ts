@@ -37,7 +37,7 @@ export const initialState: State = {
         ptRoute: ReadyState.UNINSTANTIATED,
         ptStop: ReadyState.UNINSTANTIATED,
     },
-    routeOffset: 0,
+    routeOffset: 2,
     mapStyle: 'light-v11',
 };
 

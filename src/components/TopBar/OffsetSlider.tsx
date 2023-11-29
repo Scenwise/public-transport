@@ -17,23 +17,20 @@ const Input = styled(MuiInput)`
 const OffsetSlider: React.FC = () => {
     const dispatch = useAppDispatch();
     const routeOffset = useAppSelector((state) => state.slice.routeOffset);
-    const [value, setValue] = React.useState(0);
 
     const handleSliderChange = (event: Event, newValue: number | number[]) => {
-        setValue(newValue as number);
         dispatch(updateRouteOffset(newValue as number));
     };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value === '' ? 0 : Number(event.target.value));
         dispatch(updateRouteOffset(event.target.value === '' ? 0 : Number(event.target.value)));
     };
 
     const handleBlur = () => {
-        if (value < 0) {
-            setValue(0);
-        } else if (value > 10) {
-            setValue(10);
+        if (routeOffset < 0) {
+            updateRouteOffset(0);
+        } else if (routeOffset > 10) {
+            updateRouteOffset(10);
         }
     };
 
@@ -56,7 +53,7 @@ const OffsetSlider: React.FC = () => {
                 </Grid>
                 <Grid item xs={4}>
                     <Input
-                        value={value}
+                        value={routeOffset}
                         size='small'
                         onChange={handleInputChange}
                         onBlur={handleBlur}
