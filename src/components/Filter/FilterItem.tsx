@@ -10,10 +10,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
-import { selectFilterList, selectPTRoutesFeatureList, updateFilter } from '../../dataStoring/slice';
-import { getOptions } from '../../hooks/filterHook/useInitiateFilterOptions';
-import { checkCheckboxFilter } from '../../hooks/filterHook/useUpdateRoutesWithFilter';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { updateFilter } from '../../dataStoring/slice';
+import { useAppDispatch } from '../../store';
 
 interface FilterItemProps {
     filterItem: Filter;
@@ -26,38 +24,41 @@ interface FilterItemProps {
 const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
     const dispatch = useAppDispatch();
 
-    const filters = useAppSelector(selectFilterList);
-    const fullRoutes = useAppSelector(selectPTRoutesFeatureList);
-    const ptStops = useAppSelector((state) => state.slice.ptStops);
-
     const filter = deepcopy(filterItem);
-    const [flag, setFlag] = useState(true);
 
-    // Update the available options based on the changed filter
-    useEffect(() => {
-        const filteredList = fullRoutes.filter((route) =>
-            checkCheckboxFilter(filter, route.properties[filter.optionKey]),
-        );
-        filters.forEach((otherFilter) => {
-            if (otherFilter.optionKey !== filter.optionKey) {
-                dispatch(
-                    updateFilter({
-                        ...otherFilter,
-                        availableOptions: getOptions(
-                            otherFilter,
-                            filteredList,
-                            filteredList
-                                .map((item) => item.properties.stops_ids)
-                                .flat()
-                                .filter((v, i, a) => a.indexOf(v) == i)
-                                .map((item) => ptStops[item]),
-                        ),
-                    }),
-                );
-            }
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [flag]);
+    // TODO: Need to find a more efficient way to show the available options, now adding this will make the processing extremely slow.
+    // // Change when a state of checkbox is changed
+    // const filters = useAppSelector(selectFilterList);
+    // const fullRoutes = useAppSelector(selectPTRoutesFeatureList);
+    // const ptStops = useAppSelector((state) => state.slice.ptStops);
+    // const flag = useRef(true);
+    // // Update the available options based on the changed filter
+    // useEffect(() => {
+    //     if (!flag.current) {
+    //         const filteredList = fullRoutes.filter((route) =>
+    //             checkCheckboxFilter(filter, route.properties[filter.optionKey]),
+    //         );
+    //             filters.forEach((otherFilter) => {
+    //                 if (otherFilter.optionKey !== filter.optionKey) {
+    //                     dispatch(
+    //                         updateFilter({
+    //                             ...otherFilter,
+    //                             availableOptions: getOptions(
+    //                                 otherFilter,
+    //                                 filteredList,
+    //                                 filteredList
+    //                                     .map((item) => item.properties.stops_ids)
+    //                                     .flat()
+    //                                     .filter((v, i, a) => a.indexOf(v) == i)
+    //                                     .map((item) => ptStops[item]),
+    //                             ),
+    //                         }),
+    //                     );
+    //                 }
+    //             });
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [flag.current]);
 
     // Update the filter when a checkbox is clicked.
     const handleCheckboxFiltering = async (index: number) => {
@@ -67,7 +68,7 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
         } else {
             filter.variants.push(newValue);
         }
-        setFlag(!flag);
+        // flag.current = !flag.current;
         dispatch(updateFilter(filter));
     };
 
