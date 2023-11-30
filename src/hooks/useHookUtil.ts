@@ -30,7 +30,7 @@ export const updateLayerPaint = (
     map: mapboxgl.Map | null,
     layerID: string,
     property: string,
-    defaultValue: string | number,
+    defaultValue: any, // string | number or mapbox expression
     isEqualToHovered?: any,
     valueWhenHovered?: string | number,
     isEqualToSelected?: any,

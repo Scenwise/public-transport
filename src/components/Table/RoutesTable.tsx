@@ -16,7 +16,18 @@ const RoutesTable: React.FC = () => {
     const visibleRoutes = useAppSelector((state) => state.slice.visibleRoutes);
     const filteredVisibleRoutes = filterRoutesByVisibleIds(visibleRoutes.isOn, visibleRoutes.ids, filteredRoutes);
 
-    const headers = ['index', 'origin', 'destination', 'line number', 'agency', 'vehicle type', 'route id', 'shape id'];
+    const headers = [
+        'index',
+        'origin',
+        'destination',
+        'line number',
+        'agency',
+        'vehicle type',
+        'route type',
+        'color',
+        'route id',
+        'shape id',
+    ];
     const tables = filteredVisibleRoutes.map((route, index) => [
         index + '',
         route.origin,
@@ -24,6 +35,8 @@ const RoutesTable: React.FC = () => {
         route.line_number,
         route.agency_id,
         route.vehicle_type,
+        route.route_type,
+        route.route_color,
         route.route_id + '',
         route.shape_id + '',
     ]);
@@ -41,6 +54,7 @@ const RoutesTable: React.FC = () => {
 
     return (
         <GeneralTable
+            id={'routes-table'}
             headers={headers}
             tables={tables}
             updateSelectedFeature={(selectedRouteID) => dispatch(updateSelectedRoute(selectedRouteID))}
@@ -49,6 +63,8 @@ const RoutesTable: React.FC = () => {
                 height: 'calc(100vh - 64px)', // Fill remaining height
                 width: '28%',
                 float: 'left',
+                resize: 'horizontal',
+                overflow: 'hidden',
             }}
         />
     );

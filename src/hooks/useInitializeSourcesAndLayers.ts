@@ -16,7 +16,7 @@ export const useInitializeSourcesAndLayers = (map: mapboxgl.Map | null): React.M
     const hasInitialized = useRef(false);
 
     useEffect(() => {
-        if (map) {
+        if (map && !hasInitialized.current) {
             Object.entries(layerConfig).forEach(([layerId, layer]: [string, AnyLayer]) => {
                 const sourceId = `${layerId}Source`;
 
@@ -72,11 +72,14 @@ export const useApplyDataToSource = <T extends GeoJSON.Feature>(
     useEffect((): void => {
         if (map && mapInitialized) {
             const source = map.getSource(`${layerId}Source`) as GeoJSONSource;
-            if (source)
+            if (source) {
                 source.setData({
                     type: 'FeatureCollection',
                     features: features,
                 });
+            } else {
+                updateSourcesAndLayers(layerId, features, map);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mapInitialized, features]);

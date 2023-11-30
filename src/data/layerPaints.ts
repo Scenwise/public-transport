@@ -1,6 +1,11 @@
 export const COLOR_ROUTE_SELECTED = 'red';
 export const COLOR_ROUTE_HOVERED = 'orange';
-export const COLOR_ROUTE_DEFAULT = 'purple';
+export const COLOR_ROUTE_DEFAULT = [
+    'case',
+    ['==', ['get', 'route_color'], null],
+    'purple',
+    ['to-string', ['get', 'route_color']],
+];
 export const LINE_WIDTH_SELECTED = 5;
 export const LINE_WIDTH_HOVERED = 7;
 export const LINE_WIDTH_DEFAULT = 2;

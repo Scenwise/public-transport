@@ -33,6 +33,8 @@ export enum RouteType {
     Monorail = 12,
 }
 
+export const wheelchairBoarding = ['No information', 'Some vehicles', 'Not possible'];
+
 export const FilterType = {
     checkbox: 'checkbox',
     subCheckbox: 'subCheckbox',
@@ -40,6 +42,9 @@ export const FilterType = {
     inputRange: 'inputRange', // determine range with two inputs
     switch: 'switch',
 };
+
+export const filterNames = ['Line Number', 'Vehicle Type', 'Agency', 'Route Type', 'Stop name'];
+export const filterKeys = ['line_number', 'vehicle_type', 'agency_id', 'route_type', 'stop'];
 
 export const vehicleTypesMap = {
     Bus: { color: COLOR_VEHICLE_BUS, checked: true },

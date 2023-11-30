@@ -15,6 +15,7 @@ const MapStyleSelector: React.FC = () => {
 
     const handleChange = (event: SelectChangeEvent) => {
         const id = Object.keys(mapStyles).find((key) => mapStyles[key] === event.target.value) as string;
+
         dispatch(updateMapStyle(id));
     };
 
