@@ -20,6 +20,7 @@ export interface State {
     mapStyle: string; // The id of the current map style
     routeOffset: number;
     filteredVehicleTypes: VehicleType[]; // Trigger for vehicle type filtering
+    stopCodeToRouteMap: Record<string, number>; // Map each stop code to its corresponding route id for route-vehicle matching
 }
 
 export const initialState: State = {
@@ -41,6 +42,7 @@ export const initialState: State = {
     routeOffset: 2,
     mapStyle: 'light-v11',
     filteredVehicleTypes: [],
+    stopCodeToRouteMap: {} as Record<string, number>,
 };
 
 const slice = createSlice({
@@ -86,6 +88,9 @@ const slice = createSlice({
         updateFilteredVehicleTypes(state: State, action: PayloadAction<VehicleType[]>) {
             state.filteredVehicleTypes = action.payload;
         },
+        updateStopCodeToRouteMap(state: State, action: PayloadAction<Record<string, number>>) {
+            state.stopCodeToRouteMap = action.payload;
+        },
     },
 });
 
@@ -103,6 +108,7 @@ export const {
     updateRouteOffset,
     updateMapStyle,
     updateFilteredVehicleTypes,
+    updateStopCodeToRouteMap,
 } = slice.actions;
 
 // Memoized selector for array of features
@@ -120,4 +126,5 @@ export const selectFilterList = createSelector(
     (state: RootState) => state.slice.filters,
     (features) => Object.values(features),
 );
+
 export { slice };

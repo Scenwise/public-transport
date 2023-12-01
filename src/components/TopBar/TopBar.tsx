@@ -4,6 +4,7 @@ import AppBar from '@mui/material/AppBar';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 
+import FilterVehicleCheckbox from '../Vehicles/FilterVehicleCheckbox';
 import { CsvExport } from './CsvExport';
 import { LocationSearchBar } from './LocationSearchBar';
 import MapStyleSelector from './MapStyleSelector';
@@ -21,6 +22,7 @@ const TopBar: React.FC = () => {
                         <OffsetSlider />
                         <MapStyleSelector />
                         <CsvExport />
+                        <FilterVehicleCheckbox />
                     </Stack>
                 </Stack>
             </Toolbar>

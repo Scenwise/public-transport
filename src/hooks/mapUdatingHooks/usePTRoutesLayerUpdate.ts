@@ -17,9 +17,10 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
 
         if (map && selectedPTRoute) {
             // Get the bounds of the selected route geometry
-            const bounds: LngLatBounds = selectedPTRoute.geometry.coordinates
-                .flat()
-                .reduce((bounds, coord) => bounds.extend([coord[0], coord[1]]), new LngLatBounds());
+            const bounds: LngLatBounds = selectedPTRoute.geometry.coordinates.reduce(
+                (bounds, coord) => bounds.extend([coord[0], coord[1]]),
+                new LngLatBounds(),
+            );
             // Fly to the route bounds
             map.fitBounds(bounds, {
                 padding: 20, // add padding in pixels

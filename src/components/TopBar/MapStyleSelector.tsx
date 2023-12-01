@@ -40,7 +40,7 @@ const MapStyleSelector: React.FC = () => {
                     labelId='map-style-label'
                     id='map-style-select'
                     value={mapStyles[mapStyleID]}
-                    sx={{ color: 'white' }}
+                    sx={{ color: 'white', height: '5vh' }}
                     onChange={handleChange}
                 >
                     {Object.entries(mapStyles).map(([id, label]) => (

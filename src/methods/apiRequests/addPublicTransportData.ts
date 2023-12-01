@@ -1,16 +1,17 @@
-import { ReadyState, RouteType, wheelchairBoarding } from '../../data/data';
-import { MultiLineString } from '@turf/turf';
+import { ReadyState, RouteType, vehicleTypesMap, wheelchairBoarding } from '../../data/data';
 import getGtfsTable from './apiFunction';
 
 /**
  * Fetch the routes data and store the routes as a record(map) with the key of the shape id.
  * @param setPTRoutes Function to set the routes record
  * @param setPTStops Function to set the stops record
+ * @param setStopToRouteMap Function to set the map of stop codes/route id's
  * @param setStatus Function to set the routes and stops loading status
  */
 export const addPublicTransportData = async (
     setPTRoutes: (ptRoutes: FeatureRecord<PTRouteFeature>) => void,
     setPTStops: (ptStops: FeatureRecord<PTStopFeature>) => void,
+    setStopToRouteMap: (stopToRouteMap: Record<string, number>) => void,
     setStatus: (status: Status) => void,
 ): Promise<Status> => {
     // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -33,7 +34,6 @@ export const addPublicTransportData = async (
         ptRoutesData
             .then((ptRoutesRes) => {
                 ptStopsData
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     .then((ptStopsRes) => {
                         // Initialize the routes data
                         const ptRoutes = {} as FeatureRecord<PTRouteFeature>;
@@ -44,6 +44,7 @@ export const addPublicTransportData = async (
                             const id = '' + feature.id; //the id is shape_id which is a number
                             // TODO: TO be removed after the graph service fixed the problem that ptRoutesRes and ptStopsRes does not have the equal amount of data
                             // Currently shape ids are not consistent in stop table and route table.
+                            const routeType = getRouteTypeString(feature.properties?.route_type);
                             if (ptStopsResIds.includes(id)) {
                                 const ptRoutesProperties = {
                                     origin: feature.properties?.origin,
@@ -54,10 +55,8 @@ export const addPublicTransportData = async (
                                     line_number: feature.properties?.line_numbe,
                                     route_name: feature.properties?.route_name,
                                     vehicle_type: feature.properties?.vehicle_ty,
-                                    route_type: getRouteTypeString(feature.properties?.route_type),
-                                    route_color: feature.properties?.route_color
-                                        ? '#' + feature.properties?.route_color
-                                        : null,
+                                    route_type: routeType,
+                                    route_color: getRouteColor(routeType),
                                 } as PTRouteProperties;
                                 ptRoutes[id] = {
                                     geometry: {
@@ -71,10 +70,8 @@ export const addPublicTransportData = async (
 
                         // Initialize the stops data
                         const ptStops = {} as FeatureRecord<PTStopFeature>;
-                        // if (ptStopsRes.features === undefined)
-                        //     throw new Error('The data failed to fetch: ' + ptStopsRes);
-                        // ptStopsRes.features.forEach((feature) => {
-                        //     const id = '' + feature.id; //the id is shape_id which is a number
+                        // Initialize the stops-routes map
+                        const stopToRouteMap = {} as Record<string, number>;
 
                         ptStopsRes.features.forEach((feature) => {
                             const id = '' + feature.id; //This id is shape_id which is a number
@@ -109,15 +106,17 @@ export const addPublicTransportData = async (
                                 // Add the stop ids to the route
                                 ptRoutes[id].properties.stops_ids = sortedStops.map((stop) => stop.properties.stopId);
 
-                                // Store each individual stops into the general stop map.
+                                // Store each individual stops into the general stop map. Store the route id for each stop code.
                                 sortedStops.forEach((stop: PTStopFeature) => {
                                     ptStops[stop.properties.stopId] = stop;
+                                    stopToRouteMap[stop.properties.stopsCode] = ptRoutes[id].properties.shape_id;
                                 });
                             }
                         });
 
                         setPTStops(ptStops);
                         setPTRoutes(ptRoutes);
+                        setStopToRouteMap(stopToRouteMap);
                         ptRouteStatus = ReadyState.OPEN;
                         ptStopStatus = ReadyState.OPEN;
                         setStatus({
@@ -141,6 +140,14 @@ const getRouteTypeString = (value: number): string => {
     const routeTypeString = Object.keys(RouteType).find((key) => RouteType[key as keyof typeof RouteType] === value);
 
     return routeTypeString ? routeTypeString : '';
+};
+
+const getRouteColor = (type: string): string => {
+    if (type === '') {
+        type = 'Other';
+    }
+    const enumValue = vehicleTypesMap[type as keyof typeof vehicleTypesMap];
+    return enumValue.color;
 };
 
 const getWheelchairBoarding = (value: number): string => {

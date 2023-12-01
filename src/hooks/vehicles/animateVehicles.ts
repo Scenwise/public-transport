@@ -20,8 +20,7 @@ const animateVehicles = (
     );
     vehicleRoutePair.marker.setPopup(popup);
 
-    // Reduce the multiline string into a single linestring for easier traversal
-    const line = route.geometry.coordinates.flat();
+    const line = route.geometry.coordinates;
 
     // Find current and new positions on route and slice the route to that zone only
     const convertedLine = turf.featureCollection(
@@ -31,8 +30,8 @@ const animateVehicles = (
         .coordinates;
     const endPosition = turf.nearestPoint(newPosition, convertedLine).geometry.coordinates;
 
-    // If distance between actual location and route is > 100 meters, we misintersected
-    if (turf.pointToLineDistance(turf.point(newPosition), turf.lineString(line)) > 0.1) return false;
+    // If distance between actual location and route is > 20 meters, delete the match (vehicle changed its route)
+    if (turf.pointToLineDistance(turf.point(newPosition), turf.lineString(line)) > 0.02) return false;
 
     const startIndex = line.findIndex(
         (coord: Array<number>) => coord[0] === startPosition[0] && coord[1] === startPosition[1],

@@ -7,6 +7,10 @@ interface BboxFeaturePair {
     feature: PTRouteFeature;
 }
 
+/**
+ * Legacy code. Used to construct an R-Tree data structure for the routes.
+ * Keep it for now since we might need it for future optimizations.
+ */
 const useRBush = (
     mapInitialized: boolean,
     routeTree: React.MutableRefObject<RBush<PTRouteIndex>>,

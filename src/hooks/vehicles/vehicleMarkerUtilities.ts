@@ -1,3 +1,5 @@
+import { Marker } from 'mapbox-gl';
+
 import { vehicleTypesMap } from '../../data/data';
 
 export const getVehiclePopupText = (vehicle: string, route: string, delay: number): string => {
@@ -29,4 +31,28 @@ export const getMarkerColorBasedOnVehicleType = (type: string): string => {
     }
     const enumValue = vehicleTypesMap[type as keyof typeof vehicleTypesMap];
     return enumValue.color;
+};
+
+export const addNewLabelToVehicle = (marker: Marker): void => {
+    // Create HTML element for label
+    const newLabel = document.createElement('div');
+    newLabel.className = 'new-label';
+    newLabel.textContent = 'New!';
+
+    // Style the label
+    newLabel.style.backgroundColor = 'white';
+    newLabel.style.padding = '1px';
+    newLabel.style.borderRadius = '5px';
+    newLabel.style.border = '1px solid red';
+    newLabel.style.color = 'red';
+    newLabel.style.fontSize = '15px';
+    newLabel.style.fontWeight = 'bold';
+    newLabel.style.position = 'absolute';
+    newLabel.style.top = '-20px';
+    newLabel.style.left = '-6px';
+
+    marker.getElement().appendChild(newLabel);
+    setTimeout(() => {
+        newLabel.parentNode?.removeChild(newLabel);
+    }, 1000);
 };

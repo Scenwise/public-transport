@@ -46,8 +46,6 @@ const MapBoxContainer: React.FC = () => {
     const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
     const ptStopFeatures = useAppSelector(selectPTStopsFeatureList);
 
-    const selectedRouteID = useAppSelector((state) => state.slice.selectedRoute);
-
     usePublicTransport(map);
 
     /**
@@ -216,21 +214,12 @@ const MapBoxContainer: React.FC = () => {
         }
     };
 
-    const [stopsTableHeight, setStopsTableHeight] = useState<number>(0);
-    useEffect(() => {
-        // Calculate the height of the StopsTable and update the state
-        const stopsTable = document.getElementById(selectedRouteID);
-        if (stopsTable) {
-            setStopsTableHeight(stopsTable.offsetHeight);
-        }
-    }, [selectedRouteID]);
-
     const miniMapStyles: React.CSSProperties = {
         width: '20%',
         height: '20%',
         position: 'absolute',
         border: 'solid blue',
-        bottom: `${stopsTableHeight + 5}px`, // Adjusted bottom property
+        bottom: `5px`,
         right: '3px',
         zIndex: 100,
         display: zoom >= 10 ? 'flex' : 'none',

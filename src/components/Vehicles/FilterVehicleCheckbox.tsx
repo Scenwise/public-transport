@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
+import { IconButton, Menu, Tooltip } from '@mui/material';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions/CardActions';
-import CardContent from '@mui/material/CardContent';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { vehicleTypesMap } from '../../data/data';
@@ -25,6 +25,11 @@ const FilterVehicleCheckbox: React.FC = () => {
     const vehicleMarkers = context.vehicleMarkers;
     const dispatch = useAppDispatch();
 
+    // For open and close of the filter menu
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const isDisabled = vehicleMarkers ? vehicleMarkers.size == 0 : false;
+
     const vehicleTypes = Object.entries(vehicleTypesMap).map(([name, info]) => ({
         name,
         color: info.color,
@@ -40,42 +45,74 @@ const FilterVehicleCheckbox: React.FC = () => {
         setSelectedVehicleTypes(updatedTypes);
     };
 
-    if (vehicleMarkers.size == 0) return null;
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
 
     return (
-        <Card sx={{ position: 'absolute', right: 0 }}>
-            <CardContent>
-                <Typography noWrap={true} fontWeight={'bolder'}>
-                    {' '}
-                    Displayed vehicle types{' '}
-                </Typography>
-                <FormGroup>
-                    {vehicleTypes.map((type, index) => (
-                        <FormControlLabel
-                            key={index}
-                            control={
-                                <Checkbox
-                                    defaultChecked={true}
-                                    onChange={() => handleCheckboxChange(index)}
-                                    style={{ color: type.color }}
-                                />
-                            }
-                            label={<Typography fontSize={'15px'}> {type.name} </Typography>}
-                        />
-                    ))}
-                </FormGroup>
-            </CardContent>
-            <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                    variant='contained'
-                    onClick={() => dispatch(updateFilteredVehicleTypes(selectedVehicleTypes))}
-                    disableElevation
-                    size='small'
-                >
-                    Apply
-                </Button>
-            </CardActions>
-        </Card>
+        <>
+            <Stack direction='column' alignItems='center'>
+                <Typography noWrap={true}>Total vehicles</Typography>
+                <Typography variant='caption'>{context.vehicleMarkers.size}</Typography>
+            </Stack>
+            <Tooltip title={'Vehicles Filter'} placement={'right'}>
+                <span>
+                    <IconButton
+                        color='inherit'
+                        aria-label='Vehicles Filter'
+                        onClick={handleMenuOpen}
+                        disabled={isDisabled}
+                        style={{ borderRadius: '50%' }}
+                    >
+                        <DirectionsBusIcon />
+                    </IconButton>
+                </span>
+            </Tooltip>
+            <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+            >
+                <div style={{ padding: '10px' }}>
+                    <Typography noWrap={true} fontWeight={'bolder'}>
+                        {' '}
+                        Displayed vehicle types{' '}
+                    </Typography>
+                    <FormGroup>
+                        {vehicleTypes.map((type, index) => (
+                            <FormControlLabel
+                                key={index}
+                                control={
+                                    <Checkbox
+                                        checked={selectedVehicleTypes[index].checked}
+                                        onChange={() => handleCheckboxChange(index)}
+                                        style={{ color: type.color }}
+                                    />
+                                }
+                                label={<Typography fontSize={'15px'}> {type.name} </Typography>}
+                            />
+                        ))}
+                    </FormGroup>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button
+                            variant='contained'
+                            onClick={() => dispatch(updateFilteredVehicleTypes(selectedVehicleTypes))}
+                            disableElevation
+                            size='small'
+                        >
+                            Apply
+                        </Button>
+                    </div>
+                </div>
+            </Menu>
+        </>
     );
 };
 

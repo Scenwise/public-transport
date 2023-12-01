@@ -1,21 +1,21 @@
-import RBush from 'rbush';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
-import { ReadyState, filterKeys, filterNames } from '../data/data';
 import { useVehicleMarkers } from '../components/Vehicles/VehicleMapContext';
+import { ReadyState, filterKeys, filterNames } from '../data/data';
 import {
     selectPTRoutesFeatureList,
     selectPTStopsFeatureList,
     updatePTRoutes,
     updatePTStops,
     updateStatus,
+    updateStopCodeToRouteMap,
 } from '../dataStoring/slice';
 import { addPublicTransportData } from '../methods/apiRequests/addPublicTransportData';
 import { RootState, useAppDispatch, useAppSelector } from '../store';
 import { useInitiateFilterOptions } from './filterHook/useInitiateFilterOptions';
 import { useUpdateRoutesWithFilter } from './filterHook/useUpdateRoutesWithFilter';
 import { useVisibleRoutesUpdate } from './filterHook/useVisibleRoutesUpdate';
-import { usePTRoutesActionUpdate } from './mapUdatingHooks/usePTRoutesActionUpdate';
+// import { usePTRoutesActionUpdate } from './mapUdatingHooks/usePTRoutesActionUpdate';
 import { usePTRoutesLayerUpdate } from './mapUdatingHooks/usePTRoutesLayerUpdate';
 import { usePTStopsActionUpdate } from './mapUdatingHooks/usePTStopsActionUpdate';
 import { usePTStopsLayerUpdate } from './mapUdatingHooks/usePTStopsLayerUpdate';
@@ -23,7 +23,6 @@ import { useUpdateMapStyle } from './mapUdatingHooks/useUpdateMapStyle';
 import { useApplyDataToSource, useInitializeSourcesAndLayers } from './useInitializeSourcesAndLayers';
 import useFilterVehicleTypes from './vehicles/useFilterVehicleTypes';
 import { useKV6Websocket } from './vehicles/useKV6Websocket';
-import useRBush from './vehicles/useRBush';
 
 export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     const dispatch = useAppDispatch();
@@ -47,6 +46,9 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
                     (stops: FeatureRecord<PTStopFeature>) => {
                         dispatch(updatePTStops(stops));
                     },
+                    (stopsToRoutes: Record<string, number>) => {
+                        dispatch(updateStopCodeToRouteMap(stopsToRoutes));
+                    },
                     (status: Status) => {
                         dispatch(updateStatus(status));
                     },
@@ -58,29 +60,19 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     }, [mapInitialized.current]);
 
     useInitiateFilterOptions(filterNames, filterKeys);
-    // Initialize bounding boxes for routes and vehicle websocket
-    const routeTree = useRef(new RBush<PTRouteIndex>(3));
-    const loadedTree = useRef(false);
+
     // VehicleMarkers keys are of format: "[DataOwnerCode]-[VehicleNumber]"
     const context = useVehicleMarkers();
     const [vehicleMarkers, setVehicleMarkers] = [context.vehicleMarkers, context.setVehicleMarkers];
     const routesMap = useAppSelector((state: RootState) => state.slice.ptRoutes);
-    useRBush(mapInitialized.current, routeTree, ptRouteFeatures, loadedTree);
-    useKV6Websocket(
-        mapInitialized.current,
-        map,
-        routeTree.current,
-        routesMap,
-        vehicleMarkers,
-        setVehicleMarkers,
-        loadedTree,
-    );
+    const stopsToRoutesMap = useAppSelector((state: RootState) => state.slice.stopCodeToRouteMap);
+    useKV6Websocket(mapInitialized.current, map, routesMap, stopsToRoutesMap, vehicleMarkers, setVehicleMarkers);
     useFilterVehicleTypes(mapInitialized.current, map, vehicleMarkers);
 
     useInitiateFilterOptions(['Line Number', 'Vehicle Type', 'Agency'], ['line_number', 'vehicle_type', 'agency_id']);
 
     // Update the layers of the map when an action is triggered
-    usePTRoutesActionUpdate(map);
+    // usePTRoutesActionUpdate(map);
     usePTStopsActionUpdate(map);
 
     // Update the layers of the map

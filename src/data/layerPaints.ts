@@ -43,4 +43,4 @@ export const COLOR_VEHICLE_AERIAL_LIFT = '#87CEEB'; // Sky Blue
 export const COLOR_VEHICLE_FERRY = '#1E90FF'; // Dodger Blue
 
 // Default: grey
-export const COLOR_VEHICLE_DEFAULT = '#dbdbdb'; // Light Gray
+export const COLOR_VEHICLE_DEFAULT = '#9c9c9c'; // Gray

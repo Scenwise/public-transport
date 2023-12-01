@@ -1,29 +1,29 @@
 import { Marker, Popup } from 'mapbox-gl';
-import RBush from 'rbush';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { updateSelectedRoute } from '../../dataStoring/slice';
 import animateVehicles from './animateVehicles';
-import findMatchingRoute from './findMatchingRoute';
 import { getMarkerColorBasedOnVehicleType, getVehiclePopupText } from './vehicleMarkerUtilities';
 
 // Create websocket connection
 export const useKV6Websocket = (
     mapInitialized: boolean,
     map: mapboxgl.Map | null,
-    routeTree: RBush<PTRouteIndex>,
     routesMap: FeatureRecord<PTRouteFeature>,
+    stopsToRoutesMap: Record<string, number>,
     vehicleMarkers: Map<string, VehicleRoutePair>,
     setVehicleMarkers: React.Dispatch<React.SetStateAction<Map<string, VehicleRoutePair>>>,
-    loadedTree: React.MutableRefObject<boolean>,
 ): void => {
+    const dispatch = useDispatch();
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
-        if (map && mapInitialized && routesMap && loadedTree.current) {
+        if (map && mapInitialized && routesMap) {
             const webSocketURL = 'wss://prod.dataservice.scenwise.nl/kv6';
             const socket = new WebSocket(webSocketURL);
 
             socket.onopen = () => {
-                setTimeout(() => 5000);
+                setTimeout(() => 7000);
                 const message = JSON.stringify({
                     Command: {
                         Set: {
@@ -93,28 +93,30 @@ export const useKV6Websocket = (
 
                             // If we do not have this vehicle, find its route
                             else if (vehicleRoutePair === undefined) {
-                                const intersectedRoad = findMatchingRoute(vehicle, routeTree);
-                                if (intersectedRoad != null) {
+                                const intersectedRoad = routesMap[stopsToRoutesMap[vehicle.userStopCode]];
+                                if (intersectedRoad !== undefined) {
                                     const popup = new Popup().setHTML(
                                         getVehiclePopupText(
                                             mapKey,
-                                            intersectedRoad.route.properties.line_number,
+                                            intersectedRoad.properties.line_number,
                                             vehicle.punctuality,
                                         ),
                                     );
                                     const marker = new Marker({
-                                        color: getMarkerColorBasedOnVehicleType(
-                                            intersectedRoad.route.properties.route_type,
-                                        ),
+                                        color: getMarkerColorBasedOnVehicleType(intersectedRoad.properties.route_type),
                                     })
                                         .setLngLat([vehicle.longitude, vehicle.latitude])
-                                        .addTo(map)
-                                        .setPopup(popup);
+                                        .setPopup(popup)
+                                        .addTo(map);
+                                    marker.getElement().addEventListener('click', () => {
+                                        dispatch(updateSelectedRoute(intersectedRoad.properties.shape_id + ''));
+                                    });
+                                    // addNewLabelToVehicle(marker);
                                     setVehicleMarkers(
                                         new Map(
                                             vehicleMarkers.set(mapKey, {
                                                 marker: marker,
-                                                routeId: intersectedRoad.route.properties.shape_id + '',
+                                                routeId: intersectedRoad.properties.shape_id + '',
                                                 vehicle: vehicle,
                                             }),
                                         ),
@@ -124,7 +126,7 @@ export const useKV6Websocket = (
                         }
                     }
                 }
-            }, 250);
+            }, 100);
 
             socket.onerror = (error) => {
                 console.error('WebSocket error:', error);

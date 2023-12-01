@@ -1,7 +1,17 @@
 import * as turf from '@turf/turf';
 import RBush from 'rbush';
 
-const findMatchingRoute = (vehicle: PTVechileProperties, routeTree: RBush<PTRouteIndex>): PTRouteIndex | null => {
+/**
+ * Legacy code. Function for matching the vehicles with the routes geometrically (based on coordinates).
+ * Not deleted yet because we might need a similar algorithm for future tasks.
+ * @param vehicle the vehicle that needs to be matched
+ * @param routeTree the R-tree structure of routes
+ * @returns the matching route
+ */
+const findMatchingRouteGeometrically = (
+    vehicle: PTVechileProperties,
+    routeTree: RBush<PTRouteIndex>,
+): PTRouteIndex | null => {
     // Find corresponding road
     const vehiclePoint = turf.point([vehicle.longitude, vehicle.latitude]);
 
@@ -35,4 +45,4 @@ const findMatchingRoute = (vehicle: PTVechileProperties, routeTree: RBush<PTRout
     }
     return null;
 };
-export default findMatchingRoute;
+export default findMatchingRouteGeometrically;
