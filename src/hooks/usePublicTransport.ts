@@ -69,8 +69,6 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     useKV6Websocket(mapInitialized.current, map, routesMap, stopsToRoutesMap, vehicleMarkers, setVehicleMarkers);
     useFilterVehicleTypes(mapInitialized.current, map, vehicleMarkers);
 
-    useInitiateFilterOptions(['Line Number', 'Vehicle Type', 'Agency'], ['line_number', 'vehicle_type', 'agency_id']);
-
     // Update the layers of the map when an action is triggered
     // usePTRoutesActionUpdate(map);
     usePTStopsActionUpdate(map);
