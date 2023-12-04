@@ -1,5 +1,7 @@
 import React, { Dispatch, ReactNode, SetStateAction, createContext, useContext, useState } from 'react';
 
+import { vehicleTypes } from '../../data/data';
+
 interface VehicleRoutePair {
     marker: mapboxgl.Marker;
     routeId: string; // key of the route in the routes map
@@ -9,6 +11,8 @@ interface VehicleRoutePair {
 type VehicleMarkersContextType = {
     vehicleMarkers: Map<string, VehicleRoutePair>;
     setVehicleMarkers: Dispatch<SetStateAction<Map<string, VehicleRoutePair>>>;
+    vehicleFilters: Map<string, VehicleFilter>;
+    setVehicleFilters: Dispatch<SetStateAction<Map<string, VehicleFilter>>>;
 };
 
 type VehicleMarkersComponentProps = {
@@ -19,9 +23,12 @@ const VehicleMarkersContext = createContext<VehicleMarkersContextType | undefine
 
 export const VehicleMarkersProvider: React.FC<VehicleMarkersComponentProps> = ({ children }) => {
     const [vehicleMarkers, setVehicleMarkers] = useState(new Map<string, VehicleRoutePair>());
+    const [vehicleFilters, setVehicleFilters] = useState(new Map<string, VehicleFilter>(vehicleTypes));
 
     return (
-        <VehicleMarkersContext.Provider value={{ vehicleMarkers, setVehicleMarkers }}>
+        <VehicleMarkersContext.Provider
+            value={{ vehicleMarkers, setVehicleMarkers, vehicleFilters, setVehicleFilters }}
+        >
             {children}
         </VehicleMarkersContext.Provider>
     );

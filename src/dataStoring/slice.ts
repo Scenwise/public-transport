@@ -19,7 +19,6 @@ export interface State {
     status: Status;
     mapStyle: string; // The id of the current map style
     routeOffset: number;
-    filteredVehicleTypes: VehicleType[]; // Trigger for vehicle type filtering
     stopCodeToRouteMap: Record<string, number>; // Map each stop code to its corresponding route id for route-vehicle matching
 }
 
@@ -41,7 +40,6 @@ export const initialState: State = {
     },
     routeOffset: 2,
     mapStyle: 'light-v11',
-    filteredVehicleTypes: [],
     stopCodeToRouteMap: {} as Record<string, number>,
 };
 
@@ -85,9 +83,6 @@ const slice = createSlice({
         updateMapStyle(state: State, action: PayloadAction<string>) {
             state.mapStyle = action.payload;
         },
-        updateFilteredVehicleTypes(state: State, action: PayloadAction<VehicleType[]>) {
-            state.filteredVehicleTypes = action.payload;
-        },
         updateStopCodeToRouteMap(state: State, action: PayloadAction<Record<string, number>>) {
             state.stopCodeToRouteMap = action.payload;
         },
@@ -107,7 +102,6 @@ export const {
     updateStatus,
     updateRouteOffset,
     updateMapStyle,
-    updateFilteredVehicleTypes,
     updateStopCodeToRouteMap,
 } = slice.actions;
 

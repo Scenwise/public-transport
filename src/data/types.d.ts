@@ -73,10 +73,14 @@ interface PTVechileProperties {
     latitude: number;
 }
 
-type VehicleType = {
-    name: string;
+type VehicleFilter = {
     color: string;
     checked: boolean;
+};
+
+interface MarkerColorPair {
+    color: string;
+    marker: mapboxgl.Marker;
 };
 
 interface PTRouteIndex {

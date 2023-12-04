@@ -46,16 +46,18 @@ export const FilterType = {
 export const filterNames = ['Line Number', 'Vehicle Type', 'Agency', 'Route Type', 'Stop name'];
 export const filterKeys = ['line_number', 'vehicle_type', 'agency_id', 'route_type', 'stop'];
 
-export const vehicleTypesMap = {
-    Bus: { color: COLOR_VEHICLE_BUS, checked: true },
-    Trolleybus: { color: COLOR_VEHICLE_TROLLEYBUS, checked: true },
-    Tram: { color: COLOR_VEHICLE_TRAM, checked: true },
-    CableTram: { color: COLOR_VEHICLE_CABLE_TRAM, checked: true },
-    Subway: { color: COLOR_VEHICLE_SUBWAY, checked: true },
-    Rail: { color: COLOR_VEHICLE_RAIL, checked: true },
-    Monorail: { color: COLOR_VEHICLE_MONORAIL, checked: true },
-    Funicular: { color: COLOR_VEHICLE_FUNICULAR, checked: true },
-    Ferry: { color: COLOR_VEHICLE_FERRY, checked: true },
-    AerialLift: { color: COLOR_VEHICLE_AERIAL_LIFT, checked: true },
-    Other: { color: COLOR_VEHICLE_DEFAULT, checked: true },
-};
+export const vehicleTypes = new Map<string, VehicleFilter>(
+    Object.entries({
+        Bus: { color: COLOR_VEHICLE_BUS, checked: true },
+        Trolleybus: { color: COLOR_VEHICLE_TROLLEYBUS, checked: true },
+        Tram: { color: COLOR_VEHICLE_TRAM, checked: true },
+        CableTram: { color: COLOR_VEHICLE_CABLE_TRAM, checked: true },
+        Subway: { color: COLOR_VEHICLE_SUBWAY, checked: true },
+        Rail: { color: COLOR_VEHICLE_RAIL, checked: true },
+        Monorail: { color: COLOR_VEHICLE_MONORAIL, checked: true },
+        Funicular: { color: COLOR_VEHICLE_FUNICULAR, checked: true },
+        Ferry: { color: COLOR_VEHICLE_FERRY, checked: true },
+        AerialLift: { color: COLOR_VEHICLE_AERIAL_LIFT, checked: true },
+        Other: { color: COLOR_VEHICLE_DEFAULT, checked: true },
+    }) as [string, VehicleFilter][],
+);

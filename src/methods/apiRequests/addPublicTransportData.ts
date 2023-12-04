@@ -1,4 +1,4 @@
-import { ReadyState, RouteType, vehicleTypesMap, wheelchairBoarding } from '../../data/data';
+import { ReadyState, RouteType, vehicleTypes, wheelchairBoarding } from '../../data/data';
 import getGtfsTable from './apiFunction';
 
 /**
@@ -146,8 +146,8 @@ const getRouteColor = (type: string): string => {
     if (type === '') {
         type = 'Other';
     }
-    const enumValue = vehicleTypesMap[type as keyof typeof vehicleTypesMap];
-    return enumValue.color;
+    const value = vehicleTypes.get(type);
+    return value === undefined ? 'black' : value.color;
 };
 
 const getWheelchairBoarding = (value: number): string => {

@@ -1,48 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import { IconButton, Menu, Tooltip } from '@mui/material';
-import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { vehicleTypesMap } from '../../data/data';
-import { updateFilteredVehicleTypes } from '../../dataStoring/slice';
-import { useAppDispatch } from '../../store';
+import { vehicleTypes } from '../../data/data';
 import { useVehicleMarkers } from './VehicleMapContext';
-
-type VehicleType = {
-    name: string;
-    color: string;
-    checked: boolean;
-};
 
 const FilterVehicleCheckbox: React.FC = () => {
     const context = useVehicleMarkers();
     const vehicleMarkers = context.vehicleMarkers;
-    const dispatch = useAppDispatch();
+    const vehicleFilters = context.vehicleFilters;
 
     // For open and close of the filter menu
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const isDisabled = vehicleMarkers ? vehicleMarkers.size == 0 : false;
 
-    const vehicleTypes = Object.entries(vehicleTypesMap).map(([name, info]) => ({
-        name,
-        color: info.color,
-        checked: info.checked,
-    }));
-
-    const [selectedVehicleTypes, setSelectedVehicleTypes] = useState<VehicleType[]>(vehicleTypes);
-
-    const handleCheckboxChange = (index: number) => {
-        // Deep copy the array
-        const updatedTypes = JSON.parse(JSON.stringify(selectedVehicleTypes));
-        updatedTypes[index].checked = !updatedTypes[index].checked;
-        setSelectedVehicleTypes(updatedTypes);
+    const handleCheckboxChange = (key: string) => {
+        const updatedTypes = vehicleFilters;
+        const updatedValue = updatedTypes.get(key);
+        if (updatedValue) {
+            updatedValue.checked = !updatedValue.checked;
+            updatedTypes.set(key, updatedValue);
+            context.setVehicleFilters(new Map(updatedTypes));
+        }
     };
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -86,30 +72,20 @@ const FilterVehicleCheckbox: React.FC = () => {
                         Displayed vehicle types{' '}
                     </Typography>
                     <FormGroup>
-                        {vehicleTypes.map((type, index) => (
+                        {Array.from(vehicleTypes).map(([key, value]) => (
                             <FormControlLabel
-                                key={index}
+                                key={key}
                                 control={
                                     <Checkbox
-                                        checked={selectedVehicleTypes[index].checked}
-                                        onChange={() => handleCheckboxChange(index)}
-                                        style={{ color: type.color }}
+                                        checked={vehicleFilters.get(key)?.checked}
+                                        onChange={() => handleCheckboxChange(key)}
+                                        style={{ color: value.color }}
                                     />
                                 }
-                                label={<Typography fontSize={'15px'}> {type.name} </Typography>}
+                                label={<Typography fontSize={'15px'}> {key} </Typography>}
                             />
                         ))}
                     </FormGroup>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Button
-                            variant='contained'
-                            onClick={() => dispatch(updateFilteredVehicleTypes(selectedVehicleTypes))}
-                            disableElevation
-                            size='small'
-                        >
-                            Apply
-                        </Button>
-                    </div>
                 </div>
             </Menu>
         </>

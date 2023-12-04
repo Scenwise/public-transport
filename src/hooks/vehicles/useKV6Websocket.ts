@@ -1,10 +1,10 @@
 import { Marker, Popup } from 'mapbox-gl';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateSelectedRoute } from '../../dataStoring/slice';
+import { vehicleTypes } from '../../data/data';
 import animateVehicles from './animateVehicles';
-import { getMarkerColorBasedOnVehicleType, getVehiclePopupText } from './vehicleMarkerUtilities';
+import { getMarkerColorBasedOnVehicleType, getVehiclePopupText, styleMarker } from './vehicleMarkerUtilities';
 
 // Create websocket connection
 export const useKV6Websocket = (
@@ -16,6 +16,7 @@ export const useKV6Websocket = (
     setVehicleMarkers: React.Dispatch<React.SetStateAction<Map<string, VehicleRoutePair>>>,
 ): void => {
     const dispatch = useDispatch();
+    const selectedMarker = useRef<MarkerColorPair>({} as MarkerColorPair)
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
         if (map && mapInitialized && routesMap) {
@@ -106,12 +107,23 @@ export const useKV6Websocket = (
                                         color: getMarkerColorBasedOnVehicleType(intersectedRoad.properties.route_type),
                                     })
                                         .setLngLat([vehicle.longitude, vehicle.latitude])
-                                        .setPopup(popup)
-                                        .addTo(map);
-                                    marker.getElement().addEventListener('click', () => {
-                                        dispatch(updateSelectedRoute(intersectedRoad.properties.shape_id + ''));
-                                    });
-                                    // addNewLabelToVehicle(marker);
+                                        .setPopup(popup);
+
+                                    if (
+                                        vehicleTypes.get(intersectedRoad.properties.route_type)?.checked ||
+                                        (vehicleTypes.get('Other')?.checked &&
+                                            intersectedRoad.properties.route_type === '')
+                                    ) {
+                                        marker.addTo(map);
+                                    }
+
+                                    styleMarker(
+                                        marker,
+                                        selectedMarker,
+                                        dispatch,
+                                        intersectedRoad.properties.shape_id,
+                                    );
+
                                     setVehicleMarkers(
                                         new Map(
                                             vehicleMarkers.set(mapKey, {
@@ -126,7 +138,7 @@ export const useKV6Websocket = (
                         }
                     }
                 }
-            }, 100);
+            }, 10);
 
             socket.onerror = (error) => {
                 console.error('WebSocket error:', error);

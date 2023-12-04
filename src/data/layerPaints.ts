@@ -24,14 +24,14 @@ export const STROKE_WIDTH_STOP_DEFAULT = 0;
 
 // Buses: lighter purples
 export const COLOR_VEHICLE_BUS = '#BA55D3'; // Medium Orchid
-export const COLOR_VEHICLE_TROLLEYBUS = '#9370DB'; // Medium Purple
+export const COLOR_VEHICLE_TROLLEYBUS = '#7a4fd1'; // Purple
 
 // Trams: yellows/oranges
 export const COLOR_VEHICLE_TRAM = '#FFD700'; // Gold
 export const COLOR_VEHICLE_CABLE_TRAM = '#FFA500'; // Orange
 
 // Subway: reds
-export const COLOR_VEHICLE_SUBWAY = '#FF0000'; // Red
+export const COLOR_VEHICLE_SUBWAY = '#ff269a'; // Hot Pink
 
 // Trains: greens
 export const COLOR_VEHICLE_MONORAIL = '#64DD17'; // Light Green
