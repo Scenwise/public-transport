@@ -6,15 +6,27 @@ import { vehicleTypes } from '../../data/data';
 import { COLOR_ROUTE_SELECTED } from '../../data/layerPaints';
 import { updateSelectedRoute } from '../../dataStoring/slice';
 
-export const getVehiclePopupText = (vehicle: string, route: string, delay: number): string => {
+export const getVehiclePopupText = (vehicle: string, route: PTRouteProperties, delay: number): string => {
     return (
         '<div>' +
         '\n' +
         '<div><b> Vehicle: </b>' +
         vehicle +
         '</div>' +
+        '<div><b> Type: </b>' +
+        route.route_type +
+        '</div>' +
         '<div><b> Line number: </b>' +
-        route +
+        route.line_number +
+        '</div>' +
+        '<div><b> Origin: </b>' +
+        route.origin +
+        '</div>' +
+        '<div><b> Destination: </b>' +
+        route.destination +
+        '</div>' +
+        '<div><b> Route agency: </b>' +
+        route.agency_id +
         '</div>' +
         '<div><b> Delay: </b>' +
         formatDelay(delay) +
@@ -53,7 +65,7 @@ export const styleMarker = (
 
         // Set new marker as selected
         const oldColor = getMarkerColor(markerElement);
-        console.log(selectedMarker.current)
+        console.log(selectedMarker.current);
         selectedMarker.current = {
             color: oldColor,
             marker: marker,

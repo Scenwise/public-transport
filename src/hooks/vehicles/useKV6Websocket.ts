@@ -16,7 +16,7 @@ export const useKV6Websocket = (
     setVehicleMarkers: React.Dispatch<React.SetStateAction<Map<string, VehicleRoutePair>>>,
 ): void => {
     const dispatch = useDispatch();
-    const selectedMarker = useRef<MarkerColorPair>({} as MarkerColorPair)
+    const selectedMarker = useRef<MarkerColorPair>({} as MarkerColorPair);
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
         if (map && mapInitialized && routesMap) {
@@ -97,11 +97,7 @@ export const useKV6Websocket = (
                                 const intersectedRoad = routesMap[stopsToRoutesMap[vehicle.userStopCode]];
                                 if (intersectedRoad !== undefined) {
                                     const popup = new Popup().setHTML(
-                                        getVehiclePopupText(
-                                            mapKey,
-                                            intersectedRoad.properties.line_number,
-                                            vehicle.punctuality,
-                                        ),
+                                        getVehiclePopupText(mapKey, intersectedRoad.properties, vehicle.punctuality),
                                     );
                                     const marker = new Marker({
                                         color: getMarkerColorBasedOnVehicleType(intersectedRoad.properties.route_type),
@@ -117,12 +113,7 @@ export const useKV6Websocket = (
                                         marker.addTo(map);
                                     }
 
-                                    styleMarker(
-                                        marker,
-                                        selectedMarker,
-                                        dispatch,
-                                        intersectedRoad.properties.shape_id,
-                                    );
+                                    styleMarker(marker, selectedMarker, dispatch, intersectedRoad.properties.shape_id);
 
                                     setVehicleMarkers(
                                         new Map(

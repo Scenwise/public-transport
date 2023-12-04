@@ -81,7 +81,7 @@ type VehicleFilter = {
 interface MarkerColorPair {
     color: string;
     marker: mapboxgl.Marker;
-};
+}
 
 interface PTRouteIndex {
     minX: number;

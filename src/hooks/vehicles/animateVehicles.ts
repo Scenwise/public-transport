@@ -14,7 +14,7 @@ const animateVehicles = (
     const popup = new Popup().setHTML(
         getVehiclePopupText(
             vehicleRoutePair.vehicle.dataOwnerCode + '-' + vehicleRoutePair.vehicle.vehicleNumber,
-            route.properties.line_number,
+            route.properties,
             vehicleRoutePair.vehicle.punctuality,
         ),
     );
