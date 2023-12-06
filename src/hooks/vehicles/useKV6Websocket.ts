@@ -3,8 +3,12 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { vehicleTypes } from '../../data/data';
-import animateVehicles from './animateVehicles';
-import { getMarkerColorBasedOnVehicleType, getVehiclePopupText, styleMarker } from './vehicleMarkerUtilities';
+import animateVehicles from '../../methods/vehicles/animateVehicles';
+import {
+    getMarkerColorBasedOnVehicleType,
+    getVehiclePopupText,
+    styleMarker,
+} from '../../methods/vehicles/vehicleMarkerUtilities';
 
 // Create websocket connection
 export const useKV6Websocket = (

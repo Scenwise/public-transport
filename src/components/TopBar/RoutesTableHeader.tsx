@@ -50,7 +50,7 @@ const RoutesTableHeader: React.FC = () => {
     const [PTRouteStatusIcon, ptRouteStatusColor] = getStatusIcon(status.ptRoute);
 
     return (
-        <Stack direction='row' spacing={10} alignItems='center' sx={{ flexGrow: 1 }}>
+        <Stack direction='row' spacing={5} alignItems='center' sx={{ flexGrow: 1 }}>
             <Tooltip title={connectionStatus(status.ptRoute)} placement='right' sx={{ marginRight: 0.5 }}>
                 <PTRouteStatusIcon fontSize='small' color={ptRouteStatusColor} />
             </Tooltip>

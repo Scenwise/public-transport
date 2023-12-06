@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 const Clock: React.FC = () => {
@@ -13,11 +12,9 @@ const Clock: React.FC = () => {
     }, []);
 
     return (
-        <Stack direction='column' alignItems='center'>
-            <Typography variant='h6' noWrap={true}>
-                {time}
-            </Typography>
-        </Stack>
+        <Typography variant='h6' noWrap={true}>
+            {time}
+        </Typography>
     );
 };
 

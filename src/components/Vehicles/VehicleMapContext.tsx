@@ -2,12 +2,6 @@ import React, { Dispatch, ReactNode, SetStateAction, createContext, useContext, 
 
 import { vehicleTypes } from '../../data/data';
 
-interface VehicleRoutePair {
-    marker: mapboxgl.Marker;
-    routeId: string; // key of the route in the routes map
-    vehicle: PTVechileProperties;
-}
-
 type VehicleMarkersContextType = {
     vehicleMarkers: Map<string, VehicleRoutePair>;
     setVehicleMarkers: Dispatch<SetStateAction<Map<string, VehicleRoutePair>>>;

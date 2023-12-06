@@ -35,14 +35,14 @@ const OffsetSlider: React.FC = () => {
     };
 
     return (
-        <Box sx={{ width: 250 }}>
+        <Box width={'10vw'}>
             <Grid container>
                 <Grid item xs={12}>
                     <Typography id='input-slider' gutterBottom textAlign='left' margin={0}>
                         Line offset
                     </Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={10}>
                     <Slider
                         color='secondary'
                         value={routeOffset}
@@ -51,12 +51,14 @@ const OffsetSlider: React.FC = () => {
                         max={10}
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={2}>
                     <Input
                         value={routeOffset}
                         size='small'
+                        disableUnderline
                         onChange={handleInputChange}
                         onBlur={handleBlur}
+                        sx={{ color: 'white' }}
                         inputProps={{
                             step: 1,
                             min: 0,
