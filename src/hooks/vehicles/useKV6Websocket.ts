@@ -20,7 +20,7 @@ export const useKV6Websocket = (
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
         if (map && mapInitialized && routesMap) {
-            const webSocketURL = 'wss://prod.dataservice.scenwise.nl/kv6';
+            const webSocketURL = 'wss://beta.dataservice.scenwise.nl/kv6';
             const socket = new WebSocket(webSocketURL);
 
             socket.onopen = () => {
@@ -129,7 +129,7 @@ export const useKV6Websocket = (
                         }
                     }
                 }
-            }, 10);
+            }, 100);
 
             socket.onerror = (error) => {
                 console.error('WebSocket error:', error);

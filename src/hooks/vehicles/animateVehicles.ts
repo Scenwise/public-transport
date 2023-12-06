@@ -30,8 +30,8 @@ const animateVehicles = (
         .coordinates;
     const endPosition = turf.nearestPoint(newPosition, convertedLine).geometry.coordinates;
 
-    // If distance between actual location and route is > 20 meters, delete the match (vehicle changed its route)
-    if (turf.pointToLineDistance(turf.point(newPosition), turf.lineString(line)) > 0.02) return false;
+    // If distance between actual location and route is > 50 meters, delete the match (vehicle changed its route)
+    if (turf.pointToLineDistance(turf.point(newPosition), turf.lineString(line)) > 0.05) return false;
 
     const startIndex = line.findIndex(
         (coord: Array<number>) => coord[0] === startPosition[0] && coord[1] === startPosition[1],
