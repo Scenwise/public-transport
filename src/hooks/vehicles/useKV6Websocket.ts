@@ -1,4 +1,4 @@
-import { Marker, Popup } from 'mapbox-gl';
+import { Marker } from 'mapbox-gl';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -6,7 +6,7 @@ import { vehicleTypes } from '../../data/data';
 import animateVehicles from '../../methods/vehicles/animateVehicles';
 import {
     getMarkerColorBasedOnVehicleType,
-    getVehiclePopupText,
+    getVehiclePopup,
     styleMarker,
 } from '../../methods/vehicles/vehicleMarkerUtilities';
 
@@ -100,14 +100,18 @@ export const useKV6Websocket = (
                             else if (vehicleRoutePair === undefined) {
                                 const intersectedRoad = routesMap[stopsToRoutesMap[vehicle.userStopCode]];
                                 if (intersectedRoad !== undefined) {
-                                    const popup = new Popup().setHTML(
-                                        getVehiclePopupText(mapKey, intersectedRoad.properties, vehicle.punctuality),
-                                    );
                                     const marker = new Marker({
                                         color: getMarkerColorBasedOnVehicleType(intersectedRoad.properties.route_type),
                                     })
                                         .setLngLat([vehicle.longitude, vehicle.latitude])
-                                        .setPopup(popup);
+                                        .setPopup(
+                                            getVehiclePopup(
+                                                mapKey,
+                                                intersectedRoad.properties,
+                                                vehicle.punctuality,
+                                                vehicle.timestamp,
+                                            ),
+                                        );
 
                                     if (
                                         vehicleTypes.get(intersectedRoad.properties.route_type)?.checked ||
