@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { AnyAction, Dispatch } from '@reduxjs/toolkit';
-import { Marker, Popup } from 'mapbox-gl';
+import mapboxgl, { Marker, Popup } from 'mapbox-gl';
 import { createElement } from 'react';
 
 import { createRoot } from 'react-dom/client';
@@ -28,9 +28,10 @@ export const getMarkerColorBasedOnVehicleType = (type: string): string => {
 
 export const styleMarker = (
     marker: Marker,
-    selectedMarker: React.MutableRefObject<MarkerColorPair>,
+    selectedMarker: React.MutableRefObject<SelectedMarkerColor>,
     dispatch: Dispatch<AnyAction>,
     routeId: number,
+    map: mapboxgl.Map,
 ): void => {
     const markerElement = marker.getElement();
     markerElement.style.cursor = 'pointer';
@@ -42,14 +43,18 @@ export const styleMarker = (
 
         // Set new marker as selected
         const oldColor = getMarkerColor(markerElement);
-        console.log(selectedMarker.current);
         selectedMarker.current = {
             color: oldColor,
             marker: marker,
         };
 
+        map.flyTo({
+            center: marker.getLngLat(),
+            zoom: 13,
+        });
         // Set new marker color as red
         setMarkerColor(marker, COLOR_ROUTE_SELECTED);
+
         dispatch(updateSelectedRoute(routeId + ''));
     });
 };

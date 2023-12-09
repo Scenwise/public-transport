@@ -12,10 +12,10 @@ const animateVehicles = (
     // Display the new vehicle delay and timestamp
     vehicleRoutePair.marker.setPopup(
         getVehiclePopup(
-            vehicleRoutePair.vehicle.dataOwnerCode + '-' + vehicleRoutePair.vehicle.vehicleNumber,
+            vehicleRoutePair.vehicle.properties.dataOwnerCode + '-' + vehicleRoutePair.vehicle.properties.vehicleNumber,
             route.properties,
-            vehicleRoutePair.vehicle.punctuality,
-            vehicleRoutePair.vehicle.timestamp,
+            vehicleRoutePair.vehicle.properties.punctuality,
+            vehicleRoutePair.vehicle.properties.timestamp,
         ),
     );
 

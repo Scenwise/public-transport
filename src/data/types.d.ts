@@ -51,9 +51,11 @@ interface VisibleFiltering {
 interface VehicleRoutePair {
     marker: mapboxgl.Marker;
     routeId: string; // key of the route in the routes map
-    vehicle: PTVechileProperties;
+    vehicle: PTVehicleFeature;
 }
 
+type PTVehicleFeature = GeoJSON.Feature<PTVehicleGeometry, PTVehicleProperties>;
+type PTVehicleGeometry = GeoJSON.Point;
 interface PTVechileProperties {
     messageType: string;
     dataOwnerCode: string;
@@ -69,8 +71,6 @@ interface PTVechileProperties {
     punctuality: number;
     rdX: number;
     rdY: number;
-    longitude: number;
-    latitude: number;
 }
 
 type VehicleFilter = {
@@ -78,7 +78,7 @@ type VehicleFilter = {
     checked: boolean;
 };
 
-interface MarkerColorPair {
+interface SelectedMarkerColor {
     color: string;
     marker: mapboxgl.Marker;
 }
