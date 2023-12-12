@@ -52,13 +52,14 @@ const StopsTable: React.FC = () => {
     // If there are no stops, no table is displayed
     if (ptStopsProperty.length == 0) return null;
 
-    const headers = ['index', 'stop name', 'platform code', 'wheelchair boarding', 'stop code', 'stop id'];
+    const headers = ['index', 'stop name', 'platform code', 'wheelchair boarding', 'stop code', 'routes', 'stop id'];
     const tables = ptStopsProperty.map((stop, index) => [
         index + '',
         stop.stopName,
         stop.platformCode,
         stop.wheelchairBoarding,
         stop.stopsCode,
+        stop.routes.toString(),
         stop.stopId,
     ]);
 

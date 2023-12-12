@@ -1,4 +1,7 @@
+import deepcopy from 'deepcopy';
+
 import { ReadyState, RouteType, vehicleTypes, wheelchairBoarding } from '../../data/data';
+import { arraysMatch, limitDecimalPlaces } from '../../util';
 import getGtfsTable from './apiFunction';
 
 /**
@@ -90,6 +93,7 @@ export const addPublicTransportData = async (
                                     geometry: { type: 'Point', coordinates: stopGeometries[index] },
                                     properties: {
                                         stopId: stopId + '',
+                                        routes: [],
                                         stopName: stopProperties.stop_names[index],
                                         stopsCode: stopProperties.stops_code[index],
                                         platformCode: stopProperties.platform_code[index],
@@ -114,7 +118,7 @@ export const addPublicTransportData = async (
                             }
                         });
 
-                        setPTStops(ptStops);
+                        setPTStops(addLineNumberToStops(ptRoutes, ptStops));
                         setPTRoutes(ptRoutes);
                         setStopToRouteMap(stopToRouteMap);
                         ptRouteStatus = ReadyState.OPEN;
@@ -134,6 +138,30 @@ export const addPublicTransportData = async (
                 ptRouteStatus = ReadyState.CLOSED;
             });
     });
+};
+
+/**
+ * For each stop, add route line lists that contains the stop to the field 'routes'
+ * @param routes all the routes
+ * @param stops all the stops
+ * return the stops with added route line lists
+ */
+const addLineNumberToStops = (
+    routes: FeatureRecord<PTRouteFeature>,
+    stops: FeatureRecord<PTStopFeature>,
+): FeatureRecord<PTStopFeature> => {
+    const res = deepcopy(stops);
+    Object.values(routes).forEach((route) => {
+        route.properties.stops_ids.forEach((stopId) => {
+            res[stopId].properties.routes.push(route.properties.line_number);
+        });
+    });
+    // Remove duplicate routes in a stop
+    Object.values(res).forEach((stop) => {
+        stop.properties.routes = stop.properties.routes.sortAndUnique();
+    });
+    console.log(res);
+    return res;
 };
 
 const getRouteTypeString = (value: number): string => {
@@ -188,14 +216,4 @@ const removeDuplicateStops = (sortedStops: PTStopFeature[]): PTStopFeature[] => 
         }
         return processedStops;
     }, []);
-};
-
-// Function to limit decimal places to four
-const limitDecimalPlaces = (coordinates: number[]): number[] => {
-    return [Number(coordinates[0].toFixed(3)), Number(coordinates[1].toFixed(3))];
-};
-
-// Function to compare arrays by values
-const arraysMatch = (arr1: number[], arr2: number[]): boolean => {
-    return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 };

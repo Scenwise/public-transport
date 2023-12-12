@@ -35,6 +35,7 @@ interface PTStopProperties {
     stopName: string;
     stopsCode: string;
     platformCode: string;
+    routes: string[];
     wheelchairBoarding: string;
 }
 

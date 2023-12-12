@@ -62,8 +62,7 @@ const LocationSearchBar: React.FC = () => {
         return ptRouteFeatures
             .filter((route) => route.properties[field].toLowerCase().includes(value.toLowerCase()))
             .map((route) => route.properties[field])
-            .filter((v, i, a) => a.indexOf(v) == i) // Only get the unique values
-            .sort();
+            .sortAndUnique();
     };
 
     const handleDepartureChange = (value: string) => {
