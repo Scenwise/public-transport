@@ -1,7 +1,6 @@
 import * as turf from '@turf/turf';
-import { Popup } from 'mapbox-gl';
 
-import { getVehiclePopupText } from './vehicleMarkerUtilities';
+import { getVehiclePopup } from './vehicleMarkerUtilities';
 
 const animateVehicles = (
     vehicleRoutePair: VehicleRoutePair,
@@ -10,15 +9,15 @@ const animateVehicles = (
 ) => {
     // Find the route from the routes map
     const route = routesMap[vehicleRoutePair.routeId];
-    // Display the new vehicle delay
-    const popup = new Popup().setHTML(
-        getVehiclePopupText(
-            vehicleRoutePair.vehicle.dataOwnerCode + '-' + vehicleRoutePair.vehicle.vehicleNumber,
+    // Display the new vehicle delay and timestamp
+    vehicleRoutePair.marker.setPopup(
+        getVehiclePopup(
+            vehicleRoutePair.vehicle.properties.dataOwnerCode + '-' + vehicleRoutePair.vehicle.properties.vehicleNumber,
             route.properties,
-            vehicleRoutePair.vehicle.punctuality,
+            vehicleRoutePair.vehicle.properties.punctuality,
+            vehicleRoutePair.vehicle.properties.timestamp,
         ),
     );
-    vehicleRoutePair.marker.setPopup(popup);
 
     const line = route.geometry.coordinates;
 
