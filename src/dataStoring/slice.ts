@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import deepcopy from 'deepcopy';
 
-import { ReadyState, allLayers } from '../data/data';
+import { ReadyState } from '../data/data';
 import getGtfsTable from '../methods/apiRequests/apiFunction';
 import { RootState } from '../store';
 
@@ -41,7 +41,7 @@ export const initialState: State = {
     },
     routeOffset: 2,
     mapStyle: 'light-v11',
-    clickableLayers: allLayers,
+    clickableLayers: [],
     stopCodeToRouteMap: {} as Record<string, number>,
 };
 

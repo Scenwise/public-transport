@@ -160,7 +160,6 @@ const addLineNumberToStops = (
     Object.values(res).forEach((stop) => {
         stop.properties.routes = stop.properties.routes.sortAndUnique();
     });
-    console.log(res);
     return res;
 };
 

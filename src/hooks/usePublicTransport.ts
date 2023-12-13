@@ -15,7 +15,7 @@ import { RootState, useAppDispatch, useAppSelector } from '../store';
 import { useInitiateFilterOptions } from './filterHook/useInitiateFilterOptions';
 import { useUpdateRoutesWithFilter } from './filterHook/useUpdateRoutesWithFilter';
 import { useVisibleRoutesUpdate } from './filterHook/useVisibleRoutesUpdate';
-// import { usePTRoutesActionUpdate } from './mapUdatingHooks/usePTRoutesActionUpdate';
+import { usePTRoutesActionUpdate } from './mapUdatingHooks/usePTRoutesActionUpdate';
 import { usePTRoutesLayerUpdate } from './mapUdatingHooks/usePTRoutesLayerUpdate';
 import { usePTStopsActionUpdate } from './mapUdatingHooks/usePTStopsActionUpdate';
 import { usePTStopsLayerUpdate } from './mapUdatingHooks/usePTStopsLayerUpdate';
@@ -70,7 +70,7 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     useFilterVehicleTypes(mapInitialized.current, map, vehicleMarkers);
 
     // Update the layers of the map when an action is triggered
-    // usePTRoutesActionUpdate(map);
+    usePTRoutesActionUpdate(map);
     usePTStopsActionUpdate(map);
 
     // Update the layers of the map

@@ -57,7 +57,7 @@ interface VehicleRoutePair {
 
 type PTVehicleFeature = GeoJSON.Feature<PTVehicleGeometry, PTVehicleProperties>;
 type PTVehicleGeometry = GeoJSON.Point;
-interface PTVechileProperties {
+interface PTVehicleProperties {
     messageType: string;
     dataOwnerCode: string;
     linePlanningNumber: string;

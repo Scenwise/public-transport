@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
     COLOR_ROUTE_DEFAULT,
     COLOR_ROUTE_HOVERED,
@@ -14,23 +16,37 @@ import { routesPaintWhenSelected, updateLayerPaint } from '../useHookUtil';
  * Update the map when a route is clicked or hovered.
  */
 export const usePTRoutesActionUpdate = (map: mapboxgl.Map | null): void => {
-    const selectedRouteID = useAppSelector((state) => state.slice.selectedRoute);
-
     const dispatch = useAppDispatch();
 
-    if (map) {
-        // This function is called whenever a route is clicked on the map.
-        map.on('click', 'ptRoutes', (e) => {
+    const selectedRouteID = useAppSelector((state) => state.slice.selectedRoute);
+    const clickableLayers = useAppSelector((state) => state.slice.clickableLayers);
+
+    useEffect(() => {
+        if (!map || !clickableLayers.includes('Routes')) return;
+        // The layer listeners
+        const clickLister = (e: mapboxgl.MapLayerMouseEvent) => {
             if (e.features) {
                 const temp = e.features[0].properties;
                 if (temp) {
                     dispatch(updateSelectedRoute('' + temp.shape_id));
                 }
             }
-        });
-        map.on('mouseenter', 'ptRoutes', (e) => handleRouteMouseEnter(map, e, selectedRouteID));
-        map.on('mouseleave', 'ptRoutes', () => handleRouteMouseLeave(map, selectedRouteID));
-    }
+        };
+        const mouseEnterLister = (e: mapboxgl.MapLayerMouseEvent) => handleRouteMouseEnter(map, e, selectedRouteID);
+        const mouseLeaveLister = () => handleRouteMouseLeave(map, selectedRouteID);
+
+        // This function is called whenever a route is clicked on the map.
+        map.on('click', 'ptRoutes', clickLister);
+        map.on('mouseenter', 'ptRoutes', mouseEnterLister);
+        map.on('mouseleave', 'ptRoutes', mouseLeaveLister);
+
+        return () => {
+            map.off('click', 'ptRoutes', clickLister);
+            map.off('mouseenter', 'ptRoutes', mouseEnterLister);
+            map.off('mouseleave', 'ptRoutes', mouseLeaveLister);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [clickableLayers]);
 };
 
 // This function is called whenever the mouse hovers on a route.

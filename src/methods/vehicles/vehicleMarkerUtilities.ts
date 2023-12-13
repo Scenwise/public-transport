@@ -59,14 +59,14 @@ export const styleMarker = (
     });
 };
 
-const setMarkerColor = (marker: Marker, color: string) => {
+export const setMarkerColor = (marker: Marker, color: string) => {
     const markerElement = marker.getElement();
     const svg = markerElement.getElementsByTagName('svg')[0];
     const path = svg.getElementsByTagName('path')[0];
     path.setAttribute('fill', color);
 };
 
-const getMarkerColor = (markerElement: HTMLElement): string => {
+export const getMarkerColor = (markerElement: HTMLElement): string => {
     const svg = markerElement.getElementsByTagName('svg')[0];
     const path = svg.getElementsByTagName('path')[0];
     const color = path.getAttribute('fill');

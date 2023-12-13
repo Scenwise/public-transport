@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
     COLOR_STOP_DEFAULT,
     COLOR_STOP_HOVERED,
@@ -17,21 +19,36 @@ import { stopsPaintWhenSelected, updateLayerPaint } from '../useHookUtil';
  */
 export const usePTStopsActionUpdate = (map: mapboxgl.Map | null): void => {
     const dispatch = useAppDispatch();
-    const selectedStopID = useAppSelector((state) => state.slice.selectedStop);
 
-    if (map) {
-        // This function is called whenever a stop is clicked on the map.
-        map.on('click', 'ptStops', (e) => {
+    const selectedStopID = useAppSelector((state) => state.slice.selectedStop);
+    const clickableLayers = useAppSelector((state) => state.slice.clickableLayers);
+
+    useEffect(() => {
+        if (!map || !clickableLayers.includes('Stops')) return;
+        // The layer listeners
+        const clickLister = (e: mapboxgl.MapLayerMouseEvent) => {
             if (e.features) {
                 const temp = e.features[0].properties;
                 if (temp) {
                     dispatch(updateSelectedStop('' + temp.stopId));
                 }
             }
-        });
-        map.on('mouseenter', 'ptStops', (e) => handleStopMouseEnter(map, e, selectedStopID));
-        map.on('mouseleave', 'ptStops', () => handleStopMouseLeave(map, selectedStopID));
-    }
+        };
+        const mouseEnterLister = (e: mapboxgl.MapLayerMouseEvent) => handleStopMouseEnter(map, e, selectedStopID);
+        const mouseLeaveLister = () => handleStopMouseLeave(map, selectedStopID);
+
+        // This function is called whenever a route is clicked on the map.
+        map.on('click', 'ptStops', clickLister);
+        map.on('mouseenter', 'ptStops', mouseEnterLister);
+        map.on('mouseleave', 'ptStops', mouseLeaveLister);
+
+        return () => {
+            map.off('click', 'ptStops', clickLister);
+            map.off('mouseenter', 'ptStops', mouseEnterLister);
+            map.off('mouseleave', 'ptStops', mouseLeaveLister);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [clickableLayers]);
 };
 
 // This function is called whenever a stop is hovered on the map.

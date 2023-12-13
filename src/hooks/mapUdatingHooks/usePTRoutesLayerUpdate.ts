@@ -1,8 +1,14 @@
-// import { LngLatBounds } from 'mapbox-gl';
+import { LngLatBounds } from 'mapbox-gl';
 import { useEffect } from 'react';
 
 import { useAppSelector } from '../../store';
-import { routesPaintWhenSelected } from '../useHookUtil';
+import {routesPaintWhenSelected, updateLayerPaint} from '../useHookUtil';
+import {
+    COLOR_ROUTE_DEFAULT,
+    COLOR_ROUTE_SELECTED,
+    LINE_WIDTH_DEFAULT,
+    LINE_WIDTH_SELECTED
+} from "../../data/layerPaints";
 
 /*
  * This hook is used to update the mapbox map with the routes layer when the selected route changes.
@@ -14,19 +20,17 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     // Fly to selected route + set the paint of the selected route different
     useEffect((): void => {
         const selectedPTRoute = ptRoutes[selectedPTRouteID];
-        // TODO: add this back when option for clickable routes is implemented, but only for clicked routes and not vehicles
-        // eslint-disable-next-line sonarjs/no-collapsible-if
         if (map && selectedPTRoute) {
             // Get the bounds of the selected route geometry
-            // const bounds: LngLatBounds = selectedPTRoute.geometry.coordinates.reduce(
-            //     (bounds, coord) => bounds.extend([coord[0], coord[1]]),
-            //     new LngLatBounds(),
-            // );
-            // // Fly to the route bounds
-            // map.fitBounds(bounds, {
-            //     padding: 20, // add padding in pixels
-            //     maxZoom: 12, // max zoom to preserve padding
-            // });
+            const bounds: LngLatBounds = selectedPTRoute.geometry.coordinates.reduce(
+                (bounds, coord) => bounds.extend([coord[0], coord[1]]),
+                new LngLatBounds(),
+            );
+            // Fly to the route bounds
+            map.fitBounds(bounds, {
+                padding: 20, // add padding in pixels
+                maxZoom: 12, // max zoom to preserve padding
+            });
 
             if (map.getLayer('ptStops')) {
                 const selectedStopIDs = selectedPTRoute.properties.stops_ids;

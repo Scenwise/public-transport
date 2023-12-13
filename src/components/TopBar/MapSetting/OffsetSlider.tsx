@@ -58,7 +58,7 @@ const OffsetSlider: React.FC = () => {
                         disableUnderline
                         onChange={handleInputChange}
                         onBlur={handleBlur}
-                        sx={{ color: 'primary' }}
+                        sx={{ color: 'primary', marginLeft: '10px' }}
                         inputProps={{
                             step: 1,
                             min: 0,
