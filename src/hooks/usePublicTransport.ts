@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import mapboxgl from 'mapbox-gl';
+import React, { useEffect } from 'react';
 
 import { useVehicleMarkers } from '../components/Vehicles/VehicleMapContext';
 import { ReadyState, filterKeys, filterNames } from '../data/data';
@@ -24,7 +25,10 @@ import { useApplyDataToSource, useInitializeSourcesAndLayers } from './useInitia
 import useFilterVehicleTypes from './vehicles/useFilterVehicleTypes';
 import { useKV6Websocket } from './vehicles/useKV6Websocket';
 
-export const usePublicTransport = (map: mapboxgl.Map | null): void => {
+export const usePublicTransport = (
+    map: mapboxgl.Map | null,
+    setMap: React.Dispatch<React.SetStateAction<mapboxgl.Map | null>>,
+): void => {
     const dispatch = useAppDispatch();
     // Initialize the routes and the stops
     const mapInitialized = useInitializeSourcesAndLayers(map);
@@ -78,10 +82,10 @@ export const usePublicTransport = (map: mapboxgl.Map | null): void => {
     usePTStopsLayerUpdate(map);
 
     // Update the style of the map
-    useUpdateMapStyle(map);
+    useUpdateMapStyle(map, setMap);
 
     // Update the filtered list
-    useUpdateRoutesWithFilter();
+    useUpdateRoutesWithFilter(map, setMap);
 
     // Update the visible routes from the current map screen
     useVisibleRoutesUpdate(map);

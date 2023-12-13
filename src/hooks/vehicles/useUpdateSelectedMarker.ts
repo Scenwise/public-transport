@@ -1,9 +1,10 @@
-import mapboxgl, {Marker} from "mapbox-gl";
-import {COLOR_ROUTE_SELECTED} from "../../data/layerPaints";
-import {updateSelectedRoute} from "../../dataStoring/slice";
-import {useAppDispatch, useAppSelector} from "../../store";
-import {useEffect} from "react";
-import {getMarkerColor, setMarkerColor} from "../../methods/vehicles/vehicleMarkerUtilities";
+import mapboxgl, { Marker } from 'mapbox-gl';
+import { useEffect } from 'react';
+
+import { COLOR_ROUTE_SELECTED } from '../../data/layerPaints';
+import { updateSelectedRoute } from '../../dataStoring/slice';
+import { getMarkerColor, setMarkerColor } from '../../methods/vehicles/vehicleMarkerUtilities';
+import { useAppDispatch, useAppSelector } from '../../store';
 
 // TODO: If the option of changing the clickability of the vehicles is going to be implemented, this will be useful
 export const useUpdateSelectedMarker = (
@@ -39,12 +40,12 @@ export const useUpdateSelectedMarker = (
             setMarkerColor(marker, COLOR_ROUTE_SELECTED);
 
             dispatch(updateSelectedRoute(routeId + ''));
-        }
+        };
 
         markerElement.addEventListener('click', clickLister);
         return () => {
             markerElement.removeEventListener('click', clickLister);
-        }
+        };
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [clickableLayers]);

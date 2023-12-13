@@ -1,3 +1,4 @@
+import mapboxgl from 'mapbox-gl';
 import { useEffect } from 'react';
 
 import {
@@ -48,7 +49,7 @@ export const usePTStopsActionUpdate = (map: mapboxgl.Map | null): void => {
             map.off('mouseleave', 'ptStops', mouseLeaveLister);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [clickableLayers]);
+    }, [map, clickableLayers, selectedStopID]);
 };
 
 // This function is called whenever a stop is hovered on the map.

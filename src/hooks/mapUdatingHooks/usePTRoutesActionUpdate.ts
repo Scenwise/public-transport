@@ -1,3 +1,4 @@
+import mapboxgl from 'mapbox-gl';
 import { useEffect } from 'react';
 
 import {
@@ -46,7 +47,7 @@ export const usePTRoutesActionUpdate = (map: mapboxgl.Map | null): void => {
             map.off('mouseleave', 'ptRoutes', mouseLeaveLister);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [clickableLayers]);
+    }, [map, clickableLayers, selectedRouteID]);
 };
 
 // This function is called whenever the mouse hovers on a route.

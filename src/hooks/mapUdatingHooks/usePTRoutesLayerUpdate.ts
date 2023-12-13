@@ -2,13 +2,7 @@ import { LngLatBounds } from 'mapbox-gl';
 import { useEffect } from 'react';
 
 import { useAppSelector } from '../../store';
-import {routesPaintWhenSelected, updateLayerPaint} from '../useHookUtil';
-import {
-    COLOR_ROUTE_DEFAULT,
-    COLOR_ROUTE_SELECTED,
-    LINE_WIDTH_DEFAULT,
-    LINE_WIDTH_SELECTED
-} from "../../data/layerPaints";
+import { routesPaintWhenSelected } from '../useHookUtil';
 
 /*
  * This hook is used to update the mapbox map with the routes layer when the selected route changes.
