@@ -12,6 +12,7 @@ import {
     COLOR_VEHICLE_TROLLEYBUS,
 } from '../data/layerPaints';
 
+export const allLayers = ['Routes', 'Stops', 'Vehicles'];
 export enum ReadyState {
     UNINSTANTIATED = -1,
     CONNECTING = 0,

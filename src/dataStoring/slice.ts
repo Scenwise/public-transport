@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import deepcopy from 'deepcopy';
 
-import { ReadyState } from '../data/data';
+import { ReadyState, allLayers } from '../data/data';
 import getGtfsTable from '../methods/apiRequests/apiFunction';
 import { RootState } from '../store';
 
@@ -19,6 +19,7 @@ export interface State {
     status: Status;
     mapStyle: string; // The id of the current map style
     routeOffset: number;
+    clickableLayers: string[];
     stopCodeToRouteMap: Record<string, number>; // Map each stop code to its corresponding route id for route-vehicle matching
 }
 
@@ -40,6 +41,7 @@ export const initialState: State = {
     },
     routeOffset: 2,
     mapStyle: 'light-v11',
+    clickableLayers: allLayers,
     stopCodeToRouteMap: {} as Record<string, number>,
 };
 
@@ -83,6 +85,9 @@ const slice = createSlice({
         updateMapStyle(state: State, action: PayloadAction<string>) {
             state.mapStyle = action.payload;
         },
+        updateClickableLayers(state: State, action: PayloadAction<string[]>) {
+            state.clickableLayers = action.payload;
+        },
         updateStopCodeToRouteMap(state: State, action: PayloadAction<Record<string, number>>) {
             state.stopCodeToRouteMap = action.payload;
         },
@@ -102,6 +107,7 @@ export const {
     updateStatus,
     updateRouteOffset,
     updateMapStyle,
+    updateClickableLayers,
     updateStopCodeToRouteMap,
 } = slice.actions;
 

@@ -6,8 +6,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-import { updateMapStyle } from '../../dataStoring/slice';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { updateMapStyle } from '../../../dataStoring/slice';
+import { useAppDispatch, useAppSelector } from '../../../store';
 
 const MapStyleSelector: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -32,15 +32,15 @@ const MapStyleSelector: React.FC = () => {
 
     return (
         <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth sx={{ color: 'white' }}>
-                <InputLabel id='map-style-label' sx={{ color: 'white' }}>
+            <FormControl fullWidth>
+                <InputLabel id='map-style-label' sx={{ color: 'primary' }}>
                     Map style
                 </InputLabel>
                 <Select
                     labelId='map-style-label'
                     id='map-style-select'
                     value={mapStyles[mapStyleID]}
-                    sx={{ color: 'white', height: '5vh' }}
+                    sx={{ color: 'primary', height: '5vh' }}
                     onChange={handleChange}
                 >
                     {Object.entries(mapStyles).map(([id, label]) => (

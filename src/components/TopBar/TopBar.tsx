@@ -9,8 +9,7 @@ import FilterVehicleCheckbox from '../Vehicles/FilterVehicleCheckbox';
 import Clock from './Clock';
 import { CsvExport } from './CsvExport';
 import { LocationSearchBar } from './LocationSearchBar';
-import MapStyleSelector from './MapStyleSelector';
-import { OffsetSlider } from './OffsetSlider';
+import { MapSetting } from './MapSetting/MapSetting';
 import { RoutesTableHeader } from './RoutesTableHeader';
 
 const TopBar: React.FC = () => {
@@ -28,8 +27,7 @@ const TopBar: React.FC = () => {
                             sx={{ flexGrow: 1 }}
                         >
                             <LocationSearchBar />
-                            <OffsetSlider />
-                            <MapStyleSelector />
+                            <MapSetting />
                             <CsvExport />
                         </Stack>
                         <Stack
