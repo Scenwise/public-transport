@@ -33,14 +33,13 @@ const MapStyleSelector: React.FC = () => {
     return (
         <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
-                <InputLabel id='map-style-label' sx={{ color: 'primary' }}>
-                    Map style
-                </InputLabel>
+                <InputLabel id='map-style-label'>Map style</InputLabel>
                 <Select
                     labelId='map-style-label'
                     id='map-style-select'
                     value={mapStyles[mapStyleID]}
-                    sx={{ color: 'primary', height: '5vh' }}
+                    color={'primary'}
+                    sx={{ height: '5vh' }}
                     onChange={handleChange}
                 >
                     {Object.entries(mapStyles).map(([id, label]) => (
