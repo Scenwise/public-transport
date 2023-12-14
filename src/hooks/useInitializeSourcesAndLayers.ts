@@ -1,12 +1,15 @@
 import { AnyLayer, GeoJSONSource } from 'mapbox-gl';
 import { useEffect, useRef } from 'react';
 
+import { allIcons } from '../data/data';
 import ptRoutesLayer from '../data/layers/ptRoutesLayer.json';
 import ptStopsLayer from '../data/layers/ptStopsLayer.json';
+import routeDirectionLayer from '../data/layers/routeDirectionLayer.json';
 
 export const layerConfig: { [key: string]: AnyLayer } = {
     ptRoutes: ptRoutesLayer as AnyLayer,
     ptStops: ptStopsLayer as AnyLayer,
+    selectedRouteDirection: routeDirectionLayer as AnyLayer,
 };
 
 /**
@@ -32,6 +35,7 @@ export const useInitializeSourcesAndLayers = (map: mapboxgl.Map | null): React.M
                 }
             });
 
+            loadIcons(map);
             hasInitialized.current = true;
             console.log('generate layers');
         }
@@ -58,6 +62,7 @@ export const updateSourcesAndLayers = <T extends GeoJSON.Feature>(
         }
         if (!map.getLayer(layerId)) {
             map.addLayer(layerConfig[layerId]);
+            if (layerId == 'ptRoutes') loadIcons(map);
         }
     }
 };
@@ -83,4 +88,18 @@ export const useApplyDataToSource = <T extends GeoJSON.Feature>(
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mapInitialized, features]);
+};
+
+// Add the icons to the map
+const loadIcons = (map: mapboxgl.Map) => {
+    allIcons.forEach((icon) => {
+        if (!map.hasImage(icon)) {
+            const fullUrl = `${process.env.PUBLIC_URL}/${icon}.png`;
+
+            map.loadImage(fullUrl, function (error, image) {
+                if (error) throw error;
+                map.addImage(icon, image as ImageBitmap);
+            });
+        }
+    });
 };

@@ -48,12 +48,20 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
             // Only display the stops of the selected route
             if (map.getLayer('ptStops')) {
                 const selectedStopIDs = selectedPTRoute.properties.stops_ids;
-                // Display the stops of the selected route
                 map.setFilter('ptStops', ['in', ['get', 'stopId'], ['literal', selectedStopIDs]]);
-
-                // Update the paint properties of the selected route
-                routesPaintWhenSelected(map, selectedPTRouteID);
             }
+
+            // Only display the direction of the selected route
+            if (map.getLayer('selectedRouteDirection')) {
+                map.setFilter('selectedRouteDirection', [
+                    '==',
+                    ['to-string', ['get', 'shape_id']],
+                    '' + selectedPTRoute.properties.shape_id,
+                ]);
+            }
+
+            // Update the paint properties of the selected route
+            routesPaintWhenSelected(map, selectedPTRouteID);
         }
 
         // If the selected route is removed, move its corresponding stops

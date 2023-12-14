@@ -27,6 +27,7 @@ export const useUpdateMapStyle = (
         const listener = () => {
             setMap(newMap);
             updateSourcesAndLayers('ptRoutes', ptRouteFeatures, map);
+            updateSourcesAndLayers('selectedRouteDirection', ptRouteFeatures, map);
             updateSourcesAndLayers('ptStops', ptStopFeatures, map);
         };
 

@@ -13,6 +13,7 @@ import {
 } from './layerPaints';
 
 export const allLayers = ['Routes', 'Stops'];
+export const allIcons = ['arrow'];
 export enum ReadyState {
     UNINSTANTIATED = -1,
     CONNECTING = 0,
