@@ -52,6 +52,9 @@ const slice = createSlice({
         updatePTRoutes(state: State, action: PayloadAction<FeatureRecord<PTRouteFeature>>) {
             state.ptRoutes = action.payload;
         },
+        updatePTRoute(state: State, action: PayloadAction<PTRouteFeature>) {
+            state.ptRoutes[action.payload.properties.shape_id] = action.payload;
+        },
         updateFilters(state: State, action: PayloadAction<Filters>) {
             state.filters = deepcopy(action.payload);
         },
@@ -96,6 +99,7 @@ const slice = createSlice({
 
 export const {
     updatePTRoutes,
+    updatePTRoute,
     updateFilters,
     updateInitialFilters,
     updateFilter,

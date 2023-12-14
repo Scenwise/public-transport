@@ -26,6 +26,7 @@ interface PTRouteProperties {
     route_color: string;
     vehicle_type: string;
     stops_ids: string[];
+    vehicle_ids: string[];
 }
 
 type PTStopFeature = GeoJSON.Feature<PTStopGeometry, PTStopProperties>;

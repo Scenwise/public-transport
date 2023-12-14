@@ -59,6 +59,7 @@ export const addPublicTransportData = async (
                                     route_name: feature.properties?.route_name,
                                     vehicle_type: feature.properties?.vehicle_ty,
                                     route_type: routeType,
+                                    vehicle_ids: [] as string[],
                                     route_color: getRouteColor(routeType),
                                 } as PTRouteProperties;
                                 ptRoutes[id] = {

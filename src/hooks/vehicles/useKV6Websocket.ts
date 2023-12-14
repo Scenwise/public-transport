@@ -2,13 +2,15 @@ import { Marker } from 'mapbox-gl';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { vehicleTypes } from '../../data/data';
+import { ReadyState, vehicleTypes } from '../../data/data';
+import { updatePTRoute } from '../../dataStoring/slice';
 import animateVehicles from '../../methods/vehicles/animateVehicles';
 import {
     getMarkerColorBasedOnVehicleType,
     getVehiclePopup,
     styleMarker,
 } from '../../methods/vehicles/vehicleMarkerUtilities';
+import { useAppSelector } from '../../store';
 
 // Create websocket connection
 export const useKV6Websocket = (
@@ -20,9 +22,11 @@ export const useKV6Websocket = (
     setVehicleMarkers: React.Dispatch<React.SetStateAction<Map<string, VehicleRoutePair>>>,
 ): void => {
     const dispatch = useDispatch();
+    const status = useAppSelector((state) => state.slice.status);
     const selectedMarker = useRef<SelectedMarkerColor>({} as SelectedMarkerColor);
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
+        if (status.ptRoute !== ReadyState.OPEN) return;
         if (map && mapInitialized && routesMap) {
             const webSocketURL = 'wss://beta.dataservice.scenwise.nl/kv6';
             const socket = new WebSocket(webSocketURL);
@@ -74,8 +78,8 @@ export const useKV6Websocket = (
                             vehicle.geometry.coordinates[1]
                         ) {
                             // If we already have this vehicle in move, set it to next position and update the map
-                            const mapKey = vehicle.properties.dataOwnerCode + '-' + vehicle.properties.vehicleNumber;
-                            const vehicleRoutePair = vehicleMarkers.get(mapKey);
+                            const vehicleId = vehicle.properties.dataOwnerCode + '-' + vehicle.properties.vehicleNumber;
+                            const vehicleRoutePair = vehicleMarkers.get(vehicleId);
                             // Only process movement if timestamp of last move is before timestamp of current move
                             if (
                                 vehicleRoutePair !== undefined &&
@@ -90,7 +94,7 @@ export const useKV6Websocket = (
                                 if (correct) {
                                     setVehicleMarkers(
                                         new Map(
-                                            vehicleMarkers.set(mapKey, {
+                                            vehicleMarkers.set(vehicleId, {
                                                 marker: vehicleRoutePair.marker,
                                                 routeId: vehicleRoutePair.routeId,
                                                 vehicle: vehicle, // update delay, timestamp, position
@@ -100,8 +104,8 @@ export const useKV6Websocket = (
                                 }
                                 // If we misintersected, remove marker completely and try again on next update
                                 else {
-                                    vehicleMarkers.get(mapKey)?.marker.remove();
-                                    vehicleMarkers.delete(mapKey);
+                                    vehicleMarkers.get(vehicleId)?.marker.remove();
+                                    vehicleMarkers.delete(vehicleId);
                                     setVehicleMarkers(new Map(vehicleMarkers));
                                 }
                             }
@@ -116,7 +120,7 @@ export const useKV6Websocket = (
                                         .setLngLat([vehicle.geometry.coordinates[0], vehicle.geometry.coordinates[1]])
                                         .setPopup(
                                             getVehiclePopup(
-                                                mapKey,
+                                                vehicleId,
                                                 intersectedRoad.properties,
                                                 vehicle.properties.punctuality,
                                                 vehicle.properties.timestamp,
@@ -139,9 +143,14 @@ export const useKV6Websocket = (
                                         map,
                                     );
 
+                                    // Add vehicle id to its route (used to fly to the vehicle when its route is selected)
+                                    const route = JSON.parse(JSON.stringify(intersectedRoad));
+                                    route.properties.vehicle_ids.push(vehicleId);
+                                    dispatch(updatePTRoute(route));
+
                                     setVehicleMarkers(
                                         new Map(
-                                            vehicleMarkers.set(mapKey, {
+                                            vehicleMarkers.set(vehicleId, {
                                                 marker: marker,
                                                 routeId: intersectedRoad.properties.shape_id + '',
                                                 vehicle: vehicle,
@@ -168,5 +177,5 @@ export const useKV6Websocket = (
             };
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [routesMap]);
+    }, [status]);
 };
