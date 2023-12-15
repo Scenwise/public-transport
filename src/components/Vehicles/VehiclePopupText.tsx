@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 interface VehiclePopupTextProps {
     vehicle: string;
@@ -8,8 +9,6 @@ interface VehiclePopupTextProps {
 }
 
 const VehiclePopupText: React.FC<VehiclePopupTextProps> = ({ vehicle, route, delay, timestamp }) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const _ = require('lodash');
     const formatDelay = (delay: number): string => {
         const delayInMinutes = _.round(Math.abs(delay) / 60, 1);
         if (delay > 0) return '+' + delayInMinutes + ' min';

@@ -40,7 +40,7 @@ export const useKV6Websocket = (
                                 Stream: true,
                                 timeStart: Date.now() - 20000, // start about 20 seconds before current time
                                 timeStop: 1918892497000, // stop sometime in 2030
-                                region_ID: 'Netherlands',
+                                region_ID: 'Noord-Holland', // Currently noord-holland is hard coded for testing
                             },
                         },
                     },
