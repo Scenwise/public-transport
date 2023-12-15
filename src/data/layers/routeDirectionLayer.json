@@ -5,6 +5,7 @@
     "layout": {
         "symbol-placement": "line",
         "symbol-spacing": 30,
+        "icon-offset": [2, 2],
         "icon-allow-overlap": false,
         "icon-image": "arrow",
         "icon-size": 0.9

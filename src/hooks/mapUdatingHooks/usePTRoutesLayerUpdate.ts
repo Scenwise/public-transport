@@ -86,8 +86,9 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     // Apply the selected route offset to routes
     const routeOffset = useAppSelector((state) => state.slice.routeOffset);
     useEffect(() => {
-        if (map && map.getLayer('ptRoutes')) {
+        if (map && map.getLayer('ptRoutes') && map.getLayer('selectedRouteDirection')) {
             map.setPaintProperty('ptRoutes', 'line-offset', routeOffset);
+            map.setLayoutProperty('selectedRouteDirection', 'icon-offset', [routeOffset, routeOffset]);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [routeOffset]);
