@@ -11,6 +11,7 @@ import { CsvExport } from './CsvExport';
 import { LocationSearchBar } from './LocationSearchBar';
 import { MapSetting } from './MapSetting/MapSetting';
 import { RoutesTableHeader } from './RoutesTableHeader';
+import { TopBarComponentGroup } from './TopBarComponentGroup';
 
 const TopBar: React.FC = () => {
     return (
@@ -18,28 +19,20 @@ const TopBar: React.FC = () => {
             <AppBar position='static'>
                 <Toolbar>
                     <Stack direction='row' alignItems='center' sx={{ flexGrow: 1 }}>
-                        <RoutesTableHeader />
-                        <Stack
-                            direction='row'
-                            spacing={5}
-                            alignItems='center'
-                            justifyContent={'center'}
-                            sx={{ flexGrow: 1 }}
-                        >
+                        <TopBarComponentGroup justifyContent={'flex-start'}>
+                            <RoutesTableHeader />
                             <LocationSearchBar />
+                        </TopBarComponentGroup>
+
+                        <TopBarComponentGroup justifyContent={'center'}>
+                            <FilterVehicleCheckbox />
+                        </TopBarComponentGroup>
+
+                        <TopBarComponentGroup justifyContent={'flex-end'}>
                             <MapSetting />
                             <CsvExport />
-                        </Stack>
-                        <Stack
-                            direction='row'
-                            spacing={5}
-                            alignItems='center'
-                            justifyContent={'flex-end'}
-                            sx={{ flexGrow: 1 }}
-                        >
-                            <FilterVehicleCheckbox />
                             <Clock />
-                        </Stack>
+                        </TopBarComponentGroup>
                     </Stack>
                 </Toolbar>
             </AppBar>
