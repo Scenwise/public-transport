@@ -49,7 +49,7 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
     //                                 filteredList
     //                                     .map((item) => item.properties.stops_ids)
     //                                     .flat()
-    //                                     .filter((v, i, a) => a.indexOf(v) == i)
+    //                                     .unique()
     //                                     .map((item) => ptStops[item]),
     //                             ),
     //                         }),

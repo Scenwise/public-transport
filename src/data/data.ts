@@ -10,8 +10,10 @@ import {
     COLOR_VEHICLE_SUBWAY,
     COLOR_VEHICLE_TRAM,
     COLOR_VEHICLE_TROLLEYBUS,
-} from '../data/layerPaints';
+} from './layerPaints';
 
+export const allLayers = ['Routes', 'Stops'];
+export const allIcons = ['arrow'];
 export enum ReadyState {
     UNINSTANTIATED = -1,
     CONNECTING = 0,

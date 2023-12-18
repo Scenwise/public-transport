@@ -26,6 +26,7 @@ interface PTRouteProperties {
     route_color: string;
     vehicle_type: string;
     stops_ids: string[];
+    vehicle_ids: string[];
 }
 
 type PTStopFeature = GeoJSON.Feature<PTStopGeometry, PTStopProperties>;
@@ -35,6 +36,7 @@ interface PTStopProperties {
     stopName: string;
     stopsCode: string;
     platformCode: string;
+    routes: string[];
     wheelchairBoarding: string;
 }
 
@@ -51,10 +53,12 @@ interface VisibleFiltering {
 interface VehicleRoutePair {
     marker: mapboxgl.Marker;
     routeId: string; // key of the route in the routes map
-    vehicle: PTVechileProperties;
+    vehicle: PTVehicleFeature;
 }
 
-interface PTVechileProperties {
+type PTVehicleFeature = GeoJSON.Feature<PTVehicleGeometry, PTVehicleProperties>;
+type PTVehicleGeometry = GeoJSON.Point;
+interface PTVehicleProperties {
     messageType: string;
     dataOwnerCode: string;
     linePlanningNumber: string;
@@ -69,8 +73,6 @@ interface PTVechileProperties {
     punctuality: number;
     rdX: number;
     rdY: number;
-    longitude: number;
-    latitude: number;
 }
 
 type VehicleFilter = {
@@ -78,7 +80,7 @@ type VehicleFilter = {
     checked: boolean;
 };
 
-interface MarkerColorPair {
+interface SelectedMarkerColor {
     color: string;
     marker: mapboxgl.Marker;
 }

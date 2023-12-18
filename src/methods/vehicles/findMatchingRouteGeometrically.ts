@@ -9,22 +9,22 @@ import RBush from 'rbush';
  * @returns the matching route
  */
 const findMatchingRouteGeometrically = (
-    vehicle: PTVechileProperties,
+    vehicle: PTVehicleFeature,
     routeTree: RBush<PTRouteIndex>,
 ): PTRouteIndex | null => {
     // Find corresponding road
-    const vehiclePoint = turf.point([vehicle.longitude, vehicle.latitude]);
+    const vehiclePoint = turf.point(vehicle.geometry.coordinates);
 
     // Query the spatial index to find intersecting route bounding boxes
     const matchingBoxes = routeTree
         .search({
-            minX: vehicle.longitude,
-            minY: vehicle.latitude,
-            maxX: vehicle.longitude,
-            maxY: vehicle.latitude,
+            minX: vehicle.geometry.coordinates[0],
+            minY: vehicle.geometry.coordinates[1],
+            maxX: vehicle.geometry.coordinates[0],
+            maxY: vehicle.geometry.coordinates[1],
         })
         .filter((route: PTRouteIndex) =>
-            route.route.properties.agency_id.toLowerCase().includes(vehicle.dataOwnerCode.toLowerCase()),
+            route.route.properties.agency_id.toLowerCase().includes(vehicle.properties.dataOwnerCode.toLowerCase()),
         );
 
     // Find the route the vehicle is on

@@ -1,10 +1,6 @@
 import mapboxgl from 'mapbox-gl';
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
-import { selectPTRoutesFeatureList, selectPTStopsFeatureList, updateVisibleRouteState } from '../dataStoring/slice';
-import { getVisibleRoutes } from '../hooks/filterHook/useVisibleRoutesUpdate';
-import { updateSourcesAndLayers } from '../hooks/useInitializeSourcesAndLayers';
 import { usePublicTransport } from '../hooks/usePublicTransport';
 import { useAppSelector } from '../store';
 
@@ -30,7 +26,6 @@ const MapBoxContainer: React.FC = () => {
     const mapContainer = useRef<HTMLDivElement | null>(null);
     const miniMapContainer = useRef<HTMLDivElement | null>(null);
 
-    const dispatch = useDispatch();
     const mapStyle = useAppSelector((state) => state.slice.mapStyle);
 
     const [lng] = useState(4.9041);
@@ -41,14 +36,9 @@ const MapBoxContainer: React.FC = () => {
     const OVERVIEW_MIN_ZOOM = 5;
     const OVERVIEW_MAX_ZOOM = 10;
 
-    const visibleRoutes = useAppSelector((state) => state.slice.visibleRoutes);
-
-    const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
-    const ptStopFeatures = useAppSelector(selectPTStopsFeatureList);
-
     const selectedRouteID = useAppSelector((state) => state.slice.selectedRoute);
 
-    usePublicTransport(map);
+    usePublicTransport(map, setMap);
 
     /**
      * First initialization of map called on first render.
@@ -63,38 +53,6 @@ const MapBoxContainer: React.FC = () => {
         if (!map) initializeMap({ setMap, mapContainer });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [map]);
-
-    // Update the visible routes when map is moved.
-    useEffect(() => {
-        if (!map || !visibleRoutes.isOn) return;
-        const listener = () => {
-            setMap(newMap);
-            const updatedVisibleFiltering = getVisibleRoutes(map, visibleRoutes);
-            dispatch(updateVisibleRouteState(updatedVisibleFiltering));
-        };
-
-        const newMap = map.on('moveend', listener);
-
-        return () => {
-            map.off('moveend', listener);
-        };
-    }, [map, dispatch, visibleRoutes]);
-
-    // If the style is changed, reload the layers and the source
-    useEffect(() => {
-        if (!map) return;
-        const listener = () => {
-            setMap(newMap);
-            updateSourcesAndLayers('ptRoutes', ptRouteFeatures, map);
-            updateSourcesAndLayers('ptStops', ptStopFeatures, map);
-        };
-
-        const newMap = map.on('style.load', listener);
-
-        return () => {
-            map.off('style.load', listener);
-        };
-    }, [map, ptRouteFeatures, ptStopFeatures]);
 
     // Update the mini map style
     useEffect(() => {

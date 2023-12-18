@@ -19,6 +19,7 @@ export interface State {
     status: Status;
     mapStyle: string; // The id of the current map style
     routeOffset: number;
+    clickableLayers: string[];
     stopCodeToRouteMap: Record<string, number>; // Map each stop code to its corresponding route id for route-vehicle matching
 }
 
@@ -40,6 +41,7 @@ export const initialState: State = {
     },
     routeOffset: 2,
     mapStyle: 'light-v11',
+    clickableLayers: [],
     stopCodeToRouteMap: {} as Record<string, number>,
 };
 
@@ -49,6 +51,9 @@ const slice = createSlice({
     reducers: {
         updatePTRoutes(state: State, action: PayloadAction<FeatureRecord<PTRouteFeature>>) {
             state.ptRoutes = action.payload;
+        },
+        updatePTRoute(state: State, action: PayloadAction<PTRouteFeature>) {
+            state.ptRoutes[action.payload.properties.shape_id] = action.payload;
         },
         updateFilters(state: State, action: PayloadAction<Filters>) {
             state.filters = deepcopy(action.payload);
@@ -83,6 +88,9 @@ const slice = createSlice({
         updateMapStyle(state: State, action: PayloadAction<string>) {
             state.mapStyle = action.payload;
         },
+        updateClickableLayers(state: State, action: PayloadAction<string[]>) {
+            state.clickableLayers = action.payload;
+        },
         updateStopCodeToRouteMap(state: State, action: PayloadAction<Record<string, number>>) {
             state.stopCodeToRouteMap = action.payload;
         },
@@ -91,6 +99,7 @@ const slice = createSlice({
 
 export const {
     updatePTRoutes,
+    updatePTRoute,
     updateFilters,
     updateInitialFilters,
     updateFilter,
@@ -102,6 +111,7 @@ export const {
     updateStatus,
     updateRouteOffset,
     updateMapStyle,
+    updateClickableLayers,
     updateStopCodeToRouteMap,
 } = slice.actions;
 

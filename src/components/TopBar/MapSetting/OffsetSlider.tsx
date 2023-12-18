@@ -7,8 +7,8 @@ import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 
-import { updateRouteOffset } from '../../dataStoring/slice';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { updateRouteOffset } from '../../../dataStoring/slice';
+import { useAppDispatch, useAppSelector } from '../../../store';
 
 const Input = styled(MuiInput)`
     width: 42px;
@@ -38,13 +38,13 @@ const OffsetSlider: React.FC = () => {
         <Box width={'10vw'}>
             <Grid container>
                 <Grid item xs={12}>
-                    <Typography id='input-slider' gutterBottom textAlign='left' margin={0}>
+                    <Typography variant='overline' display='block'>
                         Line offset
                     </Typography>
                 </Grid>
                 <Grid item xs={10}>
                     <Slider
-                        color='secondary'
+                        color='primary'
                         value={routeOffset}
                         onChange={handleSliderChange}
                         aria-labelledby='input-slider'
@@ -58,7 +58,7 @@ const OffsetSlider: React.FC = () => {
                         disableUnderline
                         onChange={handleInputChange}
                         onBlur={handleBlur}
-                        sx={{ color: 'white' }}
+                        sx={{ marginLeft: '10px' }}
                         inputProps={{
                             step: 1,
                             min: 0,

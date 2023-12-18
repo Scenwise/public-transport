@@ -33,7 +33,7 @@ export const getVisibleRoutes = (map: mapboxgl.Map | null, visibleFiltering: Vis
             validate: false,
         });
 
-        return { isOn: visibleFiltering.isOn, ids: features.map((x) => '' + x.id) };
+        return { isOn: visibleFiltering.isOn, ids: features.map((x) => '' + x.properties?.shape_id) };
     } else {
         return initialState.visibleRoutes;
     }

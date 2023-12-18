@@ -24,6 +24,7 @@ const RoutesTable: React.FC = () => {
         'agency',
         'vehicle type',
         'route type',
+        'current vehicles',
         'route id',
         'shape id',
     ];
@@ -35,6 +36,7 @@ const RoutesTable: React.FC = () => {
         route.agency_id,
         route.vehicle_type,
         route.route_type,
+        route.vehicle_ids.toString(),
         route.route_id + '',
         route.shape_id + '',
     ]);

@@ -9,9 +9,9 @@ import FilterVehicleCheckbox from '../Vehicles/FilterVehicleCheckbox';
 import Clock from './Clock';
 import { CsvExport } from './CsvExport';
 import { LocationSearchBar } from './LocationSearchBar';
-import MapStyleSelector from './MapStyleSelector';
-import { OffsetSlider } from './OffsetSlider';
+import { MapSetting } from './MapSetting/MapSetting';
 import { RoutesTableHeader } from './RoutesTableHeader';
+import { TopBarComponentGroup } from './TopBarComponentGroup';
 
 const TopBar: React.FC = () => {
     return (
@@ -19,29 +19,20 @@ const TopBar: React.FC = () => {
             <AppBar position='static'>
                 <Toolbar>
                     <Stack direction='row' alignItems='center' sx={{ flexGrow: 1 }}>
-                        <RoutesTableHeader />
-                        <Stack
-                            direction='row'
-                            spacing={5}
-                            alignItems='center'
-                            justifyContent={'center'}
-                            sx={{ flexGrow: 1 }}
-                        >
+                        <TopBarComponentGroup justifyContent={'flex-start'}>
+                            <RoutesTableHeader />
                             <LocationSearchBar />
-                            <OffsetSlider />
-                            <MapStyleSelector />
-                            <CsvExport />
-                        </Stack>
-                        <Stack
-                            direction='row'
-                            spacing={5}
-                            alignItems='center'
-                            justifyContent={'flex-end'}
-                            sx={{ flexGrow: 1 }}
-                        >
+                        </TopBarComponentGroup>
+
+                        <TopBarComponentGroup justifyContent={'center'}>
                             <FilterVehicleCheckbox />
+                        </TopBarComponentGroup>
+
+                        <TopBarComponentGroup justifyContent={'flex-end'}>
+                            <MapSetting />
+                            <CsvExport />
                             <Clock />
-                        </Stack>
+                        </TopBarComponentGroup>
                     </Stack>
                 </Toolbar>
             </AppBar>
