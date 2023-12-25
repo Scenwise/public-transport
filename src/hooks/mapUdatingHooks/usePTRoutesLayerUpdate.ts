@@ -5,12 +5,50 @@ import { useVehicleMarkers } from '../../components/Vehicles/VehicleMapContext';
 import { useAppSelector } from '../../store';
 import { routesPaintWhenSelected } from '../useHookUtil';
 
+// technique based on https://jsfiddle.net/2mws8y3q/
+// an array of valid line-dasharray values, specifying the lengths of the alternating dashes and gaps that form the dash pattern
+const dashArraySequence = [
+    [0, 4, 3],
+    [1, 4, 2],
+    [2, 4, 1],
+    [3, 4, 0],
+    [0, 1, 3, 3],
+    [0, 2, 3, 2],
+    [0, 3, 3, 1],
+];
+
+const useAnimateSelectedRoute = (map: mapboxgl.Map | null) => {
+    useEffect(() => {
+        let step = 0;
+        function animateDashArray(timestamp: number) {
+            if (map && map.getLayer('selectedRouteDirection')) {
+                // Update line-dasharray using the next value in dashArraySequence. The
+                // divisor in the expression `timestamp / 50` controls the animation speed.
+                const newStep = parseInt(String((timestamp / 50) % dashArraySequence.length));
+
+                if (newStep !== step) {
+                    map.setPaintProperty('selectedRouteDirection', 'line-dasharray', dashArraySequence[step]);
+                    step = newStep;
+                }
+
+                // Request the next frame of the animation.
+                requestAnimationFrame(animateDashArray);
+            }
+        }
+
+        // start the animation
+        animateDashArray(0);
+    }, [map]);
+};
+
 /*
  * This hook is used to update the mapbox map with the routes layer when the selected route changes.
  */
 export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
     const ptRoutes = useAppSelector((state) => state.slice.ptRoutes);
+
+    useAnimateSelectedRoute(map);
 
     // TODO: This is a temporary solution to get the vehicle markers from the context. They should be stored in the state eventually.
     const context = useVehicleMarkers();
@@ -88,7 +126,7 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     useEffect(() => {
         if (map && map.getLayer('ptRoutes') && map.getLayer('selectedRouteDirection')) {
             map.setPaintProperty('ptRoutes', 'line-offset', routeOffset);
-            map.setLayoutProperty('selectedRouteDirection', 'icon-offset', [routeOffset, routeOffset]);
+            map.setPaintProperty('selectedRouteDirection', 'line-offset', routeOffset);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [routeOffset]);

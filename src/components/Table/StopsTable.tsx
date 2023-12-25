@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { updateSelectedStop } from '../../dataStoring/slice';
+import { updatePTStop, updateSelectedStop } from '../../dataStoring/slice';
+import { addSchedule } from '../../methods/apiRequests/addSchedule';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { GeneralTable } from './GeneralTable';
 
 /*
  * This component is used to display the stops of the selected route.
+ * If there are vehicles on the route, each vehicle gets a different stop table (to display the different schedules)
  */
 const StopsTable: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -47,18 +49,36 @@ const StopsTable: React.FC = () => {
     let ptStopsProperty = [] as PTStopProperties[];
     if (selectedRouteID != '') {
         ptRouteProperty = ptRoutesFeatures[selectedRouteID].properties;
+        addSchedule(
+            ptRouteProperty.route_id + '',
+            ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id]),
+            (stop: PTStopFeature) => dispatch(updatePTStop(stop)),
+        );
+
         ptStopsProperty = ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id].properties);
     }
     // If there are no stops, no table is displayed
     if (ptStopsProperty.length == 0) return null;
 
-    const headers = ['index', 'stop name', 'platform code', 'wheelchair boarding', 'stop code', 'routes', 'stop id'];
+    const headers = [
+        'index',
+        'stop name',
+        'platform code',
+        'wheelchair boarding',
+        'stop code',
+        'arrival',
+        'departure',
+        'routes',
+        'stop id',
+    ];
     const tables = ptStopsProperty.map((stop, index) => [
         index + '',
         stop.stopName,
         stop.platformCode,
         stop.wheelchairBoarding,
         stop.stopsCode,
+        stop.arrivalTime + '',
+        stop.departureTime + '',
         stop.routes.toString(),
         stop.stopId,
     ]);

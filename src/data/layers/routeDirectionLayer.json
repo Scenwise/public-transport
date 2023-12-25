@@ -1,18 +1,12 @@
 {
     "id": "selectedRouteDirection",
-    "type": "symbol",
+    "type": "line",
     "source": "ptRoutesSource",
-    "layout": {
-        "symbol-placement": "line",
-        "symbol-spacing": 30,
-        "icon-offset": [2, 2],
-        "icon-allow-overlap": false,
-        "icon-image": "arrow",
-        "icon-size": 0.9
-    },
     "paint": {
-        "icon-color": "white",
-        "icon-opacity": 0.9
+        "line-color": "orange",
+        "line-width": 6,
+        "line-offset": 2,
+        "line-dasharray": [0, 4, 3]
     },
     "filter": ["==", ["to-string", ["get", "shape_id"]], ""]
 }

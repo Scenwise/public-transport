@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@r
 import deepcopy from 'deepcopy';
 
 import { ReadyState } from '../data/data';
-import getGtfsTable from '../methods/apiRequests/apiFunction';
+import { getGtfsTable } from '../methods/apiRequests/apiFunction';
 import { RootState } from '../store';
 
 export const fetchGtfsGeoJSON = (tableName: string) =>
@@ -76,6 +76,9 @@ const slice = createSlice({
         updatePTStops(state: State, action: PayloadAction<FeatureRecord<PTStopFeature>>) {
             state.ptStops = action.payload;
         },
+        updatePTStop(state: State, action: PayloadAction<PTStopFeature>) {
+            state.ptStops[action.payload.properties.stopId] = deepcopy(action.payload);
+        },
         updateSelectedStop(state: State, action: PayloadAction<string>) {
             state.selectedStop = action.payload;
         },
@@ -107,6 +110,7 @@ export const {
     updateVisibleRouteState,
     updateSelectedRoute,
     updatePTStops,
+    updatePTStop,
     updateSelectedStop,
     updateStatus,
     updateRouteOffset,

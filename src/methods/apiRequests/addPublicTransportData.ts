@@ -2,7 +2,7 @@ import deepcopy from 'deepcopy';
 
 import { ReadyState, RouteType, vehicleTypes, wheelchairBoarding } from '../../data/data';
 import { arraysMatch, limitDecimalPlaces } from '../../util';
-import getGtfsTable from './apiFunction';
+import { getGtfsTable } from './apiFunction';
 
 /**
  * Fetch the routes data and store the routes as a record(map) with the key of the shape id.

@@ -8,8 +8,8 @@ import routeDirectionLayer from '../data/layers/routeDirectionLayer.json';
 
 export const layerConfig: { [key: string]: AnyLayer } = {
     ptRoutes: ptRoutesLayer as AnyLayer,
-    ptStops: ptStopsLayer as AnyLayer,
     selectedRouteDirection: routeDirectionLayer as AnyLayer,
+    ptStops: ptStopsLayer as AnyLayer,
 };
 
 /**
