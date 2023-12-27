@@ -54,16 +54,16 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     const context = useVehicleMarkers();
     const vehicleMarkers = context.vehicleMarkers;
 
+    const selectedVehicleID = useAppSelector((state) => state.slice.selectedVehicle);
+
     // Fly to selected route + set the paint of the selected route different
     useEffect((): void => {
         const selectedPTRoute = ptRoutes[selectedPTRouteID];
         if (map && selectedPTRoute) {
-            // If there are vehicles on the selected route, jump to the first vehicle on the route
+            // If there are vehicles on the selected route, jump to the selected vehicle
             // Otherwise, jump to the center of the route
             if (selectedPTRoute.properties.vehicle_ids.length > 0) {
-                // TODO: Currently there is no way to get the selected vehicle so the map will fly to the first vehicle of the selected route
-                // TODO: When the selected vehicle id is stored in the state, this can be used to fly to the selected vehicle
-                const marker = vehicleMarkers.get(selectedPTRoute.properties.vehicle_ids[0]);
+                const marker = vehicleMarkers.get(selectedVehicleID);
                 if (marker) {
                     map.flyTo({
                         center: marker.marker.getLngLat(),

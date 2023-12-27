@@ -21,6 +21,7 @@ export interface State {
     routeOffset: number;
     clickableLayers: string[];
     stopCodeToRouteMap: Record<string, number>; // Map each stop code to its corresponding route id for route-vehicle matching
+    selectedVehicle: string; // The id of the selected vehicle
 }
 
 export const initialState: State = {
@@ -43,6 +44,7 @@ export const initialState: State = {
     mapStyle: 'light-v11',
     clickableLayers: [],
     stopCodeToRouteMap: {} as Record<string, number>,
+    selectedVehicle: '',
 };
 
 const slice = createSlice({
@@ -97,6 +99,9 @@ const slice = createSlice({
         updateStopCodeToRouteMap(state: State, action: PayloadAction<Record<string, number>>) {
             state.stopCodeToRouteMap = action.payload;
         },
+        updateSelectedVehicle(state: State, action: PayloadAction<string>) {
+            state.selectedVehicle = action.payload;
+        },
     },
 });
 
@@ -117,6 +122,7 @@ export const {
     updateMapStyle,
     updateClickableLayers,
     updateStopCodeToRouteMap,
+    updateSelectedVehicle,
 } = slice.actions;
 
 // Memoized selector for array of features
