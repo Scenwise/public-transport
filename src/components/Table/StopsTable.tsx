@@ -16,6 +16,7 @@ const StopsTable: React.FC = () => {
     const ptStopsFeatures = useAppSelector((state) => state.slice.ptStops);
     const selectedRouteID = useAppSelector((state) => state.slice.selectedRoute);
     const selectedStopID = useAppSelector((state) => state.slice.selectedStop);
+    const selectedVehicleID = useAppSelector((state) => state.slice.selectedVehicle);
 
     const [routesTableWidth, setRoutesTableWidth] = useState<number>(28);
 
@@ -51,6 +52,8 @@ const StopsTable: React.FC = () => {
         ptRouteProperty = ptRoutesFeatures[selectedRouteID].properties;
         addSchedule(
             ptRouteProperty.route_id + '',
+            selectedVehicleID + '',
+            ptRouteProperty.vehicle_ids,
             ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id]),
             (stop: PTStopFeature) => dispatch(updatePTStop(stop)),
         );

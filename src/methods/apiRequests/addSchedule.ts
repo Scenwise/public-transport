@@ -5,21 +5,18 @@ import { getRouteSchedule } from './apiFunction';
 // Given a route, store the schedule of its each stop
 export const addSchedule = (
     routeID: string,
+    vehicleID: string,
+    vehicleList: string[],
     ptStopsFeatures: PTStopFeature[],
     setStop: (stop: PTStopFeature) => void,
 ): Promise<void> => {
     return new Promise(() => {
         const res = getRouteSchedule(routeID);
         res.then((schedules: SchedulePayload[]) => {
-            console.log(schedules);
-            console.log(groupStopsBySequence(schedules, ptStopsFeatures[0].properties.stopId)[0]);
-            console.log(ptStopsFeatures);
+            // TODO: Currently on the first schedule is selected, but it needs to be matched with corresponding vehicle
             groupStopsBySequence(schedules, ptStopsFeatures[0].properties.stopId)[0].forEach(
                 (schedule: SchedulePayload, index: number) => {
                     const stopFeature = deepcopy(ptStopsFeatures[index]);
-                    if (stopFeature === undefined) {
-                        console.log(stopFeature);
-                    }
                     stopFeature.properties.arrivalTime = schedule.arrival_time;
                     stopFeature.properties.departureTime = schedule.departure_time;
                     setStop(stopFeature);
