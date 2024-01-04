@@ -13,16 +13,20 @@ export const addSchedule = (
     return new Promise(() => {
         const res = getRouteSchedule(routeID);
         res.then((schedules: SchedulePayload[]) => {
-            const index = vehicleList.indexOf(vehicleID);
-
-            groupStopsBySequence(schedules, ptStopsFeatures[0].properties.stopId)[index != -1 ? index : 0].forEach(
-                (schedule: SchedulePayload, index: number) => {
-                    const stopFeature = deepcopy(ptStopsFeatures[index]);
-                    stopFeature.properties.arrivalTime = schedule.arrival_time;
-                    stopFeature.properties.departureTime = schedule.departure_time;
-                    setStop(stopFeature);
-                },
-            );
+            if (schedules) {
+                const index = vehicleList.indexOf(vehicleID);
+                groupStopsBySequence(schedules, ptStopsFeatures[0].properties.stopId)[index != -1 ? index : 0].forEach(
+                    (schedule: SchedulePayload, index: number) => {
+                        const stopFeature = deepcopy(ptStopsFeatures[index]);
+                        // TODO: Sometimes the number of stops of a route from the stop table are not matched the numbers of the schedules
+                        if (stopFeature) {
+                            stopFeature.properties.arrivalTime = schedule.arrival_time;
+                            stopFeature.properties.departureTime = schedule.departure_time;
+                            setStop(stopFeature);
+                        }
+                    },
+                );
+            }
         }).catch((error) => {
             console.error(error);
         });
