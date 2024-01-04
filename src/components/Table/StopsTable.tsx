@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { updatePTStop, updateSelectedStop } from '../../dataStoring/slice';
 import { addSchedule } from '../../methods/apiRequests/addSchedule';
@@ -44,24 +44,31 @@ const StopsTable: React.FC = () => {
         };
     }, [routesTable]);
 
-    // Get the table headers and content
-    let ptRouteProperty = {} as PTRouteProperties;
-    // The stops that belongs to the selected route
-    let ptStopsProperty = [] as PTStopProperties[];
-    if (selectedRouteID != '') {
-        ptRouteProperty = ptRoutesFeatures[selectedRouteID].properties;
-        addSchedule(
-            ptRouteProperty.route_id + '',
-            selectedVehicleID + '',
-            ptRouteProperty.vehicle_ids,
-            ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id]),
-            (stop: PTStopFeature) => dispatch(updatePTStop(stop)),
-        );
+    // Get data for the table headers and content
+    const ptRouteProperty = useMemo(() => {
+        return selectedRouteID != '' ? ptRoutesFeatures[selectedRouteID].properties : ({} as PTRouteProperties);
+        /*eslint-disable react-hooks/exhaustive-deps*/
+    }, [selectedRouteID, selectedVehicleID]);
 
-        ptStopsProperty = ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id].properties);
-    }
+    const ptStopsProperties = useMemo(() => {
+        if (selectedRouteID != '') {
+            // update the stop properties by adding the schedules
+            addSchedule(
+                ptRouteProperty.route_id + '',
+                selectedVehicleID + '',
+                ptRouteProperty.vehicle_ids,
+                ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id]),
+                (stop: PTStopFeature) => dispatch(updatePTStop(stop)),
+            );
+            return ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id].properties);
+        } else {
+            return [] as PTStopProperties[];
+        }
+        /*eslint-disable react-hooks/exhaustive-deps*/
+    }, [selectedVehicleID, selectedRouteID, ptStopsFeatures]);
+
     // If there are no stops, no table is displayed
-    if (ptStopsProperty.length == 0) return null;
+    if (ptStopsProperties.length == 0) return null;
 
     const headers = [
         'index',
@@ -74,7 +81,7 @@ const StopsTable: React.FC = () => {
         'routes',
         'stop id',
     ];
-    const tables = ptStopsProperty.map((stop, index) => [
+    const tables = ptStopsProperties.map((stop, index) => [
         index + '',
         stop.stopName,
         stop.platformCode,
@@ -87,7 +94,7 @@ const StopsTable: React.FC = () => {
     ]);
 
     // Find the index of the selected stop to highlight it in the table
-    const selectedStopIndex = ptStopsProperty.findIndex((stop) => stop.stopId == selectedStopID);
+    const selectedStopIndex = ptStopsProperties.findIndex((stop) => stop.stopId == selectedStopID);
 
     return (
         <div id={'stops-table'}>

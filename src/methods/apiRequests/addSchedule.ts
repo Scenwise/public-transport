@@ -13,8 +13,9 @@ export const addSchedule = (
     return new Promise(() => {
         const res = getRouteSchedule(routeID);
         res.then((schedules: SchedulePayload[]) => {
-            // TODO: Currently on the first schedule is selected, but it needs to be matched with corresponding vehicle
-            groupStopsBySequence(schedules, ptStopsFeatures[0].properties.stopId)[0].forEach(
+            const index = vehicleList.indexOf(vehicleID);
+
+            groupStopsBySequence(schedules, ptStopsFeatures[0].properties.stopId)[index != -1 ? index : 0].forEach(
                 (schedule: SchedulePayload, index: number) => {
                     const stopFeature = deepcopy(ptStopsFeatures[index]);
                     stopFeature.properties.arrivalTime = schedule.arrival_time;

@@ -189,11 +189,11 @@ const sortStops = (ptRoute: PTRouteFeature, stopGeometries: number[][], stops: P
     // For finding the indices of the stop coordinates from the route coordinates
     // (the decimal need to be limited in order to match up)
     const routeCoordinates = ptRoute.geometry.coordinates.map((coordinate) => limitDecimalPlaces(coordinate));
-    const limitDecimalStopGeometries = stopGeometries.map((coordinate: number[]) => limitDecimalPlaces(coordinate));
+    const stopCoordinates = stopGeometries.map((coordinate: number[]) => limitDecimalPlaces(coordinate));
 
     // The places of the coordinates of the stops in the route
     // Each entry of the coordinateIndices: [The place of the coordinate of a stop in the route, The original index of the stop]
-    const coordinateIndices = limitDecimalStopGeometries.map((stopCoordinate: number[], index: number) => [
+    const coordinateIndices = stopCoordinates.map((stopCoordinate: number[], index: number) => [
         routeCoordinates.findIndex((routeCoordinate) => arraysMatch(stopCoordinate, routeCoordinate)),
         index,
     ]);
