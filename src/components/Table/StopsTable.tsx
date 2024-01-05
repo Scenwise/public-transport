@@ -55,8 +55,8 @@ const StopsTable: React.FC = () => {
             // update the stop properties by adding the schedules
             addSchedule(
                 ptRouteProperty.route_id + '',
-                selectedVehicleID + '',
-                ptRouteProperty.vehicle_ids,
+                ptRouteProperty.origin,
+                ptRouteProperty.vehicle_ids.indexOf(selectedVehicleID + ''),
                 ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id]),
                 (stop: PTStopFeature) => dispatch(updatePTStop(stop)),
             );

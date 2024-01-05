@@ -5,17 +5,19 @@ import { getRouteSchedule } from './apiFunction';
 // Given a route, store the schedule of its each stop
 export const addSchedule = (
     routeID: string,
-    vehicleID: string,
-    vehicleList: string[],
+    routeOrigin: string,
+    vehicleIndex: number,
     ptStopsFeatures: PTStopFeature[],
     setStop: (stop: PTStopFeature) => void,
 ): Promise<void> => {
     return new Promise(() => {
         const res = getRouteSchedule(routeID);
         res.then((schedules: SchedulePayload[]) => {
-            if (schedules) {
-                const index = vehicleList.indexOf(vehicleID);
-                groupStopsBySequence(schedules, ptStopsFeatures[0].properties.stopId)[index != -1 ? index : 0].forEach(
+            if (schedules.length > 0) {
+                const originStopId = ptStopsFeatures.filter(
+                    (stop: PTStopFeature) => stop.properties.stopName === routeOrigin,
+                )[0].properties.stopId;
+                groupStopsBySequence(schedules, originStopId)[vehicleIndex != -1 ? vehicleIndex : 0].forEach(
                     (schedule: SchedulePayload, index: number) => {
                         const stopFeature = deepcopy(ptStopsFeatures[index]);
                         // TODO: Sometimes the number of stops of a route from the stop table are not matched the numbers of the schedules
@@ -26,6 +28,14 @@ export const addSchedule = (
                         }
                     },
                 );
+            } else {
+                // If no schedule is found, there is no vehicle on the route so no active schedule
+                ptStopsFeatures.forEach((stop: PTStopFeature) => {
+                    const copiedStop = deepcopy(stop);
+                    copiedStop.properties.arrivalTime = 'No active schedule';
+                    copiedStop.properties.departureTime = 'No active schedule';
+                    setStop(copiedStop);
+                });
             }
         }).catch((error) => {
             console.error(error);

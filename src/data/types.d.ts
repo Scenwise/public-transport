@@ -38,8 +38,8 @@ interface PTStopProperties {
     platformCode: string;
     wheelchairBoarding: string;
     routes: string[];
-    arrivalTime?: string;
-    departureTime?: string;
+    arrivalTime: string;
+    departureTime: string;
 }
 
 interface SchedulePayload {

@@ -101,6 +101,8 @@ export const addPublicTransportData = async (
                                         wheelchairBoarding: getWheelchairBoarding(
                                             stopProperties.wheelchair_boarding[index],
                                         ),
+                                        arrivalTime: 'Loading',
+                                        departureTime: 'Loading',
                                     },
                                 }));
 
