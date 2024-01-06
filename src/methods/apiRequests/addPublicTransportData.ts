@@ -2,7 +2,7 @@ import deepcopy from 'deepcopy';
 
 import { ReadyState, RouteType, vehicleTypes, wheelchairBoarding } from '../../data/data';
 import { arraysMatch, limitDecimalPlaces } from '../../util';
-import getGtfsTable from './apiFunction';
+import { getGtfsTable } from './apiFunction';
 
 /**
  * Fetch the routes data and store the routes as a record(map) with the key of the shape id.
@@ -101,6 +101,8 @@ export const addPublicTransportData = async (
                                         wheelchairBoarding: getWheelchairBoarding(
                                             stopProperties.wheelchair_boarding[index],
                                         ),
+                                        arrivalTime: 'Loading',
+                                        departureTime: 'Loading',
                                     },
                                 }));
 
@@ -189,11 +191,11 @@ const sortStops = (ptRoute: PTRouteFeature, stopGeometries: number[][], stops: P
     // For finding the indices of the stop coordinates from the route coordinates
     // (the decimal need to be limited in order to match up)
     const routeCoordinates = ptRoute.geometry.coordinates.map((coordinate) => limitDecimalPlaces(coordinate));
-    const limitDecimalStopGeometries = stopGeometries.map((coordinate: number[]) => limitDecimalPlaces(coordinate));
+    const stopCoordinates = stopGeometries.map((coordinate: number[]) => limitDecimalPlaces(coordinate));
 
     // The places of the coordinates of the stops in the route
     // Each entry of the coordinateIndices: [The place of the coordinate of a stop in the route, The original index of the stop]
-    const coordinateIndices = limitDecimalStopGeometries.map((stopCoordinate: number[], index: number) => [
+    const coordinateIndices = stopCoordinates.map((stopCoordinate: number[], index: number) => [
         routeCoordinates.findIndex((routeCoordinate) => arraysMatch(stopCoordinate, routeCoordinate)),
         index,
     ]);

@@ -5,6 +5,42 @@ import { useVehicleMarkers } from '../../components/Vehicles/VehicleMapContext';
 import { useAppSelector } from '../../store';
 import { routesPaintWhenSelected } from '../useHookUtil';
 
+// technique based on https://jsfiddle.net/2mws8y3q/
+// an array of valid line-dasharray values, specifying the lengths of the alternating dashes and gaps that form the dash pattern
+const dashArraySequence = [
+    [0, 4, 3],
+    [1, 4, 2],
+    [2, 4, 1],
+    [3, 4, 0],
+    [0, 1, 3, 3],
+    [0, 2, 3, 2],
+    [0, 3, 3, 1],
+];
+
+const useAnimateSelectedRoute = (map: mapboxgl.Map | null) => {
+    useEffect(() => {
+        let step = 0;
+        function animateDashArray(timestamp: number) {
+            if (map && map.getLayer('selectedRouteDirection')) {
+                // Update line-dasharray using the next value in dashArraySequence. The
+                // divisor in the expression `timestamp / 50` controls the animation speed.
+                const newStep = parseInt(String((timestamp / 50) % dashArraySequence.length));
+
+                if (newStep !== step) {
+                    map.setPaintProperty('selectedRouteDirection', 'line-dasharray', dashArraySequence[step]);
+                    step = newStep;
+                }
+
+                // Request the next frame of the animation.
+                requestAnimationFrame(animateDashArray);
+            }
+        }
+
+        // start the animation
+        animateDashArray(0);
+    }, [map]);
+};
+
 /*
  * This hook is used to update the mapbox map with the routes layer when the selected route changes.
  */
@@ -12,20 +48,22 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
     const ptRoutes = useAppSelector((state) => state.slice.ptRoutes);
 
+    useAnimateSelectedRoute(map);
+
     // TODO: This is a temporary solution to get the vehicle markers from the context. They should be stored in the state eventually.
     const context = useVehicleMarkers();
     const vehicleMarkers = context.vehicleMarkers;
+
+    const selectedVehicleID = useAppSelector((state) => state.slice.selectedVehicle);
 
     // Fly to selected route + set the paint of the selected route different
     useEffect((): void => {
         const selectedPTRoute = ptRoutes[selectedPTRouteID];
         if (map && selectedPTRoute) {
-            // If there are vehicles on the selected route, jump to the first vehicle on the route
+            // If there are vehicles on the selected route, jump to the selected vehicle
             // Otherwise, jump to the center of the route
             if (selectedPTRoute.properties.vehicle_ids.length > 0) {
-                // TODO: Currently there is no way to get the selected vehicle so the map will fly to the first vehicle of the selected route
-                // TODO: When the selected vehicle id is stored in the state, this can be used to fly to the selected vehicle
-                const marker = vehicleMarkers.get(selectedPTRoute.properties.vehicle_ids[0]);
+                const marker = vehicleMarkers.get(selectedVehicleID);
                 if (marker) {
                     map.flyTo({
                         center: marker.marker.getLngLat(),
@@ -88,7 +126,7 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     useEffect(() => {
         if (map && map.getLayer('ptRoutes') && map.getLayer('selectedRouteDirection')) {
             map.setPaintProperty('ptRoutes', 'line-offset', routeOffset);
-            map.setLayoutProperty('selectedRouteDirection', 'icon-offset', [routeOffset, routeOffset]);
+            map.setPaintProperty('selectedRouteDirection', 'line-offset', routeOffset);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [routeOffset]);

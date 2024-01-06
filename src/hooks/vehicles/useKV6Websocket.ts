@@ -8,21 +8,22 @@ import animateVehicles from '../../methods/vehicles/animateVehicles';
 import {
     getMarkerColorBasedOnVehicleType,
     getVehiclePopup,
-    styleMarker,
+    handleMarkerOnClick,
 } from '../../methods/vehicles/vehicleMarkerUtilities';
-import { useAppSelector } from '../../store';
+import { RootState, useAppSelector } from '../../store';
 
 // Create websocket connection
 export const useKV6Websocket = (
     mapInitialized: boolean,
     map: mapboxgl.Map | null,
-    routesMap: FeatureRecord<PTRouteFeature>,
-    stopsToRoutesMap: Record<string, number>,
     vehicleMarkers: Map<string, VehicleRoutePair>,
     setVehicleMarkers: React.Dispatch<React.SetStateAction<Map<string, VehicleRoutePair>>>,
 ): void => {
     const dispatch = useDispatch();
     const status = useAppSelector((state) => state.slice.status);
+    const stopsToRoutesMap = useAppSelector((state: RootState) => state.slice.stopCodeToRouteMap);
+    const routesMap = useAppSelector((state: RootState) => state.slice.ptRoutes);
+
     const selectedMarker = useRef<SelectedMarkerColor>({} as SelectedMarkerColor);
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
@@ -135,9 +136,10 @@ export const useKV6Websocket = (
                                         marker.addTo(map);
                                     }
 
-                                    styleMarker(
+                                    handleMarkerOnClick(
                                         marker,
                                         selectedMarker,
+                                        vehicleId,
                                         dispatch,
                                         intersectedRoad.properties.shape_id,
                                         map,

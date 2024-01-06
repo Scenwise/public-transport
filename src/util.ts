@@ -4,8 +4,9 @@ export const limitDecimalPlaces = (coordinates: number[]): number[] => {
 };
 
 // Function to compare arrays by values
-export const arraysMatch = (arr1: number[], arr2: number[]): boolean => {
-    return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
+// Return true if two arrays have the same values in the same order
+export const arraysMatch = (arr1: number[], arr2: number[], offset = 0.002): boolean => {
+    return arr1.length === arr2.length && arr1.every((value, index) => Math.abs(value - arr2[index]) <= offset);
 };
 
 // Add a function to get unique values from array

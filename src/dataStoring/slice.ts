@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@r
 import deepcopy from 'deepcopy';
 
 import { ReadyState } from '../data/data';
-import getGtfsTable from '../methods/apiRequests/apiFunction';
+import { getGtfsTable } from '../methods/apiRequests/apiFunction';
 import { RootState } from '../store';
 
 export const fetchGtfsGeoJSON = (tableName: string) =>
@@ -21,6 +21,7 @@ export interface State {
     routeOffset: number;
     clickableLayers: string[];
     stopCodeToRouteMap: Record<string, number>; // Map each stop code to its corresponding route id for route-vehicle matching
+    selectedVehicle: string; // The id of the selected vehicle
 }
 
 export const initialState: State = {
@@ -43,6 +44,7 @@ export const initialState: State = {
     mapStyle: 'light-v11',
     clickableLayers: [],
     stopCodeToRouteMap: {} as Record<string, number>,
+    selectedVehicle: '',
 };
 
 const slice = createSlice({
@@ -76,6 +78,9 @@ const slice = createSlice({
         updatePTStops(state: State, action: PayloadAction<FeatureRecord<PTStopFeature>>) {
             state.ptStops = action.payload;
         },
+        updatePTStop(state: State, action: PayloadAction<PTStopFeature>) {
+            state.ptStops[action.payload.properties.stopId] = deepcopy(action.payload);
+        },
         updateSelectedStop(state: State, action: PayloadAction<string>) {
             state.selectedStop = action.payload;
         },
@@ -94,6 +99,9 @@ const slice = createSlice({
         updateStopCodeToRouteMap(state: State, action: PayloadAction<Record<string, number>>) {
             state.stopCodeToRouteMap = action.payload;
         },
+        updateSelectedVehicle(state: State, action: PayloadAction<string>) {
+            state.selectedVehicle = action.payload;
+        },
     },
 });
 
@@ -107,12 +115,14 @@ export const {
     updateVisibleRouteState,
     updateSelectedRoute,
     updatePTStops,
+    updatePTStop,
     updateSelectedStop,
     updateStatus,
     updateRouteOffset,
     updateMapStyle,
     updateClickableLayers,
     updateStopCodeToRouteMap,
+    updateSelectedVehicle,
 } = slice.actions;
 
 // Memoized selector for array of features

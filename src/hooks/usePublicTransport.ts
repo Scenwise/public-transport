@@ -12,7 +12,7 @@ import {
     updateStopCodeToRouteMap,
 } from '../dataStoring/slice';
 import { addPublicTransportData } from '../methods/apiRequests/addPublicTransportData';
-import { RootState, useAppDispatch, useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { useInitiateFilterOptions } from './filterHook/useInitiateFilterOptions';
 import { useUpdateRoutesWithFilter } from './filterHook/useUpdateRoutesWithFilter';
 import { useVisibleRoutesUpdate } from './filterHook/useVisibleRoutesUpdate';
@@ -68,9 +68,8 @@ export const usePublicTransport = (
     // VehicleMarkers keys are of format: "[DataOwnerCode]-[VehicleNumber]"
     const context = useVehicleMarkers();
     const [vehicleMarkers, setVehicleMarkers] = [context.vehicleMarkers, context.setVehicleMarkers];
-    const routesMap = useAppSelector((state: RootState) => state.slice.ptRoutes);
-    const stopsToRoutesMap = useAppSelector((state: RootState) => state.slice.stopCodeToRouteMap);
-    useKV6Websocket(mapInitialized.current, map, routesMap, stopsToRoutesMap, vehicleMarkers, setVehicleMarkers);
+
+    useKV6Websocket(mapInitialized.current, map, vehicleMarkers, setVehicleMarkers);
     useFilterVehicleTypes(mapInitialized.current, map, vehicleMarkers);
 
     // Update the layers of the map when an action is triggered

@@ -36,8 +36,26 @@ interface PTStopProperties {
     stopName: string;
     stopsCode: string;
     platformCode: string;
-    routes: string[];
     wheelchairBoarding: string;
+    routes: string[];
+    arrivalTime: string;
+    departureTime: string;
+}
+
+interface SchedulePayload {
+    stop_id: number;
+    trip_id: number;
+    route_id: number;
+    timepoint: number;
+    pickup_type: number;
+    trip_seq_id: string;
+    arrival_time: string;
+    drop_off_type: number;
+    stop_headsign: string;
+    stop_sequence: number;
+    departure_time: string;
+    fare_units_traveled: number;
+    shape_dist_traveled: number;
 }
 
 type Status = {

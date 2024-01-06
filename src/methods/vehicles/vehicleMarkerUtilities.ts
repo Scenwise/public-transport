@@ -8,7 +8,7 @@ import { createRoot } from 'react-dom/client';
 import VehiclePopupText from '../../components/Vehicles/VehiclePopupText';
 import { vehicleTypes } from '../../data/data';
 import { COLOR_ROUTE_SELECTED } from '../../data/layerPaints';
-import { updateSelectedRoute } from '../../dataStoring/slice';
+import { updateSelectedRoute, updateSelectedVehicle } from '../../dataStoring/slice';
 
 export const getVehiclePopup = (vehicle: string, route: PTRouteProperties, delay: number, timestamp: number): Popup => {
     const popupText = createElement(VehiclePopupText, { vehicle, route, delay, timestamp });
@@ -26,9 +26,10 @@ export const getMarkerColorBasedOnVehicleType = (type: string): string => {
     return value === undefined ? 'black' : value.color;
 };
 
-export const styleMarker = (
+export const handleMarkerOnClick = (
     marker: Marker,
     selectedMarker: React.MutableRefObject<SelectedMarkerColor>,
+    vehicleId: string,
     dispatch: Dispatch<AnyAction>,
     routeId: number,
     map: mapboxgl.Map,
@@ -36,6 +37,8 @@ export const styleMarker = (
     const markerElement = marker.getElement();
     markerElement.style.cursor = 'pointer';
     markerElement.addEventListener('click', () => {
+        dispatch(updateSelectedVehicle(vehicleId));
+
         // Bring back previously selected marker to initial color
         if (selectedMarker.current.marker !== undefined) {
             setMarkerColor(selectedMarker.current.marker, selectedMarker.current.color);
