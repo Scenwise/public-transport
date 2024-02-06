@@ -50,7 +50,7 @@ export const useUpdateRoutesWithFilter = (
         dispatch(updateFilteredRoutes(filteredRoutes));
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filters, routes]);
+    }, [filters]);
 
     const visibleRoutes = useAppSelector((state) => state.slice.visibleRoutes);
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { FilterType } from '../../data/data';
+import { FilterType, ReadyState } from '../../data/data';
 import {
     selectPTRoutesFeatureList,
     selectPTStopsFeatureList,
@@ -14,6 +14,7 @@ export const useInitiateFilterOptions = (filterNames: string[], filterKeys: stri
     const dispatch = useAppDispatch();
     const ptRouteFeatures = useAppSelector(selectPTRoutesFeatureList);
     const ptStopFeatures = useAppSelector(selectPTStopsFeatureList);
+    const status = useAppSelector((state) => state.slice.status);
 
     // const filters = useAppSelector(state => state.slice.filters);
     const initialFilters = {} as Filters;
@@ -34,7 +35,7 @@ export const useInitiateFilterOptions = (filterNames: string[], filterKeys: stri
 
     // Dynamically store the options based on the routes
     useEffect(() => {
-        if (prevListRef.current !== ptRouteFeatures) {
+        if (prevListRef.current !== ptRouteFeatures && status.ptRoute === ReadyState.OPEN) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             Object.entries(initialFilters).forEach(([_filterKey, filter]: [string, Filter]) => {
                 const options = getOptions(filter, ptRouteFeatures, ptStopFeatures);
@@ -47,7 +48,7 @@ export const useInitiateFilterOptions = (filterNames: string[], filterKeys: stri
             prevListRef.current = ptRouteFeatures;
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ptRouteFeatures]);
+    }, [status]);
 };
 export const getOptions = (
     filter: Filter,
