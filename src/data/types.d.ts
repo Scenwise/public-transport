@@ -5,6 +5,7 @@ type Filter = {
     options: string[];
     availableOptions: string[]; // Keep track of the options that will not make the filtered list empty if clicking them
     variants: string[];
+    value: number; // Used for delay filtering
 };
 
 type Filters = Record<string, Filter>;

@@ -1,6 +1,7 @@
 import mapboxgl from 'mapbox-gl';
 import React, { useEffect } from 'react';
 
+import { filteredRouteIds, mutableCurrentDelay } from '../../data/data';
 import {
     selectPTRoutesFeatureList,
     updateFilteredRoutes,
@@ -14,6 +15,7 @@ import { getVisibleRoutes } from './useVisibleRoutesUpdate';
 export const useUpdateRoutesWithFilter = (
     map: mapboxgl.Map | null,
     setMap: React.Dispatch<React.SetStateAction<mapboxgl.Map | null>>,
+    vehicleMarkers: Map<string, VehicleRoutePair>,
 ) => {
     const dispatch = useAppDispatch();
     const filters = useAppSelector((state) => state.slice.filters);
@@ -22,6 +24,7 @@ export const useUpdateRoutesWithFilter = (
     const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
 
     // If the filter is changed, we need to update the routes.
+    // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
         const filteredRoutes = routes.filter((route) => {
             let isRouteKept = true;
@@ -33,6 +36,10 @@ export const useUpdateRoutesWithFilter = (
                             filter,
                             route.properties.stops_ids.map((id) => stops[id].properties.stopName),
                         );
+                } else if (key == 'delay' && filter.value != -1) {
+                    // We only filter based on delay if the value of the filter is not initial value
+                    isRouteKept =
+                        isRouteKept && checkVehicleDelayPerRoute(filter, route.properties.vehicle_ids, vehicleMarkers);
                 } else {
                     isRouteKept = isRouteKept && checkCheckboxFilter(filter, route.properties[key]);
                 }
@@ -48,6 +55,27 @@ export const useUpdateRoutesWithFilter = (
         }
 
         dispatch(updateFilteredRoutes(filteredRoutes));
+
+        // Filter out the vehicles and make sure only those with larger delay are added
+        const newFilteredIds = new Set(filteredRoutes.map((route) => route.properties.shape_id + ''));
+        if (map) {
+            // Keep updated delay in mutable structure
+            mutableCurrentDelay.pop();
+            mutableCurrentDelay.push(filters['delay'].value);
+            vehicleMarkers.forEach((value) => {
+                value.marker.remove();
+                if (
+                    newFilteredIds.has(value.routeId) &&
+                    (filters['delay'].value == -1 || 
+                    value.vehicle.properties.punctuality >= filters['delay'].value * 60)
+                ) {
+                    value.marker.addTo(map);
+                }
+            });
+        }
+        // Keep updated filtered ids in mutable structure
+        filteredRouteIds.clear();
+        newFilteredIds.forEach((x) => filteredRouteIds.add(x));
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters]);
@@ -84,4 +112,20 @@ export const checkCheckboxFilter = (filter: Filter, value: string): boolean => {
 
 const checkCheckboxFilterList = (filter: Filter, valueList: string[]): boolean => {
     return !filter.variants.length || valueList.some((value) => filter.variants.includes(value));
+};
+
+const checkVehicleDelayPerRoute = (
+    filter: Filter,
+    vehicleIds: string[],
+    vehicleMarkers: Map<string, VehicleRoutePair>,
+): boolean => {
+    for (const vehicle of vehicleIds) {
+        const vehiclePunctuality = vehicleMarkers.get(vehicle)?.vehicle.properties.punctuality;
+        // If we find one vehicle with corresponding delay, return true since we want to keep the route
+        if (vehiclePunctuality !== undefined && vehiclePunctuality >= filter.value * 60) {
+            return true;
+        }
+    }
+    // If all vehicles are below the delay threshold, do not keep the route
+    return false;
 };

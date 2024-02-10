@@ -169,7 +169,7 @@ const addLineNumberToStops = (
 const getRouteTypeString = (value: number): string => {
     const routeTypeString = Object.keys(RouteType).find((key) => RouteType[key as keyof typeof RouteType] === value);
 
-    return routeTypeString ? routeTypeString : '';
+    return routeTypeString ? routeTypeString : 'Other';
 };
 
 const getRouteColor = (type: string): string => {

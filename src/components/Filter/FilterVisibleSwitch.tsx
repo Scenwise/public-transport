@@ -1,7 +1,7 @@
 import React from 'react';
 
 import HelpIcon from '@mui/icons-material/Help';
-import { FormControlLabel, Switch, Tooltip, Typography } from '@mui/material';
+import { FormControlLabel, Switch, Tooltip, TooltipProps, Typography, styled, tooltipClasses } from '@mui/material';
 import Stack from '@mui/material/Stack';
 
 import { updateVisibleRouteState } from '../../dataStoring/slice';
@@ -20,21 +20,30 @@ const FilterVisibleSwitch: React.FC = () => {
         );
     };
 
+    const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
+        <Tooltip {...props} classes={{ popper: className }} />
+      ))({
+        [`& .${tooltipClasses.tooltip}`]: {
+          maxWidth: 200,
+        },
+      });
+
     return (
         <FormControlLabel
             sx={{ ml: 0, mr: 1 }}
             control={<Switch onChange={handleSwitchChange} checked={visibleRoutes.isOn} color='primary' size='small' />}
             label={
                 <Stack direction={'row'} spacing={1}>
-                    <Typography variant='caption'>Only show routes on screen</Typography>
-                    <Tooltip
+                    <Typography variant='caption'>Only list routes currently on screen</Typography>
+                    <CustomWidthTooltip
                         title={
-                            'Option to only show routes in the left list that are actually on the current map screen view.'
+                            'Option to display only the routes in the left table that correspond to the current view on the map screen.'
                         }
                         placement={'right'}
+                        arrow
                     >
                         <HelpIcon fontSize={'small'} color={'primary'} />
-                    </Tooltip>
+                    </CustomWidthTooltip>
                 </Stack>
             }
             disableTypography

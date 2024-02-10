@@ -10,6 +10,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
+import { vehicleTypes } from '../../data/data';
 import { updateFilter } from '../../dataStoring/slice';
 import { useAppDispatch } from '../../store';
 
@@ -84,6 +85,8 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchText]);
 
+    //
+
     // Filter option item component
     const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => (
         <MenuItem
@@ -92,7 +95,12 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
             value={displayedOptions[index]}
             onClick={() => handleCheckboxFiltering(index)}
         >
-            <Checkbox checked={filter.variants.includes(displayedOptions[index])} />
+            <Checkbox
+                checked={filter.variants.includes(displayedOptions[index])}
+                style={
+                    filter.optionKey === 'route_type' ? { color: vehicleTypes.get(displayedOptions[index])?.color } : {}
+                }
+            />
             <ListItemText
                 primary={displayedOptions[index]}
                 style={{ color: filter.availableOptions.includes(displayedOptions[index]) ? 'black' : '#d1d1d1' }}
@@ -106,6 +114,7 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
             <Select
                 multiple
                 value={filter.variants}
+                label={filter.optionTitle}
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {selected.map((value) => (

@@ -7,6 +7,7 @@ import { Button } from '@mui/material';
 import { selectFilterList, selectPTStopsFeatureList, updateFilters } from '../../dataStoring/slice';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { GeneralExpandableMenu } from '../GeneralExpandableMenu';
+import DelayFilter from './DelayFilter';
 import { FilterItem } from './FilterItem';
 import FilterVisibleSwitch from './FilterVisibleSwitch';
 
@@ -25,11 +26,20 @@ const FilterList: React.FC = () => {
     };
 
     return (
-        <GeneralExpandableMenu beforeExpanded={<FilterListIcon />} menuTitle={'Routes filter'} disabled={isDisabled}>
-            {filters.map((filter) => (
-                <FilterItem key={filter.optionTitle} filterItem={filter} />
-            ))}
+        <GeneralExpandableMenu
+            beforeExpanded={<FilterListIcon />}
+            menuTitle={'Routes filter'}
+            disabled={isDisabled}
+            style={{ maxWidth: '300px' }}
+        >
+            {filters
+                .filter((filter) => filter.optionKey !== 'delay')
+                .map((filter) => (
+                    <FilterItem key={filter.optionTitle} filterItem={filter} />
+                ))}
+
             <FilterVisibleSwitch />
+            <DelayFilter />
             <Button variant='contained' endIcon={<DeleteIcon />} onClick={handleClearFilters}>
                 Clear filters
             </Button>

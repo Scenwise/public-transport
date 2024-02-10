@@ -54,8 +54,10 @@ const slice = createSlice({
         updatePTRoutes(state: State, action: PayloadAction<FeatureRecord<PTRouteFeature>>) {
             state.ptRoutes = action.payload;
         },
-        updatePTRoute(state: State, action: PayloadAction<PTRouteFeature>) {
-            state.ptRoutes[action.payload.properties.shape_id] = action.payload;
+        updatePTRoute(state: State, action: PayloadAction<VehicleRoutePair>) {
+            state.ptRoutes[action.payload.routeId].properties.vehicle_ids.push(
+                action.payload.vehicle.properties.dataOwnerCode + '-' + action.payload.vehicle.properties.vehicleNumber,
+            );
         },
         updateFilters(state: State, action: PayloadAction<Filters>) {
             state.filters = deepcopy(action.payload);
@@ -69,6 +71,9 @@ const slice = createSlice({
         updateFilteredRoutes(state: State, action: PayloadAction<PTRouteFeature[]>) {
             state.filteredRoutes = action.payload;
         },
+        updateFilteredRoute(state: State, action: PayloadAction<PTRouteFeature>) {
+            state.filteredRoutes = [...state.filteredRoutes, action.payload];
+        },        
         updateVisibleRouteState(state: State, action: PayloadAction<VisibleFiltering>) {
             state.visibleRoutes = deepcopy(action.payload);
         },
@@ -112,6 +117,7 @@ export const {
     updateInitialFilters,
     updateFilter,
     updateFilteredRoutes,
+    updateFilteredRoute,
     updateVisibleRouteState,
     updateSelectedRoute,
     updatePTStops,

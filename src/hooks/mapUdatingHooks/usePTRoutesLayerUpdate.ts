@@ -123,9 +123,9 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     const filteredRoutes = useAppSelector((state) => state.slice.filteredRoutes);
     useEffect(() => {
         if (map && map.getLayer('ptRoutes')) {
-            const filteredRouteIDs = filteredRoutes.map((route) => route.properties.shape_id);
+            const filteredIDs = filteredRoutes.map((route) => route.properties.shape_id);
 
-            map.setFilter('ptRoutes', ['in', ['get', 'shape_id'], ['literal', filteredRouteIDs]]);
+            map.setFilter('ptRoutes', ['in', ['get', 'shape_id'], ['literal', filteredIDs]]);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filteredRoutes]);
