@@ -1,6 +1,8 @@
 import React from 'react';
-import Stack from '@mui/material/Stack';
+
 import { Typography } from '@mui/material';
+import Stack from '@mui/material/Stack';
+
 import { useVehicleMarkers } from '../Vehicles/VehicleMapContext';
 
 const VehicleCounter: React.FC = () => {
@@ -8,9 +10,9 @@ const VehicleCounter: React.FC = () => {
 
     return (
         <Stack direction='column' alignItems='center'>
-        <Typography noWrap={true}>Total vehicles</Typography>
-        <Typography variant='caption'>{context.vehicleMarkers.size}</Typography>
-    </Stack>
+            <Typography noWrap={true}>Total vehicles</Typography>
+            <Typography variant='caption'>{context.vehicleMarkers.size}</Typography>
+        </Stack>
     );
 };
 

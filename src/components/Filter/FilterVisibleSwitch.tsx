@@ -22,11 +22,11 @@ const FilterVisibleSwitch: React.FC = () => {
 
     const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
         <Tooltip {...props} classes={{ popper: className }} />
-      ))({
+    ))({
         [`& .${tooltipClasses.tooltip}`]: {
-          maxWidth: 200,
+            maxWidth: 200,
         },
-      });
+    });
 
     return (
         <FormControlLabel

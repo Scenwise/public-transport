@@ -73,7 +73,7 @@ const slice = createSlice({
         },
         updateFilteredRoute(state: State, action: PayloadAction<PTRouteFeature>) {
             state.filteredRoutes = [...state.filteredRoutes, action.payload];
-        },        
+        },
         updateVisibleRouteState(state: State, action: PayloadAction<VisibleFiltering>) {
             state.visibleRoutes = deepcopy(action.payload);
         },

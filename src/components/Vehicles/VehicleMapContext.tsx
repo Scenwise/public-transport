@@ -22,12 +22,21 @@ export const VehicleMarkersProvider: React.FC<VehicleMarkersComponentProps> = ({
     const [vehicleMarkers, setVehicleMarkers] = useState(new Map<string, VehicleRoutePair>());
     const [vehicleFilters, setVehicleFilters] = useState(new Map<string, VehicleFilter>(vehicleTypes));
 
-    const filteredRoutes = useAppSelector((state: RootState) => state.slice.filteredRoutes)
-    const [filteredRoutesId, setFilteredRoutesId] = useState(new Set<number>(new Set(filteredRoutes.map((route) => route.properties.route_id))));
+    const filteredRoutes = useAppSelector((state: RootState) => state.slice.filteredRoutes);
+    const [filteredRoutesId, setFilteredRoutesId] = useState(
+        new Set<number>(new Set(filteredRoutes.map((route) => route.properties.route_id))),
+    );
 
     return (
         <VehicleMarkersContext.Provider
-            value={{ vehicleMarkers, setVehicleMarkers, vehicleFilters, setVehicleFilters, filteredRoutesId, setFilteredRoutesId }}
+            value={{
+                vehicleMarkers,
+                setVehicleMarkers,
+                vehicleFilters,
+                setVehicleFilters,
+                filteredRoutesId,
+                setFilteredRoutesId,
+            }}
         >
             {children}
         </VehicleMarkersContext.Provider>

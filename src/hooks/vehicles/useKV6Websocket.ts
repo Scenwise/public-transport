@@ -137,7 +137,7 @@ export const useKV6Websocket = (
                                         vehicle.properties.punctuality >= mutableCurrentDelay[0] * 60
                                     ) {
                                         // If we have the route on the map already, add it
-                                        if (filteredRouteIds.has(intersectedRoad.properties.shape_id + "")) {
+                                        if (filteredRouteIds.has(intersectedRoad.properties.shape_id + '')) {
                                             marker.addTo(map);
                                         }
                                         // TODO: verify that the intersectedRoad satisfies all filters before adding it to the map

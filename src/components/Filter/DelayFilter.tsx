@@ -2,38 +2,33 @@ import React from 'react';
 
 import { Typography } from '@mui/material';
 import Slider from '@mui/material/Slider';
-import { useAppDispatch, useAppSelector } from '../../store';
+
 import { FilterType } from '../../data/data';
 import { updateFilter } from '../../dataStoring/slice';
+import { useAppDispatch, useAppSelector } from '../../store';
 
 function valueLabelFormat(value: number) {
-    if(value < 0) return 'All'
+    if (value < 0) return 'All';
     return `≥ ${value} min`;
 }
 
-const marks = [
-    { value: -1},
-    { value: 0 },
-    { value: 5 },
-    { value: 10 },
-    { value: 15 },
-    { value: 30 },
-    { value: 60 },
-];
+const marks = [{ value: -1 }, { value: 0 }, { value: 5 }, { value: 10 }, { value: 15 }, { value: 30 }, { value: 60 }];
 
 const DelayFilter: React.FC = () => {
     const dispatch = useAppDispatch();
-    const filters = useAppSelector((state) => state.slice.filters)
+    const filters = useAppSelector((state) => state.slice.filters);
     const handleSliderChange = (event: Event, newValue: number | number[]) => {
-        dispatch(updateFilter({
-            optionTitle: 'Delay',
-            optionKey: 'delay',
-            type: FilterType.range,
-            options: [],
-            availableOptions: [],
-            variants: [],
-            value: newValue as number
-        }));
+        dispatch(
+            updateFilter({
+                optionTitle: 'Delay',
+                optionKey: 'delay',
+                type: FilterType.range,
+                options: [],
+                availableOptions: [],
+                variants: [],
+                value: newValue as number,
+            }),
+        );
     };
 
     return (

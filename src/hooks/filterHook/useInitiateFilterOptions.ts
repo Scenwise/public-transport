@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { FilterType, ReadyState} from '../../data/data';
+import { FilterType, ReadyState } from '../../data/data';
 import {
     selectPTRoutesFeatureList,
     selectPTStopsFeatureList,
@@ -27,7 +27,7 @@ export const useInitiateFilterOptions = (filterNames: string[], filterKeys: stri
             options: [],
             availableOptions: [],
             variants: [],
-            value: -1
+            value: -1,
         };
     });
 

@@ -66,8 +66,8 @@ export const useUpdateRoutesWithFilter = (
                 value.marker.remove();
                 if (
                     newFilteredIds.has(value.routeId) &&
-                    (filters['delay'].value == -1 || 
-                    value.vehicle.properties.punctuality >= filters['delay'].value * 60)
+                    (filters['delay'].value == -1 ||
+                        value.vehicle.properties.punctuality >= filters['delay'].value * 60)
                 ) {
                     value.marker.addTo(map);
                 }
