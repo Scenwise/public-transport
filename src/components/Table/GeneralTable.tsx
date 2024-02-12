@@ -11,6 +11,8 @@ interface GeneralTableProps {
     selectedRowIndex: number;
     id?: string;
     style?: React.CSSProperties; // Add style as an optional prop
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    renderCell?: (rowData: any, rowIndex: number, columnIndex: number) => React.ReactNode; // A custom funtion to render cell
 }
 
 /*
@@ -21,6 +23,7 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
     tables,
     updateSelectedFeature,
     selectedRowIndex,
+    renderCell,
     ...props
 }) => {
     // Add useRef for table ref
@@ -54,20 +57,20 @@ const GeneralTable: React.FC<GeneralTableProps> = ({
 
     // The table rows
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rowContent = (_index: number, row: any[]) => {
+    const rowContent = (index: number, row: any[]) => {
         return (
             <React.Fragment>
-                {row.map((entry, index) => {
+                {row.map((entry, columnIndex) => {
                     const id = row[row.length - 1]; // The Id of the table is put on the last column
                     return (
                         <TableCell
-                            key={id + index}
+                            key={id + columnIndex}
                             sx={{
-                                backgroundColor: _index === selectedRowIndex ? '#e3f7ff' : 'inherit',
+                                backgroundColor: index === selectedRowIndex ? '#e3f7ff' : 'inherit',
                             }}
                             onClick={() => updateSelectedFeature(id)}
                         >
-                            {entry}
+                            {renderCell ? renderCell(row, index, columnIndex) : entry}
                         </TableCell>
                     );
                 })}
