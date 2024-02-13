@@ -48,11 +48,17 @@ const StopsTable: React.FC = () => {
 
     // Control the open and close of the routes popover
     const [routesPopoverAnchorEl, setRoutesPopoverAnchorEl] = useState<null | HTMLElement>(null);
-    const openRoutesPopover = Boolean(routesPopoverAnchorEl);
-    const handleRoutesPopoverClick = (event: React.MouseEvent<HTMLElement>) => {
+    const [openRoutesPopover, setOpenRoutesPopover] = useState(false);
+    const [routesPopoverData, setRoutesPopoverData] = useState<string | null>(null);
+
+    const handleRoutesPopoverClick = (event: React.MouseEvent<HTMLElement>, data: string) => {
         setRoutesPopoverAnchorEl(event.currentTarget);
+        setRoutesPopoverData(data);
+        setOpenRoutesPopover(true);
     };
     const handleRoutesPopoverClose = () => {
+        setOpenRoutesPopover(false);
+        setRoutesPopoverData(null);
         setRoutesPopoverAnchorEl(null);
     };
     function chunkArray<T>(array: T[], size: number): T[][] {
@@ -139,36 +145,11 @@ const StopsTable: React.FC = () => {
                                 <div>
                                     <Typography
                                         color='primary'
-                                        onClick={handleRoutesPopoverClick}
+                                        onClick={(e) => handleRoutesPopoverClick(e, rowData[columnIndex])}
                                         style={{ cursor: 'pointer' }}
                                     >
                                         Routes
                                     </Typography>
-                                    <Popover
-                                        open={openRoutesPopover}
-                                        anchorEl={routesPopoverAnchorEl}
-                                        onClose={handleRoutesPopoverClose}
-                                        anchorOrigin={{
-                                            vertical: 'bottom',
-                                            horizontal: 'left',
-                                        }}
-                                        transformOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'left',
-                                        }}
-                                    >
-                                        <Card style={{ maxWidth: '400px' }}>
-                                            {' '}
-                                            {/* Adjust the max width according to your preference */}
-                                            <CardContent style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                                {chunkArray(rowData[columnIndex].split(','), 5).map((chunk, index) => (
-                                                    <div key={index} style={{ marginRight: '10px' }}>
-                                                        {chunk.join(', ')}
-                                                    </div>
-                                                ))}
-                                            </CardContent>
-                                        </Card>
-                                    </Popover>
                                 </div>
                             );
                         }
@@ -176,6 +157,32 @@ const StopsTable: React.FC = () => {
                     }}
                 />
             )}
+
+            <Popover
+                open={openRoutesPopover}
+                anchorEl={routesPopoverAnchorEl}
+                onClose={handleRoutesPopoverClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+            >
+                <Card style={{ maxWidth: '400px' }}>
+                    {' '}
+                    {/* Adjust the max width according to your preference */}
+                    <CardContent style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {chunkArray((routesPopoverData || '').split(','), 5).map((chunk, index) => (
+                            <div key={index} style={{ marginRight: '10px' }}>
+                                {chunk.join(', ')}
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+            </Popover>
         </div>
     );
 };
