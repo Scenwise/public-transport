@@ -9,36 +9,46 @@ import { routesPaintWhenSelected } from '../useHookUtil';
 // an array of valid line-dasharray values, specifying the lengths of the alternating dashes and gaps that form the dash pattern
 const dashArraySequence = [
     [0, 4, 3],
+    [0.5, 4, 2.5],
     [1, 4, 2],
+    [1.5, 4, 1.5],
     [2, 4, 1],
+    [2.5, 4, 0.5],
     [3, 4, 0],
+    [0, 0.5, 3, 3.5],
     [0, 1, 3, 3],
+    [0, 1.5, 3, 2.5],
     [0, 2, 3, 2],
+    [0, 2.5, 3, 1.5],
     [0, 3, 3, 1],
+    [0, 3.5, 3, 0.5],
 ];
-
 const useAnimateSelectedRoute = (map: mapboxgl.Map | null) => {
+    const status = useAppSelector((state) => state.slice.status);
+
     useEffect(() => {
+        const THROTTLE_INTERVAL = 100; // Set an appropriate interval
+
+        let lastUpdateTime = 0;
         let step = 0;
+
         function animateDashArray(timestamp: number) {
             if (map && map.getLayer('selectedRouteDirection')) {
-                // Update line-dasharray using the next value in dashArraySequence. The
-                // divisor in the expression `timestamp / 50` controls the animation speed.
                 const newStep = parseInt(String((timestamp / 50) % dashArraySequence.length));
 
-                if (newStep !== step) {
+                if (newStep !== step && timestamp - lastUpdateTime > THROTTLE_INTERVAL) {
                     map.setPaintProperty('selectedRouteDirection', 'line-dasharray', dashArraySequence[step]);
                     step = newStep;
+                    lastUpdateTime = timestamp;
                 }
 
-                // Request the next frame of the animation.
                 requestAnimationFrame(animateDashArray);
             }
         }
-
         // start the animation
         animateDashArray(0);
-    }, [map]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [status]);
 };
 
 /*
@@ -47,7 +57,6 @@ const useAnimateSelectedRoute = (map: mapboxgl.Map | null) => {
 export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
     const selectedPTRouteID = useAppSelector((state) => state.slice.selectedRoute);
     const ptRoutes = useAppSelector((state) => state.slice.ptRoutes);
-
     useAnimateSelectedRoute(map);
 
     // TODO: This is a temporary solution to get the vehicle markers from the context. They should be stored in the state eventually.
@@ -120,6 +129,21 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filteredRoutes]);
+
+    // Make the route direction layer not visible if the selected route is filterd out
+    useEffect(() => {
+        if (map && map.getLayer('ptRoutes') && map.getLayer('selectedRouteDirection')) {
+            const filteredRouteIDs = filteredRoutes.map((route) => route.properties.shape_id);
+            const setVisibility = (value: string) =>
+                map.setLayoutProperty('selectedRouteDirection', 'visibility', value);
+            if (!filteredRouteIDs.includes(Number(selectedPTRouteID))) {
+                setVisibility('none');
+            } else {
+                setVisibility('visible');
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filteredRoutes, selectedPTRouteID]);
 
     // Apply the selected route offset to routes
     const routeOffset = useAppSelector((state) => state.slice.routeOffset);

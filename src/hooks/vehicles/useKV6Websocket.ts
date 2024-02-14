@@ -29,7 +29,7 @@ export const useKV6Websocket = (
     useEffect(() => {
         if (status.ptRoute !== ReadyState.OPEN) return;
         if (map && mapInitialized && routesMap) {
-            const webSocketURL = 'wss://beta.dataservice.scenwise.nl/kv6';
+            const webSocketURL = 'wss://prod.dataservice.scenwise.nl/kv6';
             const socket = new WebSocket(webSocketURL);
 
             socket.onopen = () => {

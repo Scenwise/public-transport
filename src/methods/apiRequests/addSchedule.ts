@@ -45,7 +45,7 @@ export const addSchedule = (
 
 /**
  * Function to split the schedule based on stop_sequence
- * [1,2,3,4,1,2,3,4...] => [[1,2,3,4], [1,2,3,4],...]
+ * [1,2,3,4,4,3,2,1,1,2,3,4...] => [[1,2,3,4], [1,2,3,4],...]
  * @param stops The stop schedule fetched to be splitted
  * @param originId Filter out the schedules from the opposite direction
  */
