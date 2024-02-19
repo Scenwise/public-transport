@@ -63,6 +63,3 @@ export const vehicleTypes = new Map<string, VehicleFilter>(
         Other: { color: COLOR_VEHICLE_DEFAULT },
     }) as [string, VehicleFilter][],
 );
-
-export const filteredRouteIds = new Set<string>();
-export const mutableCurrentDelay = [-1] as number[];

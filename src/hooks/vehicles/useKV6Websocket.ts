@@ -3,8 +3,9 @@ import { Marker } from 'mapbox-gl';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ReadyState, filteredRouteIds, mutableCurrentDelay } from '../../data/data';
-import { removePTRoute, updatePTRoute } from '../../dataStoring/slice';
+import { ReadyState } from '../../data/data';
+import { removePTRoute, updateFilteredRoute, updatePTRoute } from '../../dataStoring/slice';
+import { checkFilteredRoutePerVehicle } from '../../methods/filter/filteredRouteUtilities';
 import animateVehicles from '../../methods/vehicles/animateVehicles';
 import {
     getMarkerColorBasedOnVehicleType,
@@ -12,8 +13,10 @@ import {
     handleMarkerOnClick,
 } from '../../methods/vehicles/vehicleMarkerUtilities';
 import { RootState, useAppSelector } from '../../store';
+import { filteredRouteIds, mutableFilters } from '../filterHook/useUpdateRoutesWithFilter';
 
 // Create websocket connection
+
 export const useKV6Websocket = (
     mapInitialized: boolean,
     map: mapboxgl.Map | null,
@@ -23,6 +26,7 @@ export const useKV6Websocket = (
     const dispatch = useDispatch();
     const status = useAppSelector((state) => state.slice.status);
     const stopsToRoutesMap = useAppSelector((state: RootState) => state.slice.stopCodeToRouteMap);
+    const stops = useAppSelector((state) => state.slice.ptStops);
     const routesMap = useAppSelector((state: RootState) => state.slice.ptRoutes);
     const selectedMarker = useRef<SelectedMarkerColor>({} as SelectedMarkerColor);
 
@@ -86,7 +90,7 @@ export const useKV6Websocket = (
                                 vehicleRoutePair !== undefined &&
                                 vehicleRoutePair.vehicle.properties.timestamp < vehicle.properties.timestamp
                             ) {
-                                // animateVehicles returns true if the route and vehicle are matched correctly and false
+                                // animateVehicles returns true if the route and vehicle are matched correctly and false otherwise
                                 const correct = animateVehicles(
                                     vehicleRoutePair,
                                     routesMap,
@@ -102,6 +106,19 @@ export const useKV6Websocket = (
                                             }),
                                         ),
                                     );
+                                    // Check based on filterings if we can add the marker to the map
+                                    if (
+                                        checkFilteredRoutePerVehicle(
+                                            routesMap[vehicleRoutePair.routeId],
+                                            mutableFilters,
+                                            stops,
+                                            vehicle.properties.punctuality,
+                                        )
+                                    ) {
+                                        if (!filteredRouteIds.has(vehicleRoutePair.routeId))
+                                            dispatch(updateFilteredRoute(routesMap[vehicleRoutePair.routeId]));
+                                        vehicleRoutePair.marker.addTo(map);
+                                    }
                                 }
                                 // TODO: if delay is more than limit, add it to the map
                                 // If we misintersected, remove marker completely and try again on next update
@@ -109,7 +126,7 @@ export const useKV6Websocket = (
                                     vehicleMarkers.get(vehicleId)?.marker.remove();
                                     vehicleMarkers.delete(vehicleId);
                                     setVehicleMarkers(new Map(vehicleMarkers));
-                                    dispatch(removePTRoute({'vehicle': vehicleId, 'route': vehicleRoutePair.routeId}));
+                                    dispatch(removePTRoute({ vehicle: vehicleId, route: vehicleRoutePair.routeId }));
                                 }
                             }
 
@@ -130,24 +147,18 @@ export const useKV6Websocket = (
                                             ),
                                         );
                                     // Check based on filterings if we can add the marker to the map
-                                    // First, we check the delay condition (-1 is the initial delay value)
-                                    // eslint-disable-next-line sonarjs/no-collapsible-if
                                     if (
-                                        mutableCurrentDelay[0] == -1 ||
-                                        vehicle.properties.punctuality >= mutableCurrentDelay[0] * 60
+                                        checkFilteredRoutePerVehicle(
+                                            intersectedRoad,
+                                            mutableFilters,
+                                            stops,
+                                            vehicle.properties.punctuality,
+                                        )
                                     ) {
-                                        // If we have the route on the map already, add it
-                                        if (filteredRouteIds.has(intersectedRoad.properties.shape_id + '')) {
-                                            marker.addTo(map);
-                                        }
-                                        // TODO: verify that the intersectedRoad satisfies all filters before adding it to the map
-                                        // // If not, we need to add the route in the filtered routes
-                                        // else {
-                                        //     dispatch(updateFilteredRoute(intersectedRoad));
-                                        //     marker.addTo(map);
-                                        // }
+                                        if (!filteredRouteIds.has(intersectedRoad.properties.shape_id + ''))
+                                            dispatch(updateFilteredRoute(intersectedRoad));
+                                        marker.addTo(map);
                                     }
-
                                     handleMarkerOnClick(
                                         marker,
                                         selectedMarker,
@@ -159,12 +170,16 @@ export const useKV6Websocket = (
 
                                     // Add vehicle id to its route (used to fly to the vehicle when its route is selected)
                                     const routeId = intersectedRoad.properties.shape_id + '';
-                                    dispatch(updatePTRoute({'vehicle': vehicleId, 'route': routeId}));
-                                    setVehicleMarkers(new Map(vehicleMarkers.set(vehicleId, {
-                                        marker: marker,
-                                        routeId: routeId,
-                                        vehicle: vehicle,
-                                    })));
+                                    dispatch(updatePTRoute({ vehicle: vehicleId, route: routeId }));
+                                    setVehicleMarkers(
+                                        new Map(
+                                            vehicleMarkers.set(vehicleId, {
+                                                marker: marker,
+                                                routeId: routeId,
+                                                vehicle: vehicle,
+                                            }),
+                                        ),
+                                    );
                                 }
                             }
                         }
