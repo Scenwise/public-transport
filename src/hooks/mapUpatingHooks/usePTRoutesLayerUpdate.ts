@@ -130,6 +130,21 @@ export const usePTRoutesLayerUpdate = (map: mapboxgl.Map | null): void => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filteredRoutes]);
 
+    // Make the route direction layer not visible if the selected route is filterd out
+    useEffect(() => {
+        if (map && map.getLayer('ptRoutes') && map.getLayer('selectedRouteDirection')) {
+            const filteredRouteIDs = filteredRoutes.map((route) => route.properties.shape_id);
+            const setVisibility = (value: string) =>
+                map.setLayoutProperty('selectedRouteDirection', 'visibility', value);
+            if (!filteredRouteIDs.includes(Number(selectedPTRouteID))) {
+                setVisibility('none');
+            } else {
+                setVisibility('visible');
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filteredRoutes, selectedPTRouteID]);
+
     // Apply the selected route offset to routes
     const routeOffset = useAppSelector((state) => state.slice.routeOffset);
     useEffect(() => {
