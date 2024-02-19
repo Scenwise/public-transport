@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ReadyState, filteredRouteIds, mutableCurrentDelay } from '../../data/data';
-import { updatePTRoute } from '../../dataStoring/slice';
+import { removePTRoute, updatePTRoute } from '../../dataStoring/slice';
 import animateVehicles from '../../methods/vehicles/animateVehicles';
 import {
     getMarkerColorBasedOnVehicleType,
@@ -109,7 +109,7 @@ export const useKV6Websocket = (
                                     vehicleMarkers.get(vehicleId)?.marker.remove();
                                     vehicleMarkers.delete(vehicleId);
                                     setVehicleMarkers(new Map(vehicleMarkers));
-                                    //TODO: remove vehicle from route vehicle ids if we delete it
+                                    dispatch(removePTRoute({'vehicle': vehicleId, 'route': vehicleRoutePair.routeId}));
                                 }
                             }
 
@@ -158,13 +158,13 @@ export const useKV6Websocket = (
                                     );
 
                                     // Add vehicle id to its route (used to fly to the vehicle when its route is selected)
-                                    const pair = {
+                                    const routeId = intersectedRoad.properties.shape_id + '';
+                                    dispatch(updatePTRoute({'vehicle': vehicleId, 'route': routeId}));
+                                    setVehicleMarkers(new Map(vehicleMarkers.set(vehicleId, {
                                         marker: marker,
-                                        routeId: intersectedRoad.properties.shape_id + '',
+                                        routeId: routeId,
                                         vehicle: vehicle,
-                                    };
-                                    dispatch(updatePTRoute(pair));
-                                    setVehicleMarkers(new Map(vehicleMarkers.set(vehicleId, pair)));
+                                    })));
                                 }
                             }
                         }

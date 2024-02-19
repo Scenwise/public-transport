@@ -54,10 +54,17 @@ const slice = createSlice({
         updatePTRoutes(state: State, action: PayloadAction<FeatureRecord<PTRouteFeature>>) {
             state.ptRoutes = action.payload;
         },
-        updatePTRoute(state: State, action: PayloadAction<VehicleRoutePair>) {
-            state.ptRoutes[action.payload.routeId].properties.vehicle_ids.push(
-                action.payload.vehicle.properties.dataOwnerCode + '-' + action.payload.vehicle.properties.vehicleNumber,
-            );
+        updatePTRoute(state: State, action: { type: string, payload: { vehicle: string, route: string } }) {
+            const vehicles = state.ptRoutes[action.payload.route].properties.vehicle_ids;
+            if (!vehicles.includes(action.payload.vehicle))
+                vehicles.push(action.payload.vehicle);
+        },
+        removePTRoute(state: State, action: { type: string, payload: { vehicle: string, route: string } }) {
+            const vehicles = state.ptRoutes[action.payload.route].properties.vehicle_ids;
+            if (!vehicles.includes(action.payload.vehicle)) {
+                const index = vehicles.indexOf(action.payload.vehicle)
+                vehicles.splice(index, 1);
+            }
         },
         updateFilters(state: State, action: PayloadAction<Filters>) {
             state.filters = deepcopy(action.payload);
@@ -113,6 +120,7 @@ const slice = createSlice({
 export const {
     updatePTRoutes,
     updatePTRoute,
+    removePTRoute,
     updateFilters,
     updateInitialFilters,
     updateFilter,
