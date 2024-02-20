@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ReadyState } from '../../data/data';
-import { removePTRoute, updateFilteredRoute, updatePTRoute } from '../../dataStoring/slice';
+import { removeVehicleFromPTRoute, updateFilteredRoute, updatePTRoute } from '../../dataStoring/slice';
 import { checkFilteredRoutePerVehicle } from '../../methods/filter/filteredRouteUtilities';
 import animateVehicles from '../../methods/vehicles/animateVehicles';
 import {
@@ -108,7 +108,7 @@ export const useKV6Websocket = (
                                             stops,
                                             vehicle.properties.punctuality,
                                         )
-                                    ) {                                  
+                                    ) {
                                         vehicleRoutePair.marker.addTo(map);
                                         if (!filteredRouteIds.has(vehicleRoutePair.routeId))
                                             dispatch(updateFilteredRoute(routesMap[vehicleRoutePair.routeId]));
@@ -129,7 +129,7 @@ export const useKV6Websocket = (
                                     vehicleMarkers.get(vehicleId)?.marker.remove();
                                     vehicleMarkers.delete(vehicleId);
                                     setVehicleMarkers(new Map(vehicleMarkers));
-                                    dispatch(removePTRoute({ vehicle: vehicleId, route: vehicleRoutePair.routeId }));
+                                    dispatch(removeVehicleFromPTRoute({ vehicle: vehicleId, route: vehicleRoutePair.routeId }));
                                 }
                             }
 

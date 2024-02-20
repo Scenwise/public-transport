@@ -58,7 +58,7 @@ const slice = createSlice({
             const vehicles = state.ptRoutes[action.payload.route].properties.vehicle_ids;
             if (!vehicles.includes(action.payload.vehicle)) vehicles.push(action.payload.vehicle);
         },
-        removePTRoute(state: State, action: { type: string; payload: { vehicle: string; route: string } }) {
+        removeVehicleFromPTRoute(state: State, action: { type: string; payload: { vehicle: string; route: string } }) {
             const vehicles = state.ptRoutes[action.payload.route].properties.vehicle_ids;
             if (vehicles.includes(action.payload.vehicle)) {
                 const index = vehicles.indexOf(action.payload.vehicle);
@@ -119,7 +119,7 @@ const slice = createSlice({
 export const {
     updatePTRoutes,
     updatePTRoute,
-    removePTRoute,
+    removeVehicleFromPTRoute,
     updateFilters,
     updateInitialFilters,
     updateFilter,
