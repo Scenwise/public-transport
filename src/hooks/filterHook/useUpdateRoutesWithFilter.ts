@@ -13,7 +13,6 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { getVisibleRoutes } from './useVisibleRoutesUpdate';
 
 // Keep dynamic global variables so we can access them inside the websocket
-export let filteredRouteIds = new Set<string>();
 export let mutableFilters = {} as Filters;
 
 export const useUpdateRoutesWithFilter = (
@@ -55,8 +54,7 @@ export const useUpdateRoutesWithFilter = (
                 }
             });
         }
-        // Keep updated filters and filtered ids in mutable structure
-        filteredRouteIds = newFilteredIds;
+        // Keep updated filters in mutable structure
         mutableFilters = filters;
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

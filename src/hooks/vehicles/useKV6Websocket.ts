@@ -4,8 +4,13 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ReadyState } from '../../data/data';
-import { removeVehicleFromPTRoute, updateFilteredRoute, updatePTRoute } from '../../dataStoring/slice';
-import { checkFilteredRoutePerVehicle } from '../../methods/filter/filteredRouteUtilities';
+import {
+    removeFilteredRoute,
+    removeVehicleFromPTRoute,
+    updateFilteredRoute,
+    updatePTRoute,
+} from '../../dataStoring/slice';
+import { checkFilteredRoute, checkFilteredRoutePerVehicle } from '../../methods/filter/filteredRouteUtilities';
 import animateVehicles from '../../methods/vehicles/animateVehicles';
 import {
     getMarkerColorBasedOnVehicleType,
@@ -13,7 +18,7 @@ import {
     handleMarkerOnClick,
 } from '../../methods/vehicles/vehicleMarkerUtilities';
 import { RootState, useAppSelector } from '../../store';
-import { filteredRouteIds, mutableFilters } from '../filterHook/useUpdateRoutesWithFilter';
+import { mutableFilters } from '../filterHook/useUpdateRoutesWithFilter';
 
 // Create websocket connection
 
@@ -110,8 +115,7 @@ export const useKV6Websocket = (
                                         )
                                     ) {
                                         vehicleRoutePair.marker.addTo(map);
-                                        if (!filteredRouteIds.has(vehicleRoutePair.routeId))
-                                            dispatch(updateFilteredRoute(routesMap[vehicleRoutePair.routeId]));
+                                        dispatch(updateFilteredRoute(routesMap[vehicleRoutePair.routeId]));
                                     }
                                     // Update the vehicle with the new delay,timestamp, and position
                                     setVehicleMarkers(
@@ -129,12 +133,20 @@ export const useKV6Websocket = (
                                     vehicleMarkers.get(vehicleId)?.marker.remove();
                                     vehicleMarkers.delete(vehicleId);
                                     setVehicleMarkers(new Map(vehicleMarkers));
+                                    // Remove vehicle from route
                                     dispatch(
                                         removeVehicleFromPTRoute({
                                             vehicle: vehicleId,
                                             route: vehicleRoutePair.routeId,
                                         }),
                                     );
+                                    // Also remove route from map if there are no other vehicles on it and delay filter is on
+                                    if (
+                                        mutableFilters['delay'].value != -1 &&
+                                        routesMap[vehicleRoutePair.routeId].properties.vehicle_ids.length == 0
+                                    ) {
+                                        dispatch(removeFilteredRoute(routesMap[vehicleRoutePair.routeId]));
+                                    }
                                 }
                             }
 
@@ -164,8 +176,7 @@ export const useKV6Websocket = (
                                         )
                                     ) {
                                         marker.addTo(map);
-                                        if (!filteredRouteIds.has(intersectedRoad.properties.shape_id + ''))
-                                            dispatch(updateFilteredRoute(intersectedRoad));
+                                        dispatch(updateFilteredRoute(intersectedRoad));
                                     }
                                     handleMarkerOnClick(
                                         marker,

@@ -85,8 +85,6 @@ const FilterItem: React.FC<FilterItemProps> = ({ filterItem }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchText]);
 
-    //
-
     // Filter option item component
     const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => (
         <MenuItem
