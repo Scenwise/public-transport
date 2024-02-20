@@ -80,12 +80,6 @@ const slice = createSlice({
         updateFilteredRoute(state: State, action: PayloadAction<PTRouteFeature>) {
             if (!state.filteredRoutes.includes(action.payload)) state.filteredRoutes.push(action.payload);
         },
-        removeFilteredRoute(state: State, action: PayloadAction<PTRouteFeature>) {
-            if (state.filteredRoutes.includes(action.payload)) {
-                const index = state.filteredRoutes.indexOf(action.payload);
-                state.filteredRoutes.splice(index, 1);
-            }
-        },
         updateVisibleRouteState(state: State, action: PayloadAction<VisibleFiltering>) {
             state.visibleRoutes = deepcopy(action.payload);
         },
@@ -119,6 +113,25 @@ const slice = createSlice({
         updateSelectedVehicle(state: State, action: PayloadAction<string>) {
             state.selectedVehicle = action.payload;
         },
+        removeFilteredRouteBasedOnDelay(state: State, action: PayloadAction<string>) {
+            // If the delay filter is on and the route has no vehicles and the route is displayed on map
+            if (
+                state.filters['delay'].value != -1 &&
+                state.ptRoutes[action.payload + ''].properties.vehicle_ids.length == 0 &&
+                state.filteredRoutes.map((x) => x.properties.shape_id + '').includes(action.payload)
+            ) {
+                // Find the index of the route
+                let index = -1;
+                for (let i = 0; i < state.filteredRoutes.length; i++) {
+                    if (state.filteredRoutes[i].properties.shape_id + '' == action.payload) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index == -1) console.log('Error at removeFilteredRouteBasedOnDelay');
+                else state.filteredRoutes.splice(index, 1);
+            }
+        },
     },
 });
 
@@ -131,7 +144,7 @@ export const {
     updateFilter,
     updateFilteredRoutes,
     updateFilteredRoute,
-    removeFilteredRoute,
+    removeFilteredRouteBasedOnDelay,
     updateVisibleRouteState,
     updateSelectedRoute,
     updatePTStops,

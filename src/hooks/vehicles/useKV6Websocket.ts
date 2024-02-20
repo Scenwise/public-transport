@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { ReadyState } from '../../data/data';
 import {
-    removeFilteredRoute,
+    removeFilteredRouteBasedOnDelay,
     removeVehicleFromPTRoute,
     updateFilteredRoute,
     updatePTRoute,
@@ -140,13 +140,8 @@ export const useKV6Websocket = (
                                             route: vehicleRoutePair.routeId,
                                         }),
                                     );
-                                    // Also remove route from map if there are no other vehicles on it and delay filter is on
-                                    if (
-                                        mutableFilters['delay'].value != -1 &&
-                                        routesMap[vehicleRoutePair.routeId].properties.vehicle_ids.length == 0
-                                    ) {
-                                        dispatch(removeFilteredRoute(routesMap[vehicleRoutePair.routeId]));
-                                    }
+                                    // Remove route from map if it has all filtered properties, but no vehicles on it and the delay filter is on
+                                    dispatch(removeFilteredRouteBasedOnDelay(vehicleRoutePair.routeId));
                                 }
                             }
 
