@@ -120,7 +120,6 @@ export const useKV6Websocket = (
                                         vehicleRoutePair.marker.addTo(map);
                                     }
                                 }
-                                // TODO: if delay is more than limit, add it to the map
                                 // If we misintersected, remove marker completely and try again on next update
                                 else {
                                     vehicleMarkers.get(vehicleId)?.marker.remove();

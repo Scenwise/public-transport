@@ -60,7 +60,7 @@ const slice = createSlice({
         },
         removePTRoute(state: State, action: { type: string; payload: { vehicle: string; route: string } }) {
             const vehicles = state.ptRoutes[action.payload.route].properties.vehicle_ids;
-            if (!vehicles.includes(action.payload.vehicle)) {
+            if (vehicles.includes(action.payload.vehicle)) {
                 const index = vehicles.indexOf(action.payload.vehicle);
                 vehicles.splice(index, 1);
             }
