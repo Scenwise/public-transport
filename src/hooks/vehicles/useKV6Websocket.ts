@@ -97,28 +97,32 @@ export const useKV6Websocket = (
                                     vehicle.geometry.coordinates,
                                 );
                                 if (correct) {
-                                    setVehicleMarkers(
-                                        new Map(
-                                            vehicleMarkers.set(vehicleId, {
-                                                marker: vehicleRoutePair.marker,
-                                                routeId: vehicleRoutePair.routeId,
-                                                vehicle: vehicle, // update delay, timestamp, position
-                                            }),
-                                        ),
-                                    );
-                                    // Check based on filterings if we can add the marker to the map
+                                    // Check based on filterings if we can add the marker to the map (only if new delay is higher than before and >=0)
                                     if (
+                                        vehicle.properties.punctuality >= 0 &&
+                                        vehicleRoutePair.vehicle.properties.punctuality <
+                                            vehicle.properties.punctuality &&
                                         checkFilteredRoutePerVehicle(
                                             routesMap[vehicleRoutePair.routeId],
                                             mutableFilters,
                                             stops,
                                             vehicle.properties.punctuality,
                                         )
-                                    ) {
+                                    ) {                                  
+                                        vehicleRoutePair.marker.addTo(map);
                                         if (!filteredRouteIds.has(vehicleRoutePair.routeId))
                                             dispatch(updateFilteredRoute(routesMap[vehicleRoutePair.routeId]));
-                                        vehicleRoutePair.marker.addTo(map);
                                     }
+                                    // Update the vehicle with the new delay,timestamp, and position
+                                    setVehicleMarkers(
+                                        new Map(
+                                            vehicleMarkers.set(vehicleId, {
+                                                marker: vehicleRoutePair.marker,
+                                                routeId: vehicleRoutePair.routeId,
+                                                vehicle: vehicle,
+                                            }),
+                                        ),
+                                    );
                                 }
                                 // If we misintersected, remove marker completely and try again on next update
                                 else {
@@ -154,9 +158,9 @@ export const useKV6Websocket = (
                                             vehicle.properties.punctuality,
                                         )
                                     ) {
+                                        marker.addTo(map);
                                         if (!filteredRouteIds.has(intersectedRoad.properties.shape_id + ''))
                                             dispatch(updateFilteredRoute(intersectedRoad));
-                                        marker.addTo(map);
                                     }
                                     handleMarkerOnClick(
                                         marker,
