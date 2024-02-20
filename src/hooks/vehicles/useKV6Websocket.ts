@@ -129,7 +129,12 @@ export const useKV6Websocket = (
                                     vehicleMarkers.get(vehicleId)?.marker.remove();
                                     vehicleMarkers.delete(vehicleId);
                                     setVehicleMarkers(new Map(vehicleMarkers));
-                                    dispatch(removeVehicleFromPTRoute({ vehicle: vehicleId, route: vehicleRoutePair.routeId }));
+                                    dispatch(
+                                        removeVehicleFromPTRoute({
+                                            vehicle: vehicleId,
+                                            route: vehicleRoutePair.routeId,
+                                        }),
+                                    );
                                 }
                             }
 
