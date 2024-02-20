@@ -1,7 +1,6 @@
 import React, { Dispatch, ReactNode, SetStateAction, createContext, useContext, useState } from 'react';
 
 import { vehicleTypes } from '../../data/data';
-import { RootState, useAppSelector } from '../../store';
 
 type VehicleMarkersContextType = {
     vehicleMarkers: Map<string, VehicleRoutePair>;

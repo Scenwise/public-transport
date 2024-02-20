@@ -10,7 +10,7 @@ import {
     updateFilteredRoute,
     updatePTRoute,
 } from '../../dataStoring/slice';
-import { checkFilteredRoute, checkFilteredRoutePerVehicle } from '../../methods/filter/filteredRouteUtilities';
+import { checkFilteredRoutePerVehicle } from '../../methods/filter/filteredRouteUtilities';
 import animateVehicles from '../../methods/vehicles/animateVehicles';
 import {
     getMarkerColorBasedOnVehicleType,
