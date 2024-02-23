@@ -36,6 +36,7 @@ const MapStyleSelector: React.FC = () => {
                 <InputLabel id='map-style-label'>Map style</InputLabel>
                 <Select
                     labelId='map-style-label'
+                    label={'Map style'}
                     id='map-style-select'
                     value={mapStyles[mapStyleID]}
                     color={'primary'}

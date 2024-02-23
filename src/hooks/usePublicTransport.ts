@@ -22,7 +22,6 @@ import { usePTStopsActionUpdate } from './mapUpatingHooks/usePTStopsActionUpdate
 import { usePTStopsLayerUpdate } from './mapUpatingHooks/usePTStopsLayerUpdate';
 import { useUpdateMapStyle } from './mapUpatingHooks/useUpdateMapStyle';
 import { useApplyDataToSource, useInitializeSourcesAndLayers } from './useInitializeSourcesAndLayers';
-import useFilterVehicleTypes from './vehicles/useFilterVehicleTypes';
 import { useKV6Websocket } from './vehicles/useKV6Websocket';
 
 export const usePublicTransport = (
@@ -70,7 +69,6 @@ export const usePublicTransport = (
     const [vehicleMarkers, setVehicleMarkers] = [context.vehicleMarkers, context.setVehicleMarkers];
 
     useKV6Websocket(mapInitialized.current, map, vehicleMarkers, setVehicleMarkers);
-    useFilterVehicleTypes(mapInitialized.current, map, vehicleMarkers);
 
     // Update the layers of the map when an action is triggered
     usePTRoutesActionUpdate(map);
@@ -84,7 +82,7 @@ export const usePublicTransport = (
     useUpdateMapStyle(map, setMap);
 
     // Update the filtered list
-    useUpdateRoutesWithFilter(map, setMap);
+    useUpdateRoutesWithFilter(map, setMap, vehicleMarkers);
 
     // Update the visible routes from the current map screen
     useVisibleRoutesUpdate(map);

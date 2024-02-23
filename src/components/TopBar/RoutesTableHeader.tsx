@@ -12,7 +12,6 @@ import { ReadyState } from '../../data/data';
 import { selectPTRoutesFeatureList } from '../../dataStoring/slice';
 import { filterRoutesByVisibleIds } from '../../hooks/filterHook/useVisibleRoutesUpdate';
 import { useAppSelector } from '../../store';
-import { FilterList } from '../Filter/FilterList';
 
 const statusIcons: { [key in ReadyState]: [SvgIconComponent, SvgIconTypeMap['props']['color']] } = {
     [ReadyState.UNINSTANTIATED]: [RemoveCircleIcon, 'action'],
@@ -60,7 +59,6 @@ const RoutesTableHeader: React.FC = () => {
                     {filteredVisibleRoutesNr} / {totalRoutesNr}
                 </Typography>
             </Stack>
-            <FilterList />
         </Stack>
     );
 };

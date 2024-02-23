@@ -21,7 +21,12 @@ export const VehicleMarkersProvider: React.FC<VehicleMarkersComponentProps> = ({
 
     return (
         <VehicleMarkersContext.Provider
-            value={{ vehicleMarkers, setVehicleMarkers, vehicleFilters, setVehicleFilters }}
+            value={{
+                vehicleMarkers,
+                setVehicleMarkers,
+                vehicleFilters,
+                setVehicleFilters,
+            }}
         >
             {children}
         </VehicleMarkersContext.Provider>

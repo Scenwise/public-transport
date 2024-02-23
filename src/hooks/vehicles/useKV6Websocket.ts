@@ -1,9 +1,16 @@
+import _ from 'lodash';
 import { Marker } from 'mapbox-gl';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ReadyState, vehicleTypes } from '../../data/data';
-import { updatePTRoute } from '../../dataStoring/slice';
+import { ReadyState } from '../../data/data';
+import {
+    removeFilteredRouteBasedOnDelay,
+    removeVehicleFromPTRoute,
+    updateFilteredRoute,
+    updatePTRoute,
+} from '../../dataStoring/slice';
+import { checkFilteredRoutePerVehicle } from '../../methods/filter/filteredRouteUtilities';
 import animateVehicles from '../../methods/vehicles/animateVehicles';
 import {
     getMarkerColorBasedOnVehicleType,
@@ -11,8 +18,10 @@ import {
     handleMarkerOnClick,
 } from '../../methods/vehicles/vehicleMarkerUtilities';
 import { RootState, useAppSelector } from '../../store';
+import { mutableFilters } from '../filterHook/useUpdateRoutesWithFilter';
 
 // Create websocket connection
+
 export const useKV6Websocket = (
     mapInitialized: boolean,
     map: mapboxgl.Map | null,
@@ -22,9 +31,10 @@ export const useKV6Websocket = (
     const dispatch = useDispatch();
     const status = useAppSelector((state) => state.slice.status);
     const stopsToRoutesMap = useAppSelector((state: RootState) => state.slice.stopCodeToRouteMap);
+    const stops = useAppSelector((state) => state.slice.ptStops);
     const routesMap = useAppSelector((state: RootState) => state.slice.ptRoutes);
-
     const selectedMarker = useRef<SelectedMarkerColor>({} as SelectedMarkerColor);
+
     // eslint-disable-next-line sonarjs/cognitive-complexity
     useEffect(() => {
         if (status.ptRoute !== ReadyState.OPEN) return;
@@ -53,7 +63,6 @@ export const useKV6Websocket = (
 
             // On each socket message, process vehicles and find their corresponding route
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const _ = require('lodash');
             socket.onmessage = _.throttle((event: MessageEvent) => {
                 const message = event.data; // Take the data of the websocket message
                 if (message === 'Successfully connected!') console.log(message);
@@ -86,28 +95,58 @@ export const useKV6Websocket = (
                                 vehicleRoutePair !== undefined &&
                                 vehicleRoutePair.vehicle.properties.timestamp < vehicle.properties.timestamp
                             ) {
-                                // animateVehicles returns true if the route and vehicle are matched correctly and false
+                                // animateVehicles returns true if the route and vehicle are matched correctly and false otherwise
                                 const correct = animateVehicles(
                                     vehicleRoutePair,
                                     routesMap,
                                     vehicle.geometry.coordinates,
                                 );
                                 if (correct) {
+                                    // Update the vehicle with the new delay,timestamp, and position
                                     setVehicleMarkers(
                                         new Map(
                                             vehicleMarkers.set(vehicleId, {
                                                 marker: vehicleRoutePair.marker,
                                                 routeId: vehicleRoutePair.routeId,
-                                                vehicle: vehicle, // update delay, timestamp, position
+                                                vehicle: vehicle,
                                             }),
                                         ),
                                     );
+                                    // Check based on filterings if we can add the marker to the map (only if new delay is higher than before and >=0)
+                                    if (
+                                        vehicle.properties.punctuality >= 0 &&
+                                        vehicleRoutePair.vehicle.properties.punctuality <
+                                            vehicle.properties.punctuality &&
+                                        checkFilteredRoutePerVehicle(
+                                            routesMap[vehicleRoutePair.routeId],
+                                            mutableFilters,
+                                            stops,
+                                            vehicle.properties.punctuality,
+                                        )
+                                    ) {
+                                        vehicleRoutePair.marker.addTo(map);
+                                        dispatch(updateFilteredRoute(vehicleRoutePair.routeId));
+                                    }
                                 }
                                 // If we misintersected, remove marker completely and try again on next update
                                 else {
                                     vehicleMarkers.get(vehicleId)?.marker.remove();
                                     vehicleMarkers.delete(vehicleId);
                                     setVehicleMarkers(new Map(vehicleMarkers));
+                                    // Remove vehicle from route
+                                    dispatch(
+                                        removeVehicleFromPTRoute({
+                                            vehicle: vehicleId,
+                                            route: vehicleRoutePair.routeId,
+                                        }),
+                                    );
+                                    // Remove route from map if it has all filtered properties, but no vehicles on it and the delay filter is on
+                                    dispatch(
+                                        removeFilteredRouteBasedOnDelay({
+                                            vehicleMarkers: vehicleMarkers,
+                                            route: vehicleRoutePair.routeId,
+                                        }),
+                                    );
                                 }
                             }
 
@@ -115,6 +154,7 @@ export const useKV6Websocket = (
                             else if (vehicleRoutePair === undefined) {
                                 const intersectedRoad = routesMap[stopsToRoutesMap[vehicle.properties.userStopCode]];
                                 if (intersectedRoad !== undefined) {
+                                    const routeId = intersectedRoad.properties.shape_id + '';
                                     const marker = new Marker({
                                         color: getMarkerColorBasedOnVehicleType(intersectedRoad.properties.route_type),
                                     })
@@ -128,14 +168,30 @@ export const useKV6Websocket = (
                                             ),
                                         );
 
+                                    // Add vehicle id to its route (used to fly to the vehicle when its route is selected)
+                                    dispatch(updatePTRoute({ vehicle: vehicleId, route: routeId }));
+                                    setVehicleMarkers(
+                                        new Map(
+                                            vehicleMarkers.set(vehicleId, {
+                                                marker: marker,
+                                                routeId: routeId,
+                                                vehicle: vehicle,
+                                            }),
+                                        ),
+                                    );
+
+                                    // Check based on filterings if we can add the marker to the map
                                     if (
-                                        vehicleTypes.get(intersectedRoad.properties.route_type)?.checked ||
-                                        (vehicleTypes.get('Other')?.checked &&
-                                            intersectedRoad.properties.route_type === '')
+                                        checkFilteredRoutePerVehicle(
+                                            intersectedRoad,
+                                            mutableFilters,
+                                            stops,
+                                            vehicle.properties.punctuality,
+                                        )
                                     ) {
                                         marker.addTo(map);
+                                        dispatch(updateFilteredRoute(routeId));
                                     }
-
                                     handleMarkerOnClick(
                                         marker,
                                         selectedMarker,
@@ -143,21 +199,6 @@ export const useKV6Websocket = (
                                         dispatch,
                                         intersectedRoad.properties.shape_id,
                                         map,
-                                    );
-
-                                    // Add vehicle id to its route (used to fly to the vehicle when its route is selected)
-                                    const route = JSON.parse(JSON.stringify(intersectedRoad));
-                                    route.properties.vehicle_ids.push(vehicleId);
-                                    dispatch(updatePTRoute(route));
-
-                                    setVehicleMarkers(
-                                        new Map(
-                                            vehicleMarkers.set(vehicleId, {
-                                                marker: marker,
-                                                routeId: intersectedRoad.properties.shape_id + '',
-                                                vehicle: vehicle,
-                                            }),
-                                        ),
                                     );
                                 }
                             }

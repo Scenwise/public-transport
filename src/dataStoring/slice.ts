@@ -3,6 +3,7 @@ import deepcopy from 'deepcopy';
 
 import { ReadyState } from '../data/data';
 import { getGtfsTable } from '../methods/apiRequests/apiFunction';
+import { checkFilteredRoute } from '../methods/filter/filteredRouteUtilities';
 import { RootState } from '../store';
 
 export const fetchGtfsGeoJSON = (tableName: string) =>
@@ -54,8 +55,16 @@ const slice = createSlice({
         updatePTRoutes(state: State, action: PayloadAction<FeatureRecord<PTRouteFeature>>) {
             state.ptRoutes = action.payload;
         },
-        updatePTRoute(state: State, action: PayloadAction<PTRouteFeature>) {
-            state.ptRoutes[action.payload.properties.shape_id] = action.payload;
+        updatePTRoute(state: State, action: { type: string; payload: { vehicle: string; route: string } }) {
+            const vehicles = state.ptRoutes[action.payload.route].properties.vehicle_ids;
+            if (!vehicles.includes(action.payload.vehicle)) vehicles.push(action.payload.vehicle);
+        },
+        removeVehicleFromPTRoute(state: State, action: { type: string; payload: { vehicle: string; route: string } }) {
+            const vehicles = state.ptRoutes[action.payload.route].properties.vehicle_ids;
+            if (vehicles.includes(action.payload.vehicle)) {
+                const index = vehicles.indexOf(action.payload.vehicle);
+                vehicles.splice(index, 1);
+            }
         },
         updateFilters(state: State, action: PayloadAction<Filters>) {
             state.filters = deepcopy(action.payload);
@@ -68,6 +77,10 @@ const slice = createSlice({
         },
         updateFilteredRoutes(state: State, action: PayloadAction<PTRouteFeature[]>) {
             state.filteredRoutes = action.payload;
+        },
+        updateFilteredRoute(state: State, action: PayloadAction<string>) {
+            if (!state.filteredRoutes.map((x) => x.properties.shape_id + '').includes(action.payload))
+                state.filteredRoutes.push(state.ptRoutes[action.payload]);
         },
         updateVisibleRouteState(state: State, action: PayloadAction<VisibleFiltering>) {
             state.visibleRoutes = deepcopy(action.payload);
@@ -102,16 +115,41 @@ const slice = createSlice({
         updateSelectedVehicle(state: State, action: PayloadAction<string>) {
             state.selectedVehicle = action.payload;
         },
+        removeFilteredRouteBasedOnDelay(
+            state: State,
+            action: { type: string; payload: { vehicleMarkers: Map<string, VehicleRoutePair>; route: string } },
+        ) {
+            // If the route is displayed on map and should not be according to the filters
+            if (
+                state.filteredRoutes.map((x) => x.properties.shape_id + '').includes(action.payload.route) &&
+                !checkFilteredRoute(
+                    state.ptRoutes[action.payload.route],
+                    state.filters,
+                    state.ptStops,
+                    action.payload.vehicleMarkers,
+                )
+            ) {
+                // Find the index of the route
+                const index = state.filteredRoutes.findIndex(
+                    (route) => route.properties.shape_id + '' === action.payload.route,
+                );
+                if (index == -1) console.log('Error at removeFilteredRouteBasedOnDelay');
+                else state.filteredRoutes.splice(index, 1);
+            }
+        },
     },
 });
 
 export const {
     updatePTRoutes,
     updatePTRoute,
+    removeVehicleFromPTRoute,
     updateFilters,
     updateInitialFilters,
     updateFilter,
     updateFilteredRoutes,
+    updateFilteredRoute,
+    removeFilteredRouteBasedOnDelay,
     updateVisibleRouteState,
     updateSelectedRoute,
     updatePTStops,

@@ -27,6 +27,7 @@ export const useInitiateFilterOptions = (filterNames: string[], filterKeys: stri
             options: [],
             availableOptions: [],
             variants: [],
+            value: -1,
         };
     });
 
@@ -58,6 +59,8 @@ export const getOptions = (
     let list = [];
     if (filter.optionKey == 'stop') {
         list = ptStopFeatures.map((feature) => feature.properties.stopName);
+    } else if (filter.optionKey == 'delay') {
+        return [];
     } else {
         list = ptRouteFeatures.map((feature) => feature.properties[filter.optionKey]);
     }
