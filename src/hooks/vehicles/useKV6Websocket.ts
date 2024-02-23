@@ -141,7 +141,12 @@ export const useKV6Websocket = (
                                         }),
                                     );
                                     // Remove route from map if it has all filtered properties, but no vehicles on it and the delay filter is on
-                                    dispatch(removeFilteredRouteBasedOnDelay(vehicleRoutePair.routeId));
+                                    dispatch(
+                                        removeFilteredRouteBasedOnDelay({
+                                            vehicleMarkers: vehicleMarkers,
+                                            route: vehicleRoutePair.routeId,
+                                        }),
+                                    );
                                 }
                             }
 

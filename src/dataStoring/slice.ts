@@ -3,6 +3,7 @@ import deepcopy from 'deepcopy';
 
 import { ReadyState } from '../data/data';
 import { getGtfsTable } from '../methods/apiRequests/apiFunction';
+import { checkFilteredRoute } from '../methods/filter/filteredRouteUtilities';
 import { RootState } from '../store';
 
 export const fetchGtfsGeoJSON = (tableName: string) =>
@@ -113,21 +114,24 @@ const slice = createSlice({
         updateSelectedVehicle(state: State, action: PayloadAction<string>) {
             state.selectedVehicle = action.payload;
         },
-        removeFilteredRouteBasedOnDelay(state: State, action: PayloadAction<string>) {
-            // If the delay filter is on and the route has no vehicles and the route is displayed on map
+        removeFilteredRouteBasedOnDelay(
+            state: State,
+            action: { type: string; payload: { vehicleMarkers: Map<string, VehicleRoutePair>; route: string } },
+        ) {
+            // If the route is displayed on map and should not be according to the filters
             if (
-                state.filters['delay'].value != -1 &&
-                state.ptRoutes[action.payload + ''].properties.vehicle_ids.length == 0 &&
-                state.filteredRoutes.map((x) => x.properties.shape_id + '').includes(action.payload)
+                state.filteredRoutes.map((x) => x.properties.shape_id + '').includes(action.payload.route) &&
+                !checkFilteredRoute(
+                    state.ptRoutes[action.payload.route],
+                    state.filters,
+                    state.ptStops,
+                    action.payload.vehicleMarkers,
+                )
             ) {
                 // Find the index of the route
-                let index = -1;
-                for (let i = 0; i < state.filteredRoutes.length; i++) {
-                    if (state.filteredRoutes[i].properties.shape_id + '' == action.payload) {
-                        index = i;
-                        break;
-                    }
-                }
+                const index = state.filteredRoutes.findIndex(
+                    (route) => route.properties.shape_id + '' === action.payload.route,
+                );
                 if (index == -1) console.log('Error at removeFilteredRouteBasedOnDelay');
                 else state.filteredRoutes.splice(index, 1);
             }
