@@ -70,7 +70,7 @@ export const usePublicTransport = (
     const [vehicleMarkers, setVehicleMarkers] = [context.vehicleMarkers, context.setVehicleMarkers];
 
     useKV6Websocket(mapInitialized.current, map, vehicleMarkers, setVehicleMarkers);
-    useVehicleScheduleMatch(vehicleMarkers)
+    useVehicleScheduleMatch(vehicleMarkers);
 
     // Update the layers of the map when an action is triggered
     usePTRoutesActionUpdate(map);

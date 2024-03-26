@@ -47,7 +47,7 @@ export const initialState: State = {
     clickableLayers: [],
     stopCodeToRouteMap: {} as Record<string, number>,
     selectedVehicle: '',
-    lastVehicle: ''
+    lastVehicle: '',
 };
 
 const slice = createSlice({
@@ -166,7 +166,7 @@ export const {
     updateClickableLayers,
     updateStopCodeToRouteMap,
     updateSelectedVehicle,
-    updateLastVehicle
+    updateLastVehicle,
 } = slice.actions;
 
 // Memoized selector for array of features

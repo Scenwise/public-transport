@@ -92,13 +92,13 @@ const vehicleScheduleMatch = (
         //TODO: tie breaking constraint for more than one schedule found
 
         //TODO: Return the correct schedule and add it to the vehicle parameters. The exact stops are not needed, they can be retrieved using route_id.
-        if(possibleSchedules.length == 0) {
-            console.log("-----------------------------")
-            console.log('Found no possible schedules')
-            console.log("Time of vehicle: " + correctedTimeString)
-            console.log("Previous stop index: " + prevStopIndex)
-            console.log(schedules)
-            console.log("-----------------------------")
+        if (possibleSchedules.length == 0) {
+            console.log('-----------------------------');
+            console.log('Found no possible schedules');
+            console.log('Time of vehicle: ' + correctedTimeString);
+            console.log('Previous stop index: ' + prevStopIndex);
+            console.log(schedules);
+            console.log('-----------------------------');
         }
     }
 };
