@@ -49,7 +49,7 @@ export const addSchedule = (
  * @param stops The stop schedule fetched to be splitted
  * @param originId Filter out the schedules from the opposite direction
  */
-const groupStopsBySequence = (stops: SchedulePayload[], originId: string): SchedulePayload[][] => {
+export const groupStopsBySequence = (stops: SchedulePayload[], originId: string): SchedulePayload[][] => {
     const groups: SchedulePayload[][] = [];
     let currentGroup: SchedulePayload[] = [];
 

@@ -23,6 +23,7 @@ import { usePTStopsLayerUpdate } from './mapUpatingHooks/usePTStopsLayerUpdate';
 import { useUpdateMapStyle } from './mapUpatingHooks/useUpdateMapStyle';
 import { useApplyDataToSource, useInitializeSourcesAndLayers } from './useInitializeSourcesAndLayers';
 import { useKV6Websocket } from './vehicles/useKV6Websocket';
+import { useVehicleScheduleMatch } from './vehicles/useVehicleScheduleMatch';
 
 export const usePublicTransport = (
     map: mapboxgl.Map | null,
@@ -69,6 +70,7 @@ export const usePublicTransport = (
     const [vehicleMarkers, setVehicleMarkers] = [context.vehicleMarkers, context.setVehicleMarkers];
 
     useKV6Websocket(mapInitialized.current, map, vehicleMarkers, setVehicleMarkers);
+    useVehicleScheduleMatch(vehicleMarkers)
 
     // Update the layers of the map when an action is triggered
     usePTRoutesActionUpdate(map);

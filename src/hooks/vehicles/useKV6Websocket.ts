@@ -8,6 +8,7 @@ import {
     removeFilteredRouteBasedOnDelay,
     removeVehicleFromPTRoute,
     updateFilteredRoute,
+    updateLastVehicle,
     updatePTRoute,
 } from '../../dataStoring/slice';
 import { checkFilteredRoutePerVehicle } from '../../methods/filter/filteredRouteUtilities';
@@ -39,7 +40,7 @@ export const useKV6Websocket = (
     useEffect(() => {
         if (status.ptRoute !== ReadyState.OPEN) return;
         if (map && mapInitialized && routesMap) {
-            const webSocketURL = 'wss://prod.dataservice.scenwise.nl/kv6';
+            const webSocketURL = 'wss://dataservice.scenwise.nl/kv6';
             const socket = new WebSocket(webSocketURL);
 
             socket.onopen = () => {
@@ -66,7 +67,9 @@ export const useKV6Websocket = (
             socket.onmessage = _.throttle((event: MessageEvent) => {
                 const message = event.data; // Take the data of the websocket message
                 if (message === 'Successfully connected!') console.log(message);
+                else if (message === '{"Message":{"Info":"End of Stream reached","Code":"EOS"}}') console.log("Starting live data")
                 else {
+                    //console.log(JSON.parse(message))
                     const packets = JSON.parse(message).Packet;
                     for (const packet of packets) {
                         const payload = JSON.parse(packet.Payload);
@@ -167,7 +170,7 @@ export const useKV6Websocket = (
                                                 vehicle.properties.timestamp,
                                             ),
                                         );
-
+                                    
                                     // Add vehicle id to its route (used to fly to the vehicle when its route is selected)
                                     dispatch(updatePTRoute({ vehicle: vehicleId, route: routeId }));
                                     setVehicleMarkers(
@@ -179,6 +182,9 @@ export const useKV6Websocket = (
                                             }),
                                         ),
                                     );
+                                    
+                                    // Update vehicle schedule
+                                    dispatch(updateLastVehicle(vehicleId));
 
                                     // Check based on filterings if we can add the marker to the map
                                     if (
