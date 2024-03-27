@@ -1,7 +1,7 @@
 import deepcopy from 'deepcopy';
 
 import { ReadyState, RouteType, vehicleTypes, wheelchairBoarding } from '../../data/data';
-import { arraysMatch, limitDecimalPlaces } from '../../util';
+import { findClosestPointIndex } from '../../util';
 import { getGtfsTable } from './apiFunction';
 
 /**
@@ -88,23 +88,39 @@ export const addPublicTransportData = async (
                                 const stopIds: string[] = stopProperties.stops_ids;
                                 const stopGeometries = JSON.parse(JSON.stringify(feature.geometry)).coordinates;
 
-                                const stops: PTStopFeature[] = stopIds.map((stopId, index) => ({
-                                    id: stopId + '',
-                                    type: 'Feature',
-                                    geometry: { type: 'Point', coordinates: stopGeometries[index] },
-                                    properties: {
-                                        stopId: stopId + '',
-                                        routes: [],
-                                        stopName: stopProperties.stop_names[index],
-                                        stopsCode: stopProperties.stops_code[index],
-                                        platformCode: stopProperties.platform_code[index],
-                                        wheelchairBoarding: getWheelchairBoarding(
-                                            stopProperties.wheelchair_boarding[index],
-                                        ),
-                                        arrivalTime: 'Loading',
-                                        departureTime: 'Loading',
-                                    },
-                                }));
+                                const stops: PTStopFeature[] = [];
+                                // Number of the stops that do not have any information, need to be skipped when assigning the geometry
+                                let nullStopNum = 0;
+
+                                stopIds.forEach((stopId, index) => {
+                                    // Some stops do not have any information, just skip it
+                                    if (!stopId) {
+                                        nullStopNum++;
+                                        return null;
+                                    }
+                                    stops.push({
+                                        id: stopId + '',
+                                        type: 'Feature',
+                                        geometry: {
+                                            type: 'Point',
+                                            coordinates: stopGeometries[index - nullStopNum]
+                                                ? stopGeometries[index - nullStopNum]
+                                                : [],
+                                        },
+                                        properties: {
+                                            stopId: stopId + '',
+                                            routes: [],
+                                            stopName: stopProperties.stop_names[index],
+                                            stopsCode: stopProperties.stops_code[index],
+                                            platformCode: stopProperties.platform_code[index],
+                                            wheelchairBoarding: getWheelchairBoarding(
+                                                stopProperties.wheelchair_boarding[index],
+                                            ),
+                                            arrivalTime: 'Loading',
+                                            departureTime: 'Loading',
+                                        },
+                                    });
+                                });
 
                                 const sortedStops: PTStopFeature[] = removeDuplicateStops(
                                     sortStops(ptRoutes[id], stopGeometries, stops),
@@ -115,7 +131,13 @@ export const addPublicTransportData = async (
 
                                 // Store each individual stops into the general stop map. Store the route id for each stop code.
                                 sortedStops.forEach((stop: PTStopFeature) => {
-                                    ptStops[stop.properties.stopId] = stop;
+                                    const length = ptStops[stop.properties.stopId]?.geometry?.coordinates?.length;
+                                    // If the stop does not contain in the list of the existing stop in the list does not be assigned with a geometry
+                                    // Add the stop
+                                    if (!length || length == 0) {
+                                        ptStops[stop.properties.stopId] = stop;
+                                    }
+
                                     stopToRouteMap[stop.properties.stopsCode] = ptRoutes[id].properties.shape_id;
                                 });
                             }
@@ -161,7 +183,7 @@ const addLineNumberToStops = (
     });
     // Remove duplicate routes in a stop
     Object.values(res).forEach((stop) => {
-        stop.properties.routes = stop.properties.routes.sortAndUnique();
+        stop.properties.routes = stop.properties.routes.sort().filter((v, i, a) => a.indexOf(v) == i);
     });
     return res;
 };
@@ -189,14 +211,12 @@ const sortStops = (ptRoute: PTRouteFeature, stopGeometries: number[][], stops: P
     const sortedStops: PTStopFeature[] = new Array(stopGeometries.length).fill(null);
 
     // For finding the indices of the stop coordinates from the route coordinates
-    // (the decimal need to be limited in order to match up)
-    const routeCoordinates = ptRoute.geometry.coordinates.map((coordinate) => limitDecimalPlaces(coordinate));
-    const stopCoordinates = stopGeometries.map((coordinate: number[]) => limitDecimalPlaces(coordinate));
+    const routeCoordinates = ptRoute.geometry.coordinates;
 
     // The places of the coordinates of the stops in the route
     // Each entry of the coordinateIndices: [The place of the coordinate of a stop in the route, The original index of the stop]
-    const coordinateIndices = stopCoordinates.map((stopCoordinate: number[], index: number) => [
-        routeCoordinates.findIndex((routeCoordinate) => arraysMatch(stopCoordinate, routeCoordinate)),
+    const coordinateIndices = stopGeometries.map((stopCoordinate: number[], index: number) => [
+        findClosestPointIndex(stopCoordinate, routeCoordinates),
         index,
     ]);
 

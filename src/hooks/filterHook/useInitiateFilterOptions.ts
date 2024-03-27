@@ -65,5 +65,8 @@ export const getOptions = (
         list = ptRouteFeatures.map((feature) => feature.properties[filter.optionKey]);
     }
 
-    return list.sortAndUnique().filter((option) => option !== '' && option !== null); // Remove undefined values
+    return list
+        .sort()
+        .filter((v, i, a) => a.indexOf(v) == i)
+        .filter((option) => option !== '' && option !== null); // Remove undefined values
 };

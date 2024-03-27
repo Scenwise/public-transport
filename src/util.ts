@@ -1,24 +1,34 @@
-// Function to limit decimal places to four
-export const limitDecimalPlaces = (coordinates: number[]): number[] => {
-    return [Number(coordinates[0].toFixed(3)), Number(coordinates[1].toFixed(3))];
+// Define the haversine function
+const haversine = (coord1: number[], coord2: number[]): number => {
+    const [lon1, lat1] = coord1;
+    const [lon2, lat2] = coord2;
+    const earthRadius = 6371e3; // Earth radius in meters
+    const degreesToRadians = (degrees: number) => (degrees * Math.PI) / 180;
+    const lat1Rad = degreesToRadians(lat1);
+    const lat2Rad = degreesToRadians(lat2);
+    const deltaLat = degreesToRadians(lat2 - lat1);
+    const deltaLon = degreesToRadians(lon2 - lon1);
+
+    const a =
+        Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+        Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return earthRadius * c;
 };
 
-// Function to compare arrays by values
-// Return true if two arrays have the same values in the same order
-export const arraysMatch = (arr1: number[], arr2: number[], offset = 0.002): boolean => {
-    return arr1.length === arr2.length && arr1.every((value, index) => Math.abs(value - arr2[index]) <= offset);
-};
+// Function to find the index of the closest point in the route's coordinate list
+export const findClosestPointIndex = (stopCoord: number[], routeCoords: number[][]): number => {
+    let minDistance = Infinity;
+    let closestIndex = -1;
 
-// Add a function to get unique values from array
-declare global {
-    interface Array<T> {
-        unique(): T[];
-        sortAndUnique(): T[];
+    for (let i = 0; i < routeCoords.length; i++) {
+        const distance = haversine(stopCoord, routeCoords[i]);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestIndex = i;
+        }
     }
-}
-Array.prototype.unique = function <T>(): T[] {
-    return this.filter((v, i, a) => a.indexOf(v) == i);
-};
-Array.prototype.sortAndUnique = function <T>(): T[] {
-    return this.sort().unique();
+
+    return closestIndex;
 };

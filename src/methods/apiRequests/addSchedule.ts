@@ -8,37 +8,54 @@ export const addSchedule = (
     routeOrigin: string,
     vehicleIndex: number,
     ptStopsFeatures: PTStopFeature[],
+    ptStops: FeatureRecord<PTStopFeature>,
     setStop: (stop: PTStopFeature) => void,
 ): Promise<void> => {
+    // eslint-disable-next-line sonarjs/cognitive-complexity
     return new Promise(() => {
         const res = getRouteSchedule(routeID);
         res.then((schedules: SchedulePayload[]) => {
             if (schedules.length > 0) {
-                const originStopId = ptStopsFeatures.filter(
+                const originStop = ptStopsFeatures.filter(
                     (stop: PTStopFeature) => stop.properties.stopName === routeOrigin,
-                )[0].properties.stopId;
-                groupStopsBySequence(schedules, originStopId)[vehicleIndex != -1 ? vehicleIndex : 0].forEach(
-                    (schedule: SchedulePayload, index: number) => {
-                        const stopFeature = deepcopy(ptStopsFeatures[index]);
-                        // TODO: Sometimes the number of stops of a route from the stop table are not matched the numbers of the schedules
+                )[0];
+                const originStopName = originStop ? originStop.properties.stopId : ptStopsFeatures[0].properties.stopId;
+
+                const stopIds = ptStopsFeatures.map((feature) => feature.properties.stopId);
+
+                const groupedSchedules = groupStopsBySequence(schedules, originStopName, stopIds);
+
+                const schedule = groupedSchedules[vehicleIndex != -1 ? vehicleIndex : 0]
+                    ? groupedSchedules[vehicleIndex != -1 ? vehicleIndex : 0]
+                    : groupedSchedules[0];
+
+                if (schedule) {
+                    schedule.forEach((stop) => {
+                        const stopFeature = deepcopy(ptStops[stop.stop_id]);
                         if (stopFeature) {
-                            stopFeature.properties.arrivalTime = schedule.arrival_time;
-                            stopFeature.properties.departureTime = schedule.departure_time;
+                            stopFeature.properties.arrivalTime = stop.arrival_time;
+                            stopFeature.properties.departureTime = stop.departure_time;
                             setStop(stopFeature);
                         }
-                    },
-                );
-            } else {
-                // If no schedule is found, there is no vehicle on the route so no active schedule
-                ptStopsFeatures.forEach((stop: PTStopFeature) => {
-                    const copiedStop = deepcopy(stop);
-                    copiedStop.properties.arrivalTime = 'No active schedule';
-                    copiedStop.properties.departureTime = 'No active schedule';
-                    setStop(copiedStop);
-                });
+                    });
+                    return;
+                }
             }
+            // If no schedule is found, there is no vehicle on the route so no active schedule
+            ptStopsFeatures.forEach((stop: PTStopFeature) => {
+                const copiedStop = deepcopy(stop);
+                copiedStop.properties.arrivalTime = 'No active schedule';
+                copiedStop.properties.departureTime = 'No active schedule';
+                setStop(copiedStop);
+            });
         }).catch((error) => {
             console.error(error);
+            ptStopsFeatures.forEach((stop: PTStopFeature) => {
+                const copiedStop = deepcopy(stop);
+                copiedStop.properties.arrivalTime = error.message;
+                copiedStop.properties.departureTime = error.message;
+                setStop(copiedStop);
+            });
         });
     });
 };
@@ -49,7 +66,7 @@ export const addSchedule = (
  * @param stops The stop schedule fetched to be splitted
  * @param originId Filter out the schedules from the opposite direction
  */
-const groupStopsBySequence = (stops: SchedulePayload[], originId: string): SchedulePayload[][] => {
+const groupStopsBySequence = (stops: SchedulePayload[], originId: string, stopIds: string[]): SchedulePayload[][] => {
     const groups: SchedulePayload[][] = [];
     let currentGroup: SchedulePayload[] = [];
 
@@ -66,5 +83,24 @@ const groupStopsBySequence = (stops: SchedulePayload[], originId: string): Sched
         groups.push(currentGroup);
     }
 
-    return groups.filter((group) => group[0].stop_id + '' === originId);
+    // Get schedule groups with the correct direction (must contain all stop ids, as stops in different direction have different ids)
+    // Sort the groups based on time
+    // Sometimes there are duplicate stops in the payload, remove them
+    return groups
+        .filter((group) => {
+            return stopIds
+                .filter((id) => !!id)
+                .every((stopId) => {
+                    return group.some((payload) => payload.stop_id + '' === stopId);
+                });
+        })
+        .sort((groupA, groupB) => {
+            const arrivalTimeA = groupA[0].arrival_time;
+            const arrivalTimeB = groupB[0].arrival_time;
+            return arrivalTimeA.localeCompare(arrivalTimeB);
+        })
+        .filter((group, index, array) => {
+            // Check if the arrival time of the first element is unique in the sorted array
+            return index === 0 || group[0].arrival_time !== array[index - 1][0].arrival_time;
+        });
 };
