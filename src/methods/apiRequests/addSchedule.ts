@@ -22,7 +22,6 @@ export const addSchedule = (
                 const originStopName = originStop ? originStop.properties.stopId : ptStopsFeatures[0].properties.stopId;
 
                 const stopIds = ptStopsFeatures.map((feature) => feature.properties.stopId);
-                        // TODO: Sometimes the number of stops of a route from the stop table are not matched the numbers of the schedules
 
                 const groupedSchedules = groupStopsBySequence(schedules, originStopName, stopIds);
 
