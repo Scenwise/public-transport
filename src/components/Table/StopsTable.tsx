@@ -1,3 +1,4 @@
+import deepcopy from 'deepcopy';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { Card, CardContent, Popover, Typography } from '@mui/material';
@@ -75,16 +76,32 @@ const StopsTable: React.FC = () => {
         /*eslint-disable react-hooks/exhaustive-deps*/
     }, [selectedRouteID, selectedVehicleID]);
 
-    const ptStopsProperties = useMemo(() => {
+    useEffect(() => {
         if (selectedRouteID !== '') {
+            const stopsOfRoute = ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id]);
+            // Clean the time schedules that were loaded before
+            stopsOfRoute.forEach((stop: PTStopFeature) => {
+                if (stop.properties.arrivalTime !== 'Loading') {
+                    const copiedStop = deepcopy(stop);
+                    copiedStop.properties.arrivalTime = 'Loading';
+                    copiedStop.properties.departureTime = 'Loading';
+                    dispatch(updatePTStop(copiedStop));
+                }
+            });
             // update the stop properties by adding the schedules
             addSchedule(
                 ptRouteProperty.route_id + '',
                 ptRouteProperty.origin,
                 ptRouteProperty.vehicle_ids.indexOf(selectedVehicleID + ''),
-                ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id]),
+                stopsOfRoute,
+                ptStopsFeatures,
                 (stop: PTStopFeature) => dispatch(updatePTStop(stop)),
             );
+        }
+    }, [selectedVehicleID, selectedRouteID]);
+
+    const ptStopsProperties = useMemo(() => {
+        if (selectedRouteID !== '') {
             return ptRouteProperty.stops_ids.map((id) => ptStopsFeatures[id].properties);
         } else {
             return [] as PTStopProperties[];
