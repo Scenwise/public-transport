@@ -29,7 +29,7 @@ export const addSchedule = (
                     ? groupedSchedules[vehicleIndex != -1 ? vehicleIndex : 0]
                     : groupedSchedules[0];
 
-                if (schedule.length > 0) {
+                if (schedule) {
                     schedule.forEach((stop) => {
                         const stopFeature = deepcopy(ptStops[stop.stop_id]);
                         if (stopFeature) {
@@ -50,6 +50,12 @@ export const addSchedule = (
             });
         }).catch((error) => {
             console.error(error);
+            ptStopsFeatures.forEach((stop: PTStopFeature) => {
+                const copiedStop = deepcopy(stop);
+                copiedStop.properties.arrivalTime = error.message;
+                copiedStop.properties.departureTime = error.message;
+                setStop(copiedStop);
+            });
         });
     });
 };
