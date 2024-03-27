@@ -1,5 +1,5 @@
 import { LngLatBounds } from 'mapbox-gl';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useVehicleMarkers } from '../../components/Vehicles/VehicleMapContext';
 import { useAppSelector } from '../../store';
@@ -24,10 +24,12 @@ const dashArraySequence = [
     [0, 3.5, 3, 0.5],
 ];
 const useAnimateSelectedRoute = (map: mapboxgl.Map | null) => {
-    const status = useAppSelector((state) => state.slice.status);
+    const selectedRoute = useAppSelector((state) => state.slice.selectedRoute);
+
+    const requestRef = useRef<number>();
 
     useEffect(() => {
-        const THROTTLE_INTERVAL = 100; // Set an appropriate interval
+        const THROTTLE_INTERVAL = 1200; // The higher, the speed is slower
 
         let lastUpdateTime = 0;
         let step = 0;
@@ -35,20 +37,23 @@ const useAnimateSelectedRoute = (map: mapboxgl.Map | null) => {
         function animateDashArray(timestamp: number) {
             if (map && map.getLayer('selectedRouteDirection')) {
                 const newStep = parseInt(String((timestamp / 50) % dashArraySequence.length));
-
                 if (newStep !== step && timestamp - lastUpdateTime > THROTTLE_INTERVAL) {
                     map.setPaintProperty('selectedRouteDirection', 'line-dasharray', dashArraySequence[step]);
                     step = newStep;
                     lastUpdateTime = timestamp;
                 }
 
-                requestAnimationFrame(animateDashArray);
+                requestRef.current = requestAnimationFrame(animateDashArray);
             }
         }
         // start the animation
-        animateDashArray(0);
+        if (selectedRoute != '') {
+            animateDashArray(0);
+        } else if (requestRef.current) {
+            cancelAnimationFrame(requestRef.current);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [status]);
+    }, [selectedRoute]);
 };
 
 /*
